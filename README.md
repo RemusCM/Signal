@@ -1,4 +1,7 @@
-# Signal Android 
+## Build Status
+[![Build Status](https://travis-ci.com/daanish93/SignalApp.svg?token=CxEqbeJCbjKCCq4Yqfxa&branch=master)](https://travis-ci.com/daanish93/SignalApp)
+
+# Signal Android
 
 Signal is a messaging app for simple private communication with friends.
 
