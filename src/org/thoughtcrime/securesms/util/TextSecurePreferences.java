@@ -123,7 +123,7 @@ public class TextSecurePreferences {
     return getStringPreference(context, NICKNAME, null);
   }
 
-  public static void setName(Context context, String nickname){
+  public static void setNickname(Context context, String nickname){
     setStringPreference(context, NICKNAME, nickname);
   }
 
