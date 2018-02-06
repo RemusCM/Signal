@@ -1,5 +1,4 @@
 language: android
-
 android:
   components:
     - tools
@@ -7,8 +6,6 @@ android:
     - tools
     - build-tools-$ANDROID_BUILD_TOOLS
     - android-$ANDROID_API
-    - add-on
-    - extra
   licenses:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
