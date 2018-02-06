@@ -1,17 +1,16 @@
 language: android
 
-jdk:
-  - oraclejdk8
-
 android:
   components:
-    - platform-tools
-    - tools
     - build-tools-27.0.1
     - android-27
-    - extra-google-m2repository
+    - add-on
+    - extra
+  licenses:
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 
 before_install:
   - chmod +x gradlew
-    
+
 script: ./gradlew assembleplayDebug
