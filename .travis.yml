@@ -2,11 +2,13 @@ language: android
 jdk: oraclejdk8
 android:
   components:
-    - platform-tools
     - tools
+    - platform-tools
     - build-tools-27.0.1
     - android-27
     - extra-google-m2repository
+    - add-on
+    - extra
 before_install:
   - chmod +x gradlew
   - yes | sdkmanager "platforms;android-27"
