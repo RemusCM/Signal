@@ -117,6 +117,16 @@ public class TextSecurePreferences {
   public  static final String INCOGNITO_KEYBORAD_PREF          = "pref_incognito_keyboard";
   private static final String UNAUTHORIZED_RECEIVED            = "pref_unauthorized_received";
   private static final String SUCCESSFUL_DIRECTORY_PREF        = "pref_successful_directory";
+  private static final String NICKNAME                         =  "pref_nick_name";
+
+  public static String getNickname(Context context){
+    return getStringPreference(context, NICKNAME, null);
+  }
+
+  public static void setName(Context context, String nickname){
+    setStringPreference(context, NICKNAME, nickname);
+  }
+
 
   public static void setHasSuccessfullyRetrievedDirectory(Context context, boolean value) {
     setBooleanPreference(context, SUCCESSFUL_DIRECTORY_PREF, value);
