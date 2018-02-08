@@ -1,4 +1,4 @@
-package org.thoughtcrime.securesms.webrtc;
+package org.thoughtcrime.securesms;
 
 import android.app.Activity;
 import android.app.Dialog;
