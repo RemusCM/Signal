@@ -582,10 +582,19 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     }
 
     private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
-
       @Override
       public boolean onPreferenceClick(Preference preference) {
+        if(recipient.getProfileName() != null) {
+          new AlertDialog.Builder(getActivity())
+            .setTitle("Change/Add nickname")
+            .setCancelable(true)
+              .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+            }
+          }).show();
+        }
         return true;
       }
     }
