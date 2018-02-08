@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -590,22 +591,30 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       public boolean onPreferenceClick(Preference preference) {
         changeNicknameDialog.setTitle(changeAddTitle);
         changeNicknameDialog.setCancelable(false);
+
+        final EditText nicknameEditText = new EditText(getActivity());
+        changeNicknameDialog.setView(nicknameEditText);
+
         changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
 
           }
         });
+
+        dismissNicknameDialog();
+        changeNicknameDialog.show();
+
+        return true;
+      }
+
+      private void dismissNicknameDialog() {
         changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
           }
         });
-
-        changeNicknameDialog.show();
-
-        return true;
       }
     }
   }
