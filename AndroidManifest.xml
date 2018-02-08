@@ -111,15 +111,11 @@
     <meta-data android:name="com.google.android.gms.car.application"
                android:resource="@xml/automotive_app_desc" />
 
-    <activity android:name="org.thoughtcrime.securesms.ChangeNickname"
-              android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"/>
-
-
     <activity android:name="org.thoughtcrime.securesms.WebRtcCallActivity"
-              android:excludeFromRecents="true"
-              android:screenOrientation="portrait"
-              android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|fontScale"
-              android:launchMode="singleTask"/>
+          android:excludeFromRecents="true"
+          android:screenOrientation="portrait"
+          android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|fontScale"
+          android:launchMode="singleTask"/>
 
     <activity android:name=".CountrySelectionActivity"
               android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"/>
