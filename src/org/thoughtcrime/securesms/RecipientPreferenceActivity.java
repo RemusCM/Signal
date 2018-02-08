@@ -1,7 +1,6 @@
 package org.thoughtcrime.securesms;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,10 +29,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -587,14 +584,27 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       @Override
       public boolean onPreferenceClick(Preference preference) {
 
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Change/Add nickname")
-                .setCancelable(true).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        String changeAddTitle = getString(R.string.dialog_nickname_title);
+        String save = getString(R.string.dialog_nickname_save);
+        String cancel = getString(R.string.dialog_nickname_cancel);
+
+        AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
+        changeNicknameDialog.setTitle(changeAddTitle);
+        changeNicknameDialog.setCancelable(true);
+        changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
 
           }
-        }).show();
+        });
+        changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+
+          }
+        });
+
+        changeNicknameDialog.show();
 
         return true;
       }
