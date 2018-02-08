@@ -53,11 +53,11 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <Button
-                android:id="@+id/nicknameBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="change Nickname" />
+            <!--<Button-->
+                <!--android:id="@+id/nicknameBtn"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="change Nickname" />-->
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

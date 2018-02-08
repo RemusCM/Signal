@@ -5,6 +5,8 @@
     <string name="no">No</string>
     <string name="delete">Delete</string>
     <string name="please_wait">Please wait...</string>
+    <string name="change_nickname_btn_str">Change nickname</string>
+    <string name="ok_button_dialog_str">Ok</string>
 
     <!-- AbstractNotificationBuilder -->
     <string name="AbstractNotificationBuilder_new_message">New message</string>
