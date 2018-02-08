@@ -10,13 +10,6 @@
                 android:disableDependentsState="true"
                 android:persistent="false" />
 
-        <EditTextPreference
-            android:defaultValue="Default value"
-            android:key="pref_nick_name"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Add Nickname" />
-
         <org.thoughtcrime.securesms.preferences.widgets.SignalPreference
                             android:dependency="pref_key_recipient_mute"
                             android:key="pref_key_recipient_ringtone"
