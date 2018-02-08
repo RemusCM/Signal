@@ -14,7 +14,6 @@ import android.view.View.OnClickListener;
 import org.thoughtcrime.securesms.R;
 
 public class ChangeNickname extends Activity implements OnClickListener {
-    private Button button1;
     final Context context = this;
 
     @Override
@@ -22,8 +21,8 @@ public class ChangeNickname extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipient_preference_activity);
 
-        button1 = (Button) findViewById(R.id.nicknameBtn);
-        button1.setOnClickListener(this);
+        Button changeNicknameBtn = (Button) findViewById(R.id.changeNicknameButton);
+        changeNicknameBtn.setOnClickListener(this);
     }
 
 
@@ -36,7 +35,6 @@ public class ChangeNickname extends Activity implements OnClickListener {
         TextView txt = (TextView) dialog.findViewById(R.id.new_text);
         txt.setText("Android custom dialog example");
         ImageView image = (ImageView) dialog.findViewById(R.id.image);
-//        image.setImageResource(R.drawable.);
 
         Button dialogButtonOk = (Button) dialog.findViewById(R.id.dialogButtonOK);
         dialogButtonOk.setOnClickListener(new OnClickListener() {

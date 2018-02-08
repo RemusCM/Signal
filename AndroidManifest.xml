@@ -111,6 +111,10 @@
     <meta-data android:name="com.google.android.gms.car.application"
                android:resource="@xml/automotive_app_desc" />
 
+    <activity android:name="org.thoughtcrime.securesms.ChangeNickname"
+              android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"/>
+
+
     <activity android:name="org.thoughtcrime.securesms.WebRtcCallActivity"
               android:excludeFromRecents="true"
               android:screenOrientation="portrait"
