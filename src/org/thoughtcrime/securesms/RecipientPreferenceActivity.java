@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,8 +30,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -80,6 +83,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
+  private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
   private final DynamicLanguage dynamicLanguage = new DynamicLanguage();
@@ -257,12 +261,15 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           .setOnPreferenceClickListener(new BlockClickedListener());
       this.findPreference(PREFERENCE_COLOR)
           .setOnPreferenceChangeListener(new ColorChangeListener());
+      this.findPreference(PREFERENCE_NICKNAME)
+              .setOnPreferenceClickListener(new ChangeNicknameClickedListener());
     }
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
       Log.w(TAG, "onCreatePreferences...");
       addPreferencesFromResource(R.xml.recipient_preferences);
+
     }
 
     @Override
@@ -298,6 +305,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       ColorPickerPreference      colorPreference    = (ColorPickerPreference) this.findPreference(PREFERENCE_COLOR);
       Preference                 blockPreference    = this.findPreference(PREFERENCE_BLOCK);
       Preference                 identityPreference = this.findPreference(PREFERENCE_IDENTITY);
+      Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
       PreferenceCategory         privacyCategory    = (PreferenceCategory)this.findPreference("privacy_settings");
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
 
@@ -330,6 +338,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
 
       if (recipient.isGroupRecipient()) {
         if (colorPreference    != null) colorPreference.setVisible(false);
+        if (changeNicknamePreference    != null) changeNicknamePreference.setVisible(false);
         if (blockPreference    != null) blockPreference.setVisible(false);
         if (identityPreference != null) identityPreference.setVisible(false);
         if (privacyCategory    != null) privacyCategory.setVisible(false);
@@ -569,6 +578,15 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
             return null;
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+      }
+    }
+
+    private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
+
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+
+        return true;
       }
     }
   }
