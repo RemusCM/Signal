@@ -579,18 +579,17 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     }
 
     private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
-      // TODO
-      // create an edit text inside this alert dialog box
+
+      String changeAddTitle = getString(R.string.dialog_nickname_title);
+      String save = getString(R.string.dialog_nickname_save);
+      String cancel = getString(R.string.dialog_nickname_cancel);
+
+      AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
+
       @Override
       public boolean onPreferenceClick(Preference preference) {
-
-        String changeAddTitle = getString(R.string.dialog_nickname_title);
-        String save = getString(R.string.dialog_nickname_save);
-        String cancel = getString(R.string.dialog_nickname_cancel);
-
-        AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
         changeNicknameDialog.setTitle(changeAddTitle);
-        changeNicknameDialog.setCancelable(true);
+        changeNicknameDialog.setCancelable(false);
         changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -600,7 +599,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
         changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
-
+            dialog.dismiss();
           }
         });
 
