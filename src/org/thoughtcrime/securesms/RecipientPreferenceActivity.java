@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -580,7 +581,6 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     }
 
     private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
-
       String changeAddTitle = getString(R.string.dialog_nickname_title);
       String save = getString(R.string.dialog_nickname_save);
       String cancel = getString(R.string.dialog_nickname_cancel);
@@ -595,17 +595,19 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
         final EditText nicknameEditText = new EditText(getActivity());
         changeNicknameDialog.setView(nicknameEditText);
 
+        onClickDialogSaveButton();
+        dismissNicknameDialog();
+        changeNicknameDialog.show();
+        return true;
+      }
+
+      private void onClickDialogSaveButton() {
         changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
 
           }
         });
-
-        dismissNicknameDialog();
-        changeNicknameDialog.show();
-
-        return true;
       }
 
       private void dismissNicknameDialog() {
