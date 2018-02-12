@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -528,8 +527,10 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     private class BlockClickedListener implements Preference.OnPreferenceClickListener {
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        if (recipient.isBlocked()) handleUnblock();
-        else                       handleBlock();
+        if (recipient.isBlocked())
+          handleUnblock();
+        else
+          handleBlock();
 
         return true;
       }
@@ -591,30 +592,43 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       public boolean onPreferenceClick(Preference preference) {
         changeNicknameDialog.setTitle(changeAddTitle);
         changeNicknameDialog.setCancelable(false);
-
         final EditText nicknameEditText = new EditText(getActivity());
         changeNicknameDialog.setView(nicknameEditText);
 
-        onClickDialogSaveButton();
-        dismissNicknameDialog();
-        changeNicknameDialog.show();
-        return true;
-      }
-
-      private void onClickDialogSaveButton() {
-        changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-
-          }
-        });
-      }
-
-      private void dismissNicknameDialog() {
+        saveButton(nicknameEditText.getText().toString());
         changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
+          }
+        });
+        changeNicknameDialog.show();
+        return true;
+      }
+
+      /**
+       * On click save button this is what
+       * happen
+       * @param nicknameStr
+       */
+      private void saveButton(String nicknameStr) {
+        changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+              new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                  Context context = getActivity();
+                  DatabaseFactory.getRecipientDatabase(context).setProfileName(
+                          recipient,
+                          nicknameStr
+                  );
+                    ApplicationContext.getInstance(context)
+                            .getJobManager()
+                            .add(new MultiDeviceContactUpdateJob(context, recipient.getAddress()));
+                  return null;
+                }
+              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
           }
         });
       }
