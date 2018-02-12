@@ -122,23 +122,26 @@ public class ConversationTitleView extends RelativeLayout {
 
   @SuppressLint("SetTextI18n")
   private void setNonContactRecipientTitle(Recipient recipient) {
-    this.title.setText(recipient.getAddress().serialize());
 
-    if (TextUtils.isEmpty(recipient.getProfileName())) {
-      this.subtitle.setText(null);
+    if (!TextUtils.isEmpty(recipient.getProfileName()) ||
+            recipient.getCustomLabel() != null) {
+      this.title.setText(recipient.getCustomLabel());
       this.subtitle.setVisibility(View.GONE);
     } else {
-      this.subtitle.setText("~" + recipient.getProfileName());
-      this.subtitle.setVisibility(View.VISIBLE);
+      this.title.setText(recipient.getAddress().serialize());
     }
+    this.subtitle.setVisibility(View.INVISIBLE);
+
   }
 
   private void setContactRecipientTitle(Recipient recipient) {
-    this.title.setText(recipient.getName());
-
-    if (recipient.getCustomLabel() != null) this.subtitle.setText(recipient.getCustomLabel());
-    else                                    this.subtitle.setText(recipient.getAddress().serialize());
-
-    this.subtitle.setVisibility(View.VISIBLE);
+    if (recipient.getCustomLabel() != null || !TextUtils.isEmpty(recipient.getProfileName())) {
+      this.subtitle.setText(null);
+      this.subtitle.setVisibility(View.GONE);
+      this.title.setText(recipient.getCustomLabel());
+    } else {
+      this.title.setText(recipient.getAddress().serialize());
+    }
+    this.subtitle.setVisibility(View.INVISIBLE);
   }
 }
