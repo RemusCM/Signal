@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -63,6 +64,7 @@ import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.concurrent.ListenableFuture;
+import org.w3c.dom.Text;
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.util.concurrent.ExecutionException;
@@ -235,6 +237,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       implements RecipientModifiedListener
   {
     private Recipient recipient;
+
     private boolean   canHaveSafetyNumber;
 
     @Override
@@ -587,7 +590,6 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       String cancel = getString(R.string.dialog_nickname_cancel);
 
       AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
-
       @Override
       public boolean onPreferenceClick(Preference preference) {
         changeNicknameDialog.setTitle(changeAddTitle);
@@ -595,7 +597,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
         final EditText nicknameEditText = new EditText(getActivity());
         changeNicknameDialog.setView(nicknameEditText);
 
-        saveButton(nicknameEditText.getText().toString());
+        saveButton(nicknameEditText);
+
         changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -611,7 +614,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
        * happen
        * @param nicknameStr
        */
-      private void saveButton(String nicknameStr) {
+      private void saveButton(EditText nicknameStr) {
         changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -619,13 +622,10 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
                 @Override
                 protected Void doInBackground(Void... params) {
                   Context context = getActivity();
-                  DatabaseFactory.getRecipientDatabase(context).setProfileName(
-                          recipient,
-                          nicknameStr
-                  );
-                    ApplicationContext.getInstance(context)
-                            .getJobManager()
-                            .add(new MultiDeviceContactUpdateJob(context, recipient.getAddress()));
+                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(context);
+                  Log.w(TAG, " printing this -> " + nicknameStr.getText().toString());
+                  database.setProfileName(recipient, nicknameStr.getText().toString());
+
                   return null;
                 }
               }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
