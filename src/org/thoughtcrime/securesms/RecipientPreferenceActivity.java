@@ -26,6 +26,7 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,8 +51,10 @@ import org.thoughtcrime.securesms.database.RecipientDatabase.VibrateState;
 import org.thoughtcrime.securesms.database.loaders.ThreadMediaLoader;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.MultiDeviceContactUpdateJob;
+import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.GlideRequests;
+import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.preferences.CorrectedPreferenceFragment;
 import org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -246,7 +249,6 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       super.onCreate(icicle);
 
       initializeRecipients();
-
       this.canHaveSafetyNumber = getActivity().getIntent()
                                  .getBooleanExtra(RecipientPreferenceActivity.CAN_HAVE_SAFETY_NUMBER_EXTRA, false);
 
@@ -590,6 +592,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       String cancel = getString(R.string.dialog_nickname_cancel);
 
       AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
+
       @Override
       public boolean onPreferenceClick(Preference preference) {
         changeNicknameDialog.setTitle(changeAddTitle);
@@ -621,10 +624,29 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
               new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                  Context context = getActivity();
-                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(context);
                   Log.w(TAG, " printing this -> " + nicknameStr.getText().toString());
-                  database.setProfileName(recipient, nicknameStr.getText().toString());
+                  Log.w(TAG, "old profile name -> " + recipient.resolve().getProfileName());
+
+                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
+                  database.setProfileName(
+                          recipient, nicknameStr.getText().toString()
+                  );
+
+                  if(!Util.equals(nicknameStr.getText().toString(),
+                          recipient.resolve().getProfileName())) {
+                    database.setProfileName(
+                            recipient, nicknameStr.getText().toString()
+                    );
+                  }
+
+                  TextSecurePreferences.setProfileName(
+                          getActivity(),
+                          nicknameStr.getText().toString()
+                  );
+
+                  ApplicationContext.getInstance(getActivity())
+                          .getJobManager()
+                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
 
                   return null;
                 }
