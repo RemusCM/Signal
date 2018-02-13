@@ -5,6 +5,11 @@
     <string name="no">No</string>
     <string name="delete">Delete</string>
     <string name="please_wait">Please wait...</string>
+    <string name="preference_nickname_title">Nickname</string>
+    <string name="preference_nickname_summary">Tap to add or modify</string>
+    <string name="dialog_nickname_title">Change/Add nickname</string>
+    <string name="dialog_nickname_save">Save</string>
+    <string name="dialog_nickname_cancel">Cancel</string>
 
     <!-- AbstractNotificationBuilder -->
     <string name="AbstractNotificationBuilder_new_message">New message</string>

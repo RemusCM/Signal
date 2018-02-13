@@ -35,6 +35,10 @@
                 app:numColumns="5" />
     </PreferenceCategory>
 
+    <Preference android:title="@string/preference_nickname_title"
+        android:key="pref_key_change_nickname"
+        android:summary="@string/preference_nickname_summary"/>
+
     <PreferenceCategory android:key="divider" android:layout="@layout/preference_divider"/>
 
     <PreferenceCategory android:key="privacy_settings" android:title="@string/recipient_preferences__privacy">

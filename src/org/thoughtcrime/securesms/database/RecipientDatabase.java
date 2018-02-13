@@ -287,6 +287,13 @@ public class RecipientDatabase extends Database {
     recipient.resolve().setProfileName(profileName);
   }
 
+  public void setCustomLabel(@NonNull Recipient recipient, @Nullable String customLabel) {
+    ContentValues contentValues = new ContentValues(1);
+    contentValues.put(SYSTEM_PHONE_LABEL, customLabel);
+    updateOrInsert(recipient.getAddress(), contentValues);
+    recipient.resolve().setCustomLabel(customLabel);
+  }
+
   public void setProfileAvatar(@NonNull Recipient recipient, @Nullable String profileAvatar) {
     ContentValues contentValues = new ContentValues(1);
     contentValues.put(SIGNAL_PROFILE_AVATAR, profileAvatar);

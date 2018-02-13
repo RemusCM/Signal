@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,10 +26,12 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,8 +51,10 @@ import org.thoughtcrime.securesms.database.RecipientDatabase.VibrateState;
 import org.thoughtcrime.securesms.database.loaders.ThreadMediaLoader;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.MultiDeviceContactUpdateJob;
+import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.GlideRequests;
+import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.preferences.CorrectedPreferenceFragment;
 import org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -62,6 +67,7 @@ import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.concurrent.ListenableFuture;
+import org.w3c.dom.Text;
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.util.concurrent.ExecutionException;
@@ -80,6 +86,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
+  private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
   private final DynamicLanguage dynamicLanguage = new DynamicLanguage();
@@ -233,6 +240,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       implements RecipientModifiedListener
   {
     private Recipient recipient;
+
     private boolean   canHaveSafetyNumber;
 
     @Override
@@ -241,7 +249,6 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       super.onCreate(icicle);
 
       initializeRecipients();
-
       this.canHaveSafetyNumber = getActivity().getIntent()
                                  .getBooleanExtra(RecipientPreferenceActivity.CAN_HAVE_SAFETY_NUMBER_EXTRA, false);
 
@@ -257,12 +264,15 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           .setOnPreferenceClickListener(new BlockClickedListener());
       this.findPreference(PREFERENCE_COLOR)
           .setOnPreferenceChangeListener(new ColorChangeListener());
+      this.findPreference(PREFERENCE_NICKNAME)
+              .setOnPreferenceClickListener(new ChangeNicknameClickedListener());
     }
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
       Log.w(TAG, "onCreatePreferences...");
       addPreferencesFromResource(R.xml.recipient_preferences);
+
     }
 
     @Override
@@ -298,6 +308,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       ColorPickerPreference      colorPreference    = (ColorPickerPreference) this.findPreference(PREFERENCE_COLOR);
       Preference                 blockPreference    = this.findPreference(PREFERENCE_BLOCK);
       Preference                 identityPreference = this.findPreference(PREFERENCE_IDENTITY);
+      Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
       PreferenceCategory         privacyCategory    = (PreferenceCategory)this.findPreference("privacy_settings");
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
 
@@ -330,6 +341,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
 
       if (recipient.isGroupRecipient()) {
         if (colorPreference    != null) colorPreference.setVisible(false);
+        if (changeNicknamePreference    != null) changeNicknamePreference.setVisible(false);
         if (blockPreference    != null) blockPreference.setVisible(false);
         if (identityPreference != null) identityPreference.setVisible(false);
         if (privacyCategory    != null) privacyCategory.setVisible(false);
@@ -520,8 +532,10 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     private class BlockClickedListener implements Preference.OnPreferenceClickListener {
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        if (recipient.isBlocked()) handleUnblock();
-        else                       handleBlock();
+        if (recipient.isBlocked())
+          handleUnblock();
+        else
+          handleBlock();
 
         return true;
       }
@@ -569,6 +583,64 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
             return null;
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+      }
+    }
+
+    private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
+      String changeAddTitle = getString(R.string.dialog_nickname_title);
+      String save = getString(R.string.dialog_nickname_save);
+      String cancel = getString(R.string.dialog_nickname_cancel);
+
+      AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
+
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        changeNicknameDialog.setTitle(changeAddTitle);
+        changeNicknameDialog.setCancelable(false);
+        final EditText nicknameEditText = new EditText(getActivity());
+        changeNicknameDialog.setView(nicknameEditText);
+
+        saveButton(nicknameEditText);
+
+        changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
+        changeNicknameDialog.show();
+        return true;
+      }
+
+      /**
+       * On click save button this is what
+       * happen
+       * @param nicknameStr
+       */
+      private void saveButton(EditText nicknameStr) {
+        changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+              new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                  Log.w(TAG, "new profile name -> " + nicknameStr.getText().toString());
+                  Log.w(TAG, "old profile name -> " + recipient.resolve().getProfileName());
+
+                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
+
+                  database.setCustomLabel(recipient, nicknameStr.getText().toString());
+                  database.setProfileName(recipient, nicknameStr.getText().toString());
+
+                  ApplicationContext.getInstance(getActivity())
+                          .getJobManager()
+                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
+
+                  return null;
+                }
+              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+          }
+        });
       }
     }
   }
