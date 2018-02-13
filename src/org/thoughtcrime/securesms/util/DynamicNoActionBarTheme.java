@@ -10,7 +10,7 @@ public class DynamicNoActionBarTheme extends DynamicTheme {
     String theme = TextSecurePreferences.getTheme(activity);
 
     if (theme.equals("dark")) return R.style.TextSecure_DarkNoActionBar;
-
+    if (theme.equals("pink")) return R.style.TextSecure_PinkNoActionBar;
     return R.style.TextSecure_LightNoActionBar;
   }
 }
