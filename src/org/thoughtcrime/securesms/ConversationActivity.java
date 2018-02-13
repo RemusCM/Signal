@@ -2066,6 +2066,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
               identityDatabase.setVerified(identityRecord.getAddress(),
                                            identityRecord.getIdentityKey(),
                                            VerifiedStatus.DEFAULT);
+
             }
           }
 

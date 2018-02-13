@@ -624,13 +624,10 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
               new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                  Log.w(TAG, "new profile name -> " + nicknameStr.getText().toString());
-                  Log.w(TAG, "old profile name -> " + recipient.resolve().getProfileName());
 
                   RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
-
-                  database.setCustomLabel(recipient, nicknameStr.getText().toString());
-                  database.setProfileName(recipient, nicknameStr.getText().toString());
+                  database.setDisplayName(recipient, nicknameStr.getText().toString());
+                  database.setCustomLabel(recipient, recipient.getAddress().serialize());
 
                   ApplicationContext.getInstance(getActivity())
                           .getJobManager()
