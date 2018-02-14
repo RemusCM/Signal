@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +25,6 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +32,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -54,7 +53,6 @@ import org.thoughtcrime.securesms.jobs.MultiDeviceContactUpdateJob;
 import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.GlideRequests;
-import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.preferences.CorrectedPreferenceFragment;
 import org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -67,7 +65,6 @@ import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.concurrent.ListenableFuture;
-import org.w3c.dom.Text;
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.util.concurrent.ExecutionException;
@@ -86,6 +83,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
+  // the preference key used in recipient_preferences.xml
   private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
@@ -264,8 +262,11 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           .setOnPreferenceClickListener(new BlockClickedListener());
       this.findPreference(PREFERENCE_COLOR)
           .setOnPreferenceChangeListener(new ColorChangeListener());
+      // associate the key to an inner class ChangeNicknameClickedListener
+      // which contains the method that performs addition or modification of nickname
       this.findPreference(PREFERENCE_NICKNAME)
               .setOnPreferenceClickListener(new ChangeNicknameClickedListener());
+
     }
 
     @Override
@@ -308,6 +309,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       ColorPickerPreference      colorPreference    = (ColorPickerPreference) this.findPreference(PREFERENCE_COLOR);
       Preference                 blockPreference    = this.findPreference(PREFERENCE_BLOCK);
       Preference                 identityPreference = this.findPreference(PREFERENCE_IDENTITY);
+      // initialize the nickname preference to be used
       Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
       PreferenceCategory         privacyCategory    = (PreferenceCategory)this.findPreference("privacy_settings");
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
@@ -587,57 +589,84 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     }
 
     private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
-      String changeAddTitle = getString(R.string.dialog_nickname_title);
+      // get all the strings for dialog box
+      String nicknameDialogTitle = getString(R.string.dialog_nickname_title);
       String save = getString(R.string.dialog_nickname_save);
       String cancel = getString(R.string.dialog_nickname_cancel);
 
-      AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
+      // the actual dialog box for nickname
+      AlertDialog.Builder nicknameDialog = new AlertDialog.Builder(getActivity());
 
+      // performs actions when you click on the nickname preference
+      // in the conversation settings
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        changeNicknameDialog.setTitle(changeAddTitle);
-        changeNicknameDialog.setCancelable(false);
+        // customization for dialog box
+        nicknameDialog.setTitle(nicknameDialogTitle);
+        nicknameDialog.setCancelable(false);
+
+        // add an edit text in the the dialog box for entering the nickname
         final EditText nicknameEditText = new EditText(getActivity());
-        changeNicknameDialog.setView(nicknameEditText);
+        nicknameDialog.setView(nicknameEditText);
 
         saveButton(nicknameEditText);
+        cancelButton();
+        nicknameDialog.show();
+        return true;
+      }
 
-        changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+      /**
+       * Performs the modification or addition of nickname
+       * for a contact
+       * @param nicknameEditText the desired nickname
+       */
+      private void saveButton(EditText nicknameEditText) {
+        nicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            // check the text being passed if it is null or empty,
+            // otherwise perform modification action
+            if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
+              dialog.dismiss();
+              Toast.makeText(getActivity(), "Please enter a valid nickname.",
+                      Toast.LENGTH_SHORT).show();
+            } else {
+              new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
+                  database.setDisplayName(recipient, nicknameEditText.getText().toString());
+                  database.setCustomLabel(recipient, recipient.getAddress().serialize());
+                  ApplicationContext.getInstance(getActivity())
+                          .getJobManager()
+                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
+                  return null;
+                }
+              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+          }
+        });
+      }
+
+      /**
+       * Dismisses the dialog on pressed cancel.
+       */
+      private void cancelButton() {
+        nicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
           }
         });
-        changeNicknameDialog.show();
-        return true;
       }
 
       /**
-       * On click save button this is what
-       * happen
-       * @param nicknameStr
+       * Nickname cannot be empty or null.
+       * @param nicknameEditText
+       * @return true if dialog nickname edit text is empty
        */
-      private void saveButton(EditText nicknameStr) {
-        changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-              new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-
-                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
-                  database.setDisplayName(recipient, nicknameStr.getText().toString());
-                  database.setCustomLabel(recipient, recipient.getAddress().serialize());
-
-                  ApplicationContext.getInstance(getActivity())
-                          .getJobManager()
-                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
-
-                  return null;
-                }
-              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-          }
-        });
+      private boolean isDialogNicknameEditTextEmpty(EditText nicknameEditText) {
+        return Util.isEmpty(nicknameEditText) || nicknameEditText.getText().toString().isEmpty();
       }
     }
   }
