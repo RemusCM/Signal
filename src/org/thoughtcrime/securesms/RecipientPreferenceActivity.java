@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,12 +25,10 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,10 +48,8 @@ import org.thoughtcrime.securesms.database.RecipientDatabase.VibrateState;
 import org.thoughtcrime.securesms.database.loaders.ThreadMediaLoader;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.MultiDeviceContactUpdateJob;
-import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.GlideRequests;
-import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.preferences.CorrectedPreferenceFragment;
 import org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -67,7 +62,6 @@ import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.concurrent.ListenableFuture;
-import org.w3c.dom.Text;
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.util.concurrent.ExecutionException;
@@ -86,8 +80,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
-  /*private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";*/
-  private static final String PREFERENCE_NICKNAMES = "pref_key_change_nicknames";
+
+  private static final String PREFERENCE_NICKNAME = "pref_key_change_nicknames";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
   private final DynamicLanguage dynamicLanguage = new DynamicLanguage();
@@ -265,8 +259,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           .setOnPreferenceClickListener(new BlockClickedListener());
       this.findPreference(PREFERENCE_COLOR)
           .setOnPreferenceChangeListener(new ColorChangeListener());
-      /*this.findPreference(PREFERENCE_NICKNAME)
-              .setOnPreferenceClickListener(new ChangeNicknameClickedListener());*/
+      this.findPreference(PREFERENCE_NICKNAME)
+              .setOnPreferenceClickListener(new NicknameChangeActivity(getContext(), recipient));
 
     }
 
@@ -307,13 +301,14 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       CheckBoxPreference         mutePreference     = (CheckBoxPreference) this.findPreference(PREFERENCE_MUTED);
       Preference                 ringtonePreference =  this.findPreference(PREFERENCE_TONE);
       ListPreference             vibratePreference  = (ListPreference) this.findPreference(PREFERENCE_VIBRATE);
-      Preference                 changeNicknamesPreference = this.findPreference(PREFERENCE_NICKNAMES);
       ColorPickerPreference      colorPreference    = (ColorPickerPreference) this.findPreference(PREFERENCE_COLOR);
       Preference                 blockPreference    = this.findPreference(PREFERENCE_BLOCK);
       Preference                 identityPreference = this.findPreference(PREFERENCE_IDENTITY);
-      /*Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);*/
       PreferenceCategory         privacyCategory    = (PreferenceCategory)this.findPreference("privacy_settings");
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
+
+      Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
+
 
       mutePreference.setChecked(recipient.isMuted());
 
@@ -344,8 +339,6 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
 
       if (recipient.isGroupRecipient()) {
         if (colorPreference    != null) colorPreference.setVisible(false);
-        /*if (changeNicknamePreference    != null) changeNicknamePreference.setVisible(false);*/
-        /*if (changeNicknamesPreference    != null) changeNicknamesPreference.setVisible(false);*/
         if (blockPreference    != null) blockPreference.setVisible(false);
         if (identityPreference != null) identityPreference.setVisible(false);
         if (privacyCategory    != null) privacyCategory.setVisible(false);

@@ -280,6 +280,13 @@ public class RecipientDatabase extends Database {
     recipient.resolve().setProfileKey(profileKey);
   }
 
+  public void setDisplayName(@NonNull Recipient recipient, @Nullable String displayName) {
+    ContentValues contentValues = new ContentValues(1);
+    contentValues.put(SYSTEM_DISPLAY_NAME, displayName);
+    updateOrInsert(recipient.getAddress(), contentValues);
+    recipient.resolve().setName(displayName);
+  }
+
   public void setProfileName(@NonNull Recipient recipient, @Nullable String profileName) {
     ContentValues contentValues = new ContentValues(1);
     contentValues.put(SIGNAL_PROFILE_NAME, profileName);

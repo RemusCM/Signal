@@ -26,7 +26,7 @@
                 android:persistent="false"/>
 
         <Preference
-            android:dependency= "pref_key_recipient_mute"
+            android:dependency="pref_key_recipient_mute"
             android:key="pref_key_change_nicknames"
             android:title="@string/change_nicknames"
             android:summary="@string/change_nicknames_summary"
@@ -48,10 +48,6 @@
                 android:persistent="false"
                 app:numColumns="5" />
     </PreferenceCategory>
-
-  <!--  <Preference android:title="@string/preference_nickname_title"
-        android:key="pref_key_change_nickname"
-        android:summary="@string/preference_nickname_summary"/>-->
 
     <PreferenceCategory android:key="divider" android:layout="@layout/preference_divider"/>
 
