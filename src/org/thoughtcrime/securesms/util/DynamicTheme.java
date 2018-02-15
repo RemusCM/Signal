@@ -5,11 +5,11 @@ import android.content.Intent;
 
 import org.thoughtcrime.securesms.R;
 
-public class DynamicTheme {
+public class DynamicTheme extends Activity {
 
   public static final String DARK  = "dark";
   public static final String LIGHT = "light";
-  public static final String PINK= "pink";
+  public static final String PINK = "pink";
 
   private int currentTheme;
 
