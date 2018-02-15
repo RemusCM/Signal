@@ -86,7 +86,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
-  private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";
+  /*private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";*/
+  private static final String PREFERENCE_NICKNAMES = "pref_key_change_nicknames";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
   private final DynamicLanguage dynamicLanguage = new DynamicLanguage();
@@ -264,8 +265,9 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           .setOnPreferenceClickListener(new BlockClickedListener());
       this.findPreference(PREFERENCE_COLOR)
           .setOnPreferenceChangeListener(new ColorChangeListener());
-      this.findPreference(PREFERENCE_NICKNAME)
-              .setOnPreferenceClickListener(new ChangeNicknameClickedListener());
+      /*this.findPreference(PREFERENCE_NICKNAME)
+              .setOnPreferenceClickListener(new ChangeNicknameClickedListener());*/
+
     }
 
     @Override
@@ -305,10 +307,11 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       CheckBoxPreference         mutePreference     = (CheckBoxPreference) this.findPreference(PREFERENCE_MUTED);
       Preference                 ringtonePreference =  this.findPreference(PREFERENCE_TONE);
       ListPreference             vibratePreference  = (ListPreference) this.findPreference(PREFERENCE_VIBRATE);
+      Preference                 changeNicknamesPreference = this.findPreference(PREFERENCE_NICKNAMES);
       ColorPickerPreference      colorPreference    = (ColorPickerPreference) this.findPreference(PREFERENCE_COLOR);
       Preference                 blockPreference    = this.findPreference(PREFERENCE_BLOCK);
       Preference                 identityPreference = this.findPreference(PREFERENCE_IDENTITY);
-      Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
+      /*Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);*/
       PreferenceCategory         privacyCategory    = (PreferenceCategory)this.findPreference("privacy_settings");
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
 
@@ -341,7 +344,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
 
       if (recipient.isGroupRecipient()) {
         if (colorPreference    != null) colorPreference.setVisible(false);
-        if (changeNicknamePreference    != null) changeNicknamePreference.setVisible(false);
+        /*if (changeNicknamePreference    != null) changeNicknamePreference.setVisible(false);*/
+        /*if (changeNicknamesPreference    != null) changeNicknamesPreference.setVisible(false);*/
         if (blockPreference    != null) blockPreference.setVisible(false);
         if (identityPreference != null) identityPreference.setVisible(false);
         if (privacyCategory    != null) privacyCategory.setVisible(false);
@@ -586,7 +590,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       }
     }
 
-    private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
+    /*private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
       String changeAddTitle = getString(R.string.dialog_nickname_title);
       String save = getString(R.string.dialog_nickname_save);
       String cancel = getString(R.string.dialog_nickname_cancel);
@@ -612,11 +616,11 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
         return true;
       }
 
-      /**
+      *//**
        * On click save button this is what
        * happen
        * @param nicknameStr
-       */
+       *//*
       private void saveButton(EditText nicknameStr) {
         changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
           @Override
@@ -642,6 +646,6 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           }
         });
       }
-    }
+    }*/
   }
 }
