@@ -70,7 +70,9 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import java.util.concurrent.ExecutionException;
 
 @SuppressLint("StaticFieldLeak")
-public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActivity implements RecipientModifiedListener, LoaderManager.LoaderCallbacks<Cursor>
+public class RecipientPreferenceActivity extends
+        PassphraseRequiredActionBarActivity implements
+        RecipientModifiedListener, LoaderManager.LoaderCallbacks<Cursor>
 {
   private static final String TAG = RecipientPreferenceActivity.class.getSimpleName();
 
@@ -111,6 +113,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
     this.address       = getIntent().getParcelableExtra(ADDRESS_EXTRA);
 
     Recipient recipient = Recipient.from(this, address, true);
+
 
     initializeToolbar();
     setHeader(recipient);
@@ -265,7 +268,7 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       // associate the key to an inner class ChangeNicknameClickedListener
       // which contains the method that performs addition or modification of nickname
       this.findPreference(PREFERENCE_NICKNAME)
-              .setOnPreferenceClickListener(new ChangeNicknameClickedListener());
+              .setOnPreferenceClickListener(new NicknameChangeActivity(getContext(), recipient));
 
     }
 
@@ -588,86 +591,87 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       }
     }
 
-    private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
-      // get all the strings for dialog box
-      String nicknameDialogTitle = getString(R.string.dialog_nickname_title);
-      String save = getString(R.string.dialog_nickname_save);
-      String cancel = getString(R.string.dialog_nickname_cancel);
+//    private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
+//      // get all the strings for dialog box
+//      String nicknameDialogTitle = getString(R.string.dialog_nickname_title);
+//      String save = getString(R.string.dialog_nickname_save);
+//      String cancel = getString(R.string.dialog_nickname_cancel);
+//
+//      // the actual dialog box for nickname
+//      AlertDialog.Builder nicknameDialog = new AlertDialog.Builder(getActivity());
+//
+//      // performs actions when you click on the nickname preference
+//      // in the conversation settings
+//      @Override
+//      public boolean onPreferenceClick(Preference preference) {
+//        // customization for dialog box
+//        nicknameDialog.setTitle(nicknameDialogTitle);
+//        nicknameDialog.setCancelable(false);
+//
+//        // add an edit text in the the dialog box for entering the nickname
+//        final EditText nicknameEditText = new EditText(getActivity());
+//        nicknameDialog.setView(nicknameEditText);
+//
+//        saveButton(nicknameEditText);
+//        cancelButton();
+//        nicknameDialog.show();
+//        return true;
+//      }
+//
+//      /**
+//       * Performs the modification or addition of nickname
+//       * for a contact
+//       * @param nicknameEditText the desired nickname
+//       */
+//      private void saveButton(EditText nicknameEditText) {
+//        nicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
+//          @Override
+//          public void onClick(DialogInterface dialog, int which) {
+//            // check the text being passed if it is null or empty,
+//            // otherwise perform modification action
+//            if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
+//              dialog.dismiss();
+//              Toast.makeText(getActivity(), "Please enter a valid nickname.",
+//                      Toast.LENGTH_SHORT).show();
+//            } else {
+//              new AsyncTask<Void, Void, Void>() {
+//                @Override
+//                protected Void doInBackground(Void... params) {
+//                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
+//                  database.setDisplayName(recipient, nicknameEditText.getText().toString());
+//                  database.setCustomLabel(recipient, recipient.getAddress().serialize());
+//                  ApplicationContext.getInstance(getActivity())
+//                          .getJobManager()
+//                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
+//                  return null;
+//                }
+//              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            }
+//          }
+//        });
+//      }
+//
+//      /**
+//       * Dismisses the dialog on pressed cancel.
+//       */
+//      private void cancelButton() {
+//        nicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+//          @Override
+//          public void onClick(DialogInterface dialog, int which) {
+//            dialog.dismiss();
+//          }
+//        });
+//      }
+//
+//      /**
+//       * Nickname cannot be empty or null.
+//       * @param nicknameEditText
+//       * @return true if dialog nickname edit text is empty
+//       */
+//      private boolean isDialogNicknameEditTextEmpty(EditText nicknameEditText) {
+//        return Util.isEmpty(nicknameEditText) || nicknameEditText.getText().toString().isEmpty();
+//      }
+//    }
 
-      // the actual dialog box for nickname
-      AlertDialog.Builder nicknameDialog = new AlertDialog.Builder(getActivity());
-
-      // performs actions when you click on the nickname preference
-      // in the conversation settings
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        // customization for dialog box
-        nicknameDialog.setTitle(nicknameDialogTitle);
-        nicknameDialog.setCancelable(false);
-
-        // add an edit text in the the dialog box for entering the nickname
-        final EditText nicknameEditText = new EditText(getActivity());
-        nicknameDialog.setView(nicknameEditText);
-
-        saveButton(nicknameEditText);
-        cancelButton();
-        nicknameDialog.show();
-        return true;
-      }
-
-      /**
-       * Performs the modification or addition of nickname
-       * for a contact
-       * @param nicknameEditText the desired nickname
-       */
-      private void saveButton(EditText nicknameEditText) {
-        nicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            // check the text being passed if it is null or empty,
-            // otherwise perform modification action
-            if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
-              dialog.dismiss();
-              Toast.makeText(getActivity(), "Please enter a valid nickname.",
-                      Toast.LENGTH_SHORT).show();
-            } else {
-              new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
-                  database.setDisplayName(recipient, nicknameEditText.getText().toString());
-                  database.setCustomLabel(recipient, recipient.getAddress().serialize());
-                  ApplicationContext.getInstance(getActivity())
-                          .getJobManager()
-                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
-                  return null;
-                }
-              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-          }
-        });
-      }
-
-      /**
-       * Dismisses the dialog on pressed cancel.
-       */
-      private void cancelButton() {
-        nicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        });
-      }
-
-      /**
-       * Nickname cannot be empty or null.
-       * @param nicknameEditText
-       * @return true if dialog nickname edit text is empty
-       */
-      private boolean isDialogNicknameEditTextEmpty(EditText nicknameEditText) {
-        return Util.isEmpty(nicknameEditText) || nicknameEditText.getText().toString().isEmpty();
-      }
-    }
   }
 }

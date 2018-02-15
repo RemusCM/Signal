@@ -51,6 +51,9 @@ public class RecipientDatabase extends Database {
   private static final String SIGNAL_PROFILE_AVATAR   = "signal_profile_avatar";
   private static final String PROFILE_SHARING         = "profile_sharing_approval";
 
+//  public RecipientDatabase() {
+//  }
+
   private static final String[] RECIPIENT_PROJECTION = new String[] {
       BLOCK, NOTIFICATION, VIBRATE, MUTE_UNTIL, COLOR, SEEN_INVITE_REMINDER, DEFAULT_SUBSCRIPTION_ID, EXPIRE_MESSAGES, REGISTERED,
       PROFILE_KEY, SYSTEM_DISPLAY_NAME, SYSTEM_PHOTO_URI, SYSTEM_PHONE_LABEL, SYSTEM_CONTACT_URI,
@@ -285,6 +288,14 @@ public class RecipientDatabase extends Database {
     contentValues.put(SYSTEM_DISPLAY_NAME, displayName);
     updateOrInsert(recipient.getAddress(), contentValues);
     recipient.resolve().setName(displayName);
+  }
+
+  public String getDisplayName() {
+    return SYSTEM_DISPLAY_NAME;
+  }
+
+  public String getCustomLabel() {
+    return SYSTEM_PHONE_LABEL;
   }
 
   public void setProfileName(@NonNull Recipient recipient, @Nullable String profileName) {
@@ -605,5 +616,7 @@ public class RecipientDatabase extends Database {
       this.contactUri  = contactUri;
     }
   }
+
+
 
 }
