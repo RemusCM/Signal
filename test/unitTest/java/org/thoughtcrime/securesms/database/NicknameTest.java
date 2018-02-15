@@ -25,12 +25,14 @@ public class NicknameTest extends NicknameMocking {
 
     @Test
     public void testGetDisplayName() {
-        assertEquals(recipientDb.getDisplayName(), "Dennis");
+        System.out.println("Testing DisplayName; Expected: Dennis, Actual: " + recipientDb.getDisplayName());
+        assertEquals("Dennis", recipientDb.getDisplayName());
     }
 
     @Test
     public void testGetCustomLabel() {
-        assertEquals(recipientDb.getCustomLabel(), "CEO");
+        System.out.println("Testing CustomLabel; Expected: CEO, Actual: " + recipientDb.getCustomLabel());
+        assertEquals("CEO", recipientDb.getCustomLabel());
     }
 
 }
