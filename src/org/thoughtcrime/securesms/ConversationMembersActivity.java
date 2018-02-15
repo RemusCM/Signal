@@ -33,6 +33,8 @@ public class ConversationMembersActivity extends AppCompatActivity {
     private Recipient recipient;
     private Context context;
     private String[] names;
+    private GroupMembers groupMem;
+    private List<Recipient> list;
     public ConversationMembersActivity(Context context, Recipient recipient){
         this.recipient = recipient;
         this.context = context;
@@ -42,7 +44,8 @@ public class ConversationMembersActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        groupMem = new GroupMembers(list);
+        groupMem.execute();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversation_members);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewId);
@@ -73,6 +76,7 @@ public class ConversationMembersActivity extends AppCompatActivity {
 
         @Override
         protected List<Recipient> doInBackground(Void... params) {
+            list = DatabaseFactory.getGroupDatabase(context).getGroupMembers(recipient.getAddress().toGroupString(), true);
             return DatabaseFactory.getGroupDatabase(context).getGroupMembers(recipient.getAddress().toGroupString(), true);
         }
         @Override
