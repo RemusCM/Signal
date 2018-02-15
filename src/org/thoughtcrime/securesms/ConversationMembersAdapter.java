@@ -18,7 +18,7 @@ public class ConversationMembersAdapter extends RecyclerView.Adapter<Conversatio
 
    public ConversationMembersAdapter(Context context, List groupmemberslist){
        this.context=context;
-
+       this.groupMembersList = groupmemberslist;
    }
 
     @Override

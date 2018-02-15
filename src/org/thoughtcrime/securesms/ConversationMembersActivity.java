@@ -48,7 +48,7 @@ public class ConversationMembersActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewId);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        
+
 
         membersList = new ArrayList<>();
 
