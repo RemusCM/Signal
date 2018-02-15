@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,12 +19,15 @@ import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.Util;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.thoughtcrime.securesms.giph.util.InfiniteScrollListener.TAG;
 
 public class NicknameChangeActivity extends ConversationActivity implements Preference.OnPreferenceClickListener {
   private Context context;
   private Recipient recipient;
-
+  List<String> recipientStrings = new LinkedList<>();
   private AlertDialog.Builder soloNicknameDialog;
   private AlertDialog.Builder groupNicknamesDialog;
 
@@ -36,13 +40,25 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
 
   public void groupNicknameDialog() {
     groupNicknamesDialog.setTitle("Change members' nickname");
-    groupNicknamesDialog.setCancelable(false);
+    groupNicknamesDialog.setCancelable(true);
 
     IdentityDatabase identityDatabase   = DatabaseFactory.getIdentityDatabase(context);
     IdentityRecordList identityRecordList = new IdentityRecordList();
+
     for (Recipient recipient : recipient.getParticipants()) {
       Log.w(TAG, "Loading identity for: " + recipient.getAddress());
       identityRecordList.add(identityDatabase.getIdentity(recipient.getAddress()));
+      if(Util.isOwnNumber(context, recipient.getAddress())){
+          recipientStrings.add("Me");
+      }
+      else{
+          String name = recipient.toShortString();
+
+          if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
+              name += " ~" + recipient.getProfileName();
+          }
+          recipientStrings.add(name);
+      }
       // TODO
       // prints
 //      02-15 15:36:35.255 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +14389797321
@@ -52,8 +68,9 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
 //      02-15 15:36:35.262 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149163416
 //      02-15 15:36:35.263 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149912693
     }
+String[] names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
 
-
+      groupNicknamesDialog.setItems(names, new NicknameChangeOnClickListener(context, names));
     groupNicknamesDialog.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
@@ -72,7 +89,7 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
 
   public void soloNicknameDialog() {
     soloNicknameDialog.setTitle("Change/Add");
-    soloNicknameDialog.setCancelable(false);
+    soloNicknameDialog.setCancelable(true);
 
     final EditText nicknameEditText = new EditText(context);
     soloNicknameDialog.setView(nicknameEditText);
@@ -127,4 +144,18 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
   private boolean isDialogNicknameEditTextEmpty(EditText nicknameEditText) {
     return Util.isEmpty(nicknameEditText) || nicknameEditText.getText().toString().isEmpty();
   }
+
+    private class NicknameChangeOnClickListener implements DialogInterface.OnClickListener {
+      private final Context context;
+      private final String[] names;
+        public NicknameChangeOnClickListener(Context context, String[] names) {
+            this.context = context;
+            this.names= names;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            
+        }
+    }
 }
