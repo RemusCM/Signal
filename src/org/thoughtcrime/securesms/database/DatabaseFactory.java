@@ -148,10 +148,6 @@ public class DatabaseFactory {
     }
   }
 
-  public String returnDisplayName(Context context) {
-    return getRecipientDatabase(context).getDisplayName();
-  }
-
   public static MmsSmsDatabase getMmsSmsDatabase(Context context) {
     return getInstance(context).mmsSmsDatabase;
   }

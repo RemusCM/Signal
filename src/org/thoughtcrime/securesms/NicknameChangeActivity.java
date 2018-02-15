@@ -73,6 +73,8 @@ public class NicknameChangeActivity implements Preference.OnPreferenceClickListe
                             return null;
                         }
                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    Toast.makeText(context, "Success. You have modified this nickname.",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
