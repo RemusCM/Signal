@@ -5,8 +5,8 @@
     <string name="no">No</string>
     <string name="delete">Delete</string>
     <string name="please_wait">Please wait...</string>
-    <string name="change_nicknames">Change Nicknames</string>
-    <string name="change_nicknames_summary">Tap to modify participants\'s nicknames</string>
+    <string name="change_nicknames">Change Nickname</string>
+    <string name="change_nicknames_summary">Tap to modify participant\'s nickname</string>
     <string name="participant_name">Participant\'s name</string>
     <string name="participant_summary">Tap to modify</string>
     <string name="preference_nickname_title">Nickname</string>
