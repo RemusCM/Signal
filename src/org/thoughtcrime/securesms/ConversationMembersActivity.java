@@ -32,27 +32,23 @@ public class ConversationMembersActivity extends AppCompatActivity {
     private List<GroupMembersList> membersList;
     private Recipient recipient;
     private Context context;
-
+    private String[] names;
     public ConversationMembersActivity(Context context, Recipient recipient){
         this.recipient = recipient;
         this.context = context;
     }
 
 
-    protected List<Recipient> doInBackground(Void... params) {
-        return DatabaseFactory.getGroupDatabase(context).getGroupMembers(recipient.getAddress().toGroupString(), true);
-    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-
-    protected void onCreate(Bundle savedInstanceState, List<Recipient> members) {
-        GroupMembers groupMembers = new GroupMembers(members);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversation_members);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewId);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        String[] names = groupMembers.getRecipientStrings();
+        
 
         membersList = new ArrayList<>();
 
@@ -68,7 +64,25 @@ public class ConversationMembersActivity extends AppCompatActivity {
 
     }
 
-    private class GroupMembers {
+
+
+    private class GroupMembers extends AsyncTask<Void,Void,List<Recipient>>{
+
+        @Override
+        public void onPreExecute() {}
+
+        @Override
+        protected List<Recipient> doInBackground(Void... params) {
+            return DatabaseFactory.getGroupDatabase(context).getGroupMembers(recipient.getAddress().toGroupString(), true);
+        }
+        @Override
+        public void onPostExecute(List<Recipient> members) {
+            ConversationMembersActivity.GroupMembers groupMembers = new ConversationMembersActivity.GroupMembers(members);
+             names = groupMembers.getRecipientStrings();
+
+        }
+        public void display() {
+            executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); }
         private final String TAG = ConversationMembersActivity.GroupMembers.class.getSimpleName();
 
 
