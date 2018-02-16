@@ -25,11 +25,12 @@ import java.util.List;
 import static org.thoughtcrime.securesms.giph.util.InfiniteScrollListener.TAG;
 
 public class NicknameChangeActivity extends ConversationActivity implements Preference.OnPreferenceClickListener {
-  private Context context;
-  private Recipient recipient;
+  private final Context context;
+  private final Recipient recipient;
   List<String> recipientStrings = new LinkedList<>();
   private AlertDialog.Builder soloNicknameDialog;
   private AlertDialog.Builder groupNicknamesDialog;
+
 
   NicknameChangeActivity(Context context, Recipient recipient) {
     this.context = context;
@@ -37,7 +38,9 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     groupNicknamesDialog = new AlertDialog.Builder(context);
     soloNicknameDialog = new AlertDialog.Builder(context);
   }
+ public void getStringArray(){
 
+ }
   public void groupNicknameDialog() {
     groupNicknamesDialog.setTitle("Change members' nickname");
     groupNicknamesDialog.setCancelable(true);
@@ -45,28 +48,29 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     IdentityDatabase identityDatabase   = DatabaseFactory.getIdentityDatabase(context);
     IdentityRecordList identityRecordList = new IdentityRecordList();
 
-    for (Recipient recipient : recipient.getParticipants()) {
-      Log.w(TAG, "Loading identity for: " + recipient.getAddress());
-      identityRecordList.add(identityDatabase.getIdentity(recipient.getAddress()));
-      if(Util.isOwnNumber(context, recipient.getAddress())){
-          recipientStrings.add("Me");
-      }
-      else{
-          String name = recipient.toShortString();
+    if(recipientStrings.size() == 0) {
+        for (Recipient recipient : recipient.getParticipants()) {
+            Log.w(TAG, "Loading identity for: " + recipient.getAddress());
+            identityRecordList.add(identityDatabase.getIdentity(recipient.getAddress()));
+            if (Util.isOwnNumber(context, recipient.getAddress())) {
+                recipientStrings.add("Me");
+            } else {
+                String name = recipient.toShortString();
 
-          if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
-              name += " ~" + recipient.getProfileName();
-          }
-          recipientStrings.add(name);
-      }
-      // TODO
-      // prints
+                if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
+                    name += " ~" + recipient.getProfileName();
+                }
+                recipientStrings.add(name);
+            }
+            // TODO
+            // prints
 //      02-15 15:36:35.255 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +14389797321
 //      02-15 15:36:35.259 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +14389959811
 //      02-15 15:36:35.260 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15142387156
 //      02-15 15:36:35.261 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15146791670
 //      02-15 15:36:35.262 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149163416
 //      02-15 15:36:35.263 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149912693
+        }
     }
 String[] names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
 
@@ -155,7 +159,7 @@ String[] names = recipientStrings.toArray(new String[recipient.getParticipants()
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            
+
         }
     }
 }
