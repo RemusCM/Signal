@@ -30,6 +30,7 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
   List<String> recipientStrings = new LinkedList<>();
   private AlertDialog.Builder soloNicknameDialog;
   private AlertDialog.Builder groupNicknamesDialog;
+  private AlertDialog.Builder groupNicknameDialog2;
 
 
   NicknameChangeActivity(Context context, Recipient recipient) {
@@ -37,6 +38,7 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     this.recipient = recipient;
     groupNicknamesDialog = new AlertDialog.Builder(context);
     soloNicknameDialog = new AlertDialog.Builder(context);
+    groupNicknameDialog2 = new AlertDialog.Builder(context);
   }
 
   public void groupNicknameDialog() {
@@ -45,14 +47,16 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
 
     IdentityDatabase identityDatabase   = DatabaseFactory.getIdentityDatabase(context);
     IdentityRecordList identityRecordList = new IdentityRecordList();
-
+    LinkedList<Recipient> members = new LinkedList<>();
     if(recipientStrings.size() == 0) {
         for (Recipient recipient : recipient.getParticipants()) {
             Log.w(TAG, "Loading identity for: " + recipient.getAddress());
             identityRecordList.add(identityDatabase.getIdentity(recipient.getAddress()));
             if (Util.isOwnNumber(context, recipient.getAddress())) {
                 recipientStrings.add("Me");
+                members.push(recipient);
             } else {
+                members.push(recipient);
                 String name = recipient.toShortString();
 
                 if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
@@ -72,7 +76,8 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     }
 String[] names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
 
-      groupNicknamesDialog.setItems(names, new NicknameChangeOnClickListener(context, names));
+    //context given is the group conversation, not a specific group member
+      groupNicknamesDialog.setItems(names, new NicknameChangeOnClickListener(context, members));
 
 
 
@@ -89,7 +94,7 @@ String[] names = recipientStrings.toArray(new String[recipient.getParticipants()
 
   //Save button only used for the second dialog box to be opened once a name is clicked.
   private void groupSaveButton(EditText nicknameEditText){
-      groupNicknamesDialog.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+      groupNicknameDialog2.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
           @SuppressLint("StaticFieldView")
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -171,22 +176,70 @@ String[] names = recipientStrings.toArray(new String[recipient.getParticipants()
     });
   }
 
+    public void groupNicknameDialog2(Context context, Recipient recipient) {
+        groupNicknameDialog2.setTitle("Change/Add");
+        groupNicknameDialog2.setCancelable(true);
+        final EditText nicknameEditText = new EditText(context);
+        Recipient r = recipient;
+
+        groupNicknameDialog2.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
+                    dialog.dismiss();
+                    Toast.makeText(context, "Please enter a valid nickname.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(context);
+                            database.setDisplayName(r, nicknameEditText.getText().toString());
+                            database.setCustomLabel(r, r.getAddress().serialize());
+                            ApplicationContext.getInstance(context)
+                                    .getJobManager()
+                                    .add(new MultiDeviceProfileKeyUpdateJob(context));
+                            return null;
+                        }
+                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        });
+
+        groupNicknameDialog2.setView(nicknameEditText);
+
+        //groupSaveButton(nicknameEditText);
+        groupNicknameDialog2.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                groupNicknameDialog();
+            }
+        });
+        groupNicknameDialog2.show();
+    }
   private boolean isDialogNicknameEditTextEmpty(EditText nicknameEditText) {
     return Util.isEmpty(nicknameEditText) || nicknameEditText.getText().toString().isEmpty();
   }
 
     private class NicknameChangeOnClickListener implements DialogInterface.OnClickListener {
       private final Context context;
-      private final String[] names;
-        public NicknameChangeOnClickListener(Context context, String[] names) {
+      private final LinkedList<Recipient> members;
+
+        public NicknameChangeOnClickListener(Context context, LinkedList<Recipient> members) {
             this.context = context;
-            this.names= names;
+            this.members = members;
+
         }
 
         @Override
-        public void onClick(DialogInterface dialog, int which) {
+        public void onClick(DialogInterface dialog, int item) {
+            Recipient recipient = members.get(item);
+dialog.dismiss();
 
-            
+groupNicknameDialog2(context, recipient);
+
 
         }
     }
