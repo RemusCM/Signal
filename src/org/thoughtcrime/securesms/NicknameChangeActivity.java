@@ -31,7 +31,10 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
   private AlertDialog.Builder soloNicknameDialog;
   private AlertDialog.Builder groupNicknamesDialog;
   private AlertDialog.Builder groupNicknameDialog2;
-
+  private String[] names;
+  private LinkedList<Recipient> members = new LinkedList<>();
+  private IdentityDatabase identityDatabase;
+  private IdentityRecordList identityRecordList;
 
   NicknameChangeActivity(Context context, Recipient recipient) {
     this.context = context;
@@ -45,9 +48,9 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     groupNicknamesDialog.setTitle("Change members' nickname");
     groupNicknamesDialog.setCancelable(true);
 
-    IdentityDatabase identityDatabase   = DatabaseFactory.getIdentityDatabase(context);
-    IdentityRecordList identityRecordList = new IdentityRecordList();
-    LinkedList<Recipient> members = new LinkedList<>();
+      identityDatabase   = DatabaseFactory.getIdentityDatabase(context);
+      identityRecordList = new IdentityRecordList();
+
     if(recipientStrings.size() == 0) {
         for (Recipient recipient : recipient.getParticipants()) {
             Log.w(TAG, "Loading identity for: " + recipient.getAddress());
@@ -73,16 +76,15 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
 //      02-15 15:36:35.262 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149163416
 //      02-15 15:36:35.263 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149912693
         }
+        names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
     }
-String[] names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
+
 
     //context given is the group conversation, not a specific group member
       groupNicknamesDialog.setItems(names, new NicknameChangeOnClickListener(context, members));
 
 
-
-
-    groupNicknamesDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+      groupNicknamesDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         dialog.dismiss();
@@ -178,7 +180,7 @@ String[] names = recipientStrings.toArray(new String[recipient.getParticipants()
 
     public void groupNicknameDialog2(Context context, Recipient recipient) {
         groupNicknameDialog2.setTitle("Change/Add");
-        groupNicknameDialog2.setCancelable(true);
+        groupNicknameDialog2.setCancelable(false);
         final EditText nicknameEditText = new EditText(context);
         Recipient r = recipient;
 
