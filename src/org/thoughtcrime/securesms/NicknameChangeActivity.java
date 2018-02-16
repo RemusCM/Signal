@@ -38,9 +38,7 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     groupNicknamesDialog = new AlertDialog.Builder(context);
     soloNicknameDialog = new AlertDialog.Builder(context);
   }
- public void getStringArray(){
 
- }
   public void groupNicknameDialog() {
     groupNicknamesDialog.setTitle("Change members' nickname");
     groupNicknamesDialog.setCancelable(true);
@@ -75,12 +73,9 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
 String[] names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
 
       groupNicknamesDialog.setItems(names, new NicknameChangeOnClickListener(context, names));
-    groupNicknamesDialog.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        // TODO
-      }
-    });
+
+
+
 
     groupNicknamesDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
       @Override
@@ -90,6 +85,37 @@ String[] names = recipientStrings.toArray(new String[recipient.getParticipants()
     });
     groupNicknamesDialog.show();
   }
+
+
+  //Save button only used for the second dialog box to be opened once a name is clicked.
+  private void groupSaveButton(EditText nicknameEditText){
+      groupNicknamesDialog.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+          @SuppressLint("StaticFieldView")
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+              if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
+                  dialog.dismiss();
+                  Toast.makeText(context, "Please enter a valid nickname.",
+                          Toast.LENGTH_SHORT).show();
+              } else {
+                  new AsyncTask<Void, Void, Void>() {
+                      @Override
+                      protected Void doInBackground(Void... params) {
+                          RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(context);
+                          database.setDisplayName(recipient, nicknameEditText.getText().toString());
+                          database.setCustomLabel(recipient, recipient.getAddress().serialize());
+                          ApplicationContext.getInstance(context)
+                                  .getJobManager()
+                                  .add(new MultiDeviceProfileKeyUpdateJob(context));
+                          return null;
+                      }
+                  }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+              }
+
+          }
+      });
+  }
+
 
   public void soloNicknameDialog() {
     soloNicknameDialog.setTitle("Change/Add");
@@ -160,6 +186,11 @@ String[] names = recipientStrings.toArray(new String[recipient.getParticipants()
         @Override
         public void onClick(DialogInterface dialog, int which) {
 
+            
+
         }
+    }
+    private Recipient get(int index){
+      return (recipient.getParticipants()).get(index);
     }
 }
