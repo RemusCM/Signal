@@ -45,6 +45,7 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
   }
 
   public void groupNicknameDialog() {
+    groupNicknamesDialog = new AlertDialog.Builder(context);
     groupNicknamesDialog.setTitle("Change members' nickname");
     groupNicknamesDialog.setCancelable(true);
 
@@ -93,35 +94,6 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
     groupNicknamesDialog.show();
   }
 
-
-  //Save button only used for the second dialog box to be opened once a name is clicked.
-  private void groupSaveButton(EditText nicknameEditText){
-      groupNicknameDialog2.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
-          @SuppressLint("StaticFieldView")
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-              if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
-                  dialog.dismiss();
-                  Toast.makeText(context, "Please enter a valid nickname.",
-                          Toast.LENGTH_SHORT).show();
-              } else {
-                  new AsyncTask<Void, Void, Void>() {
-                      @Override
-                      protected Void doInBackground(Void... params) {
-                          RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(context);
-                          database.setDisplayName(recipient, nicknameEditText.getText().toString());
-                          database.setCustomLabel(recipient, recipient.getAddress().serialize());
-                          ApplicationContext.getInstance(context)
-                                  .getJobManager()
-                                  .add(new MultiDeviceProfileKeyUpdateJob(context));
-                          return null;
-                      }
-                  }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-              }
-
-          }
-      });
-  }
 
 
   public void soloNicknameDialog() {
@@ -202,10 +174,14 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
                             ApplicationContext.getInstance(context)
                                     .getJobManager()
                                     .add(new MultiDeviceProfileKeyUpdateJob(context));
+                            groupNicknamesDialog = new AlertDialog.Builder(context);
+                            groupNicknameDialog2 = new AlertDialog.Builder(context);
+                            recipientStrings = new LinkedList<>();
                             return null;
                         }
                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
+
             }
         });
 
