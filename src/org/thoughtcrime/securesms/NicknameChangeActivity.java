@@ -54,9 +54,9 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
             identityRecordList.add(identityDatabase.getIdentity(recipient.getAddress()));
             if (Util.isOwnNumber(context, recipient.getAddress())) {
                 recipientStrings.add("Me");
-                members.push(recipient);
+                members.add(recipient);
             } else {
-                members.push(recipient);
+                members.add(recipient);
                 String name = recipient.toShortString();
 
                 if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
