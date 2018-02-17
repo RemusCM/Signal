@@ -121,12 +121,13 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:1.7.1'
-    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.mockito:mockito-core:1.10.19'
     testCompile 'org.powermock:powermock-api-mockito:1.6.1'
     testCompile 'org.powermock:powermock-module-junit4:1.6.1'
     testCompile 'org.powermock:powermock-module-junit4-rule:1.6.1'
     testCompile 'org.powermock:powermock-classloading-xstream:1.6.1'
 
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support:multidex:1.0.2'
     androidTestCompile 'com.android.support:multidex-instrumentation:1.0.2'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
@@ -137,6 +138,12 @@ dependencies {
     androidTestCompile('com.squareup.assertj:assertj-android:1.1.1') {
         exclude group: 'org.hamcrest', module: 'hamcrest-core'
         exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 }
 
@@ -235,6 +242,10 @@ android {
         javaMaxHeapSize "4g"
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     defaultConfig {
         versionCode 328
         versionName "4.15.0"
@@ -253,6 +264,7 @@ android {
         buildConfigField "int", "GIPHY_PROXY_PORT", "80"
         buildConfigField "String", "USER_AGENT", "\"OWA\""
         buildConfigField "boolean", "DEV_BUILD", "false"
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
     compileOptions {

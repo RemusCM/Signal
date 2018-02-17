@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -67,7 +68,9 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import java.util.concurrent.ExecutionException;
 
 @SuppressLint("StaticFieldLeak")
-public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActivity implements RecipientModifiedListener, LoaderManager.LoaderCallbacks<Cursor>
+public class RecipientPreferenceActivity extends
+        PassphraseRequiredActionBarActivity implements
+        RecipientModifiedListener, LoaderManager.LoaderCallbacks<Cursor>
 {
   private static final String TAG = RecipientPreferenceActivity.class.getSimpleName();
 
@@ -80,8 +83,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
-
-  private static final String PREFERENCE_NICKNAME = "pref_key_change_nicknames";
+  // the preference key used in recipient_preferences.xml
+  private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
   private final DynamicLanguage dynamicLanguage = new DynamicLanguage();
@@ -259,6 +262,8 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
           .setOnPreferenceClickListener(new BlockClickedListener());
       this.findPreference(PREFERENCE_COLOR)
           .setOnPreferenceChangeListener(new ColorChangeListener());
+      // associate the key to an inner class ChangeNicknameClickedListener
+      // which contains the method that performs addition or modification of nickname
       this.findPreference(PREFERENCE_NICKNAME)
               .setOnPreferenceClickListener(new NicknameChangeActivity(getContext(), recipient));
 
@@ -583,62 +588,5 @@ public class RecipientPreferenceActivity extends PassphraseRequiredActionBarActi
       }
     }
 
-    /*private class ChangeNicknameClickedListener implements Preference.OnPreferenceClickListener {
-      String changeAddTitle = getString(R.string.dialog_nickname_title);
-      String save = getString(R.string.dialog_nickname_save);
-      String cancel = getString(R.string.dialog_nickname_cancel);
-
-      AlertDialog.Builder changeNicknameDialog = new AlertDialog.Builder(getActivity());
-
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        changeNicknameDialog.setTitle(changeAddTitle);
-        changeNicknameDialog.setCancelable(false);
-        final EditText nicknameEditText = new EditText(getActivity());
-        changeNicknameDialog.setView(nicknameEditText);
-
-        saveButton(nicknameEditText);
-
-        changeNicknameDialog.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        });
-        changeNicknameDialog.show();
-        return true;
-      }
-
-      *//**
-       * On click save button this is what
-       * happen
-       * @param nicknameStr
-       *//*
-      private void saveButton(EditText nicknameStr) {
-        changeNicknameDialog.setPositiveButton(save, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-              new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                  Log.w(TAG, "new profile name -> " + nicknameStr.getText().toString());
-                  Log.w(TAG, "old profile name -> " + recipient.resolve().getProfileName());
-
-                  RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(getActivity());
-
-                  database.setCustomLabel(recipient, nicknameStr.getText().toString());
-                  database.setProfileName(recipient, nicknameStr.getText().toString());
-
-                  ApplicationContext.getInstance(getActivity())
-                          .getJobManager()
-                          .add(new MultiDeviceProfileKeyUpdateJob(getActivity()));
-
-                  return null;
-                }
-              }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-          }
-        });
-      }
-    }*/
   }
 }

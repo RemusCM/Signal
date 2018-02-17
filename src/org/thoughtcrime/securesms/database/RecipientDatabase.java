@@ -287,6 +287,14 @@ public class RecipientDatabase extends Database {
     recipient.resolve().setName(displayName);
   }
 
+  public String getDisplayName() {
+    return SYSTEM_DISPLAY_NAME;
+  }
+
+  public String getCustomLabel() {
+    return SYSTEM_PHONE_LABEL;
+  }
+
   public void setProfileName(@NonNull Recipient recipient, @Nullable String profileName) {
     ContentValues contentValues = new ContentValues(1);
     contentValues.put(SIGNAL_PROFILE_NAME, profileName);
