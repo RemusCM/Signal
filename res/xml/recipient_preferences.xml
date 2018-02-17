@@ -28,7 +28,7 @@
         <Preference
             android:dependency="pref_key_recipient_mute"
             android:key="pref_key_change_nicknames"
-            android:title="@string/change_nickname"
+            android:title="@string/dialog_nickname_title"
             android:summary="@string/preference_nickname_summary"
             android:persistent="false">
 
