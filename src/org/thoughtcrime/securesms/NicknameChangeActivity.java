@@ -7,14 +7,11 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import org.thoughtcrime.securesms.database.DatabaseFactory;
-import org.thoughtcrime.securesms.database.IdentityDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
-import org.thoughtcrime.securesms.database.identity.IdentityRecordList;
 import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.Util;
@@ -22,116 +19,102 @@ import org.thoughtcrime.securesms.util.Util;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.thoughtcrime.securesms.giph.util.InfiniteScrollListener.TAG;
-
-public class NicknameChangeActivity extends ConversationActivity implements Preference.OnPreferenceClickListener {
+@SuppressLint("Registered")
+public class NicknameChangeActivity implements Preference.OnPreferenceClickListener {
   private final Context context;
   private final Recipient recipient;
-  List<String> recipientStrings = new LinkedList<>();
-  private AlertDialog.Builder soloNicknameDialog;
-  private AlertDialog.Builder groupNicknamesDialog;
-  private AlertDialog.Builder groupNicknameDialog2;
+
+  private NicknameUtil nicknameUtil = new NicknameUtil();
+
+  private AlertDialog.Builder soloNicknameDialogBuilder;
+  private AlertDialog.Builder groupNicknamesDialogBuilder;
+  private AlertDialog.Builder groupNicknameInnerDialogBuilder;
+
+  private List<String> recipientsList = new LinkedList<>();
   private String[] names;
   private LinkedList<Recipient> members = new LinkedList<>();
-  private IdentityDatabase identityDatabase;
-  private IdentityRecordList identityRecordList;
 
   NicknameChangeActivity(Context context, Recipient recipient) {
     this.context = context;
     this.recipient = recipient;
-    groupNicknamesDialog = new AlertDialog.Builder(context);
-    soloNicknameDialog = new AlertDialog.Builder(context);
-    groupNicknameDialog2 = new AlertDialog.Builder(context);
-  }
-
-  public void groupNicknameDialog() {
-    groupNicknamesDialog = new AlertDialog.Builder(context);
-    groupNicknamesDialog.setTitle("Change members' nickname");
-    groupNicknamesDialog.setCancelable(true);
-
-      identityDatabase   = DatabaseFactory.getIdentityDatabase(context);
-      identityRecordList = new IdentityRecordList();
-
-    if(recipientStrings.size() == 0) {
-        for (Recipient recipient : recipient.getParticipants()) {
-            Log.w(TAG, "Loading identity for: " + recipient.getAddress());
-            identityRecordList.add(identityDatabase.getIdentity(recipient.getAddress()));
-            if (Util.isOwnNumber(context, recipient.getAddress())) {
-                recipientStrings.add("Me");
-                members.add(recipient);
-            } else {
-                members.add(recipient);
-                String name = recipient.toShortString();
-
-                if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
-                    name += " ~" + recipient.getProfileName();
-                }
-                recipientStrings.add(name);
-            }
-            // TODO
-            // prints
-//      02-15 15:36:35.255 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +14389797321
-//      02-15 15:36:35.259 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +14389959811
-//      02-15 15:36:35.260 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15142387156
-//      02-15 15:36:35.261 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15146791670
-//      02-15 15:36:35.262 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149163416
-//      02-15 15:36:35.263 11462-11462/org.thoughtcrime.securesms W/InfiniteScrollListener: Loading identity for: +15149912693
-        }
-        names = recipientStrings.toArray(new String[recipient.getParticipants().size()]);
-    }
-
-
-    //context given is the group conversation, not a specific group member
-      groupNicknamesDialog.setItems(names, new NicknameChangeOnClickListener(context, members));
-
-
-      groupNicknamesDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
-    groupNicknamesDialog.show();
-  }
-
-
-
-  public void soloNicknameDialog() {
-    soloNicknameDialog.setTitle("Change/Add");
-    soloNicknameDialog.setCancelable(true);
-
-    final EditText nicknameEditText = new EditText(context);
-    soloNicknameDialog.setView(nicknameEditText);
-
-    soloSaveButton(nicknameEditText);
-    soloNicknameDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
-    soloNicknameDialog.show();
+    this.soloNicknameDialogBuilder = new AlertDialog.Builder(context);
+    this.groupNicknamesDialogBuilder = new AlertDialog.Builder(context);
+    this.groupNicknameInnerDialogBuilder = new AlertDialog.Builder(context);
   }
 
   @Override
   public boolean onPreferenceClick(Preference preference) {
     if(recipient.isGroupRecipient()) {
-      groupNicknameDialog();
+      showGroupMembersNicknameDialog();
     } else {
-      soloNicknameDialog();
+      showSoloNicknameDialog();
     }
     return true;
   }
 
+
+  private void showSoloNicknameDialog() {
+    soloNicknameDialogBuilder.setTitle(R.string.dialog_nickname_title);
+    soloNicknameDialogBuilder.setCancelable(true);
+
+    final EditText nicknameEditText = new EditText(context);
+    soloNicknameDialogBuilder.setView(nicknameEditText);
+    soloSaveButton(nicknameEditText);
+
+    soloNicknameDialogBuilder.setNegativeButton(R.string.dialog_nickname_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+    soloNicknameDialogBuilder.show();
+  }
+
+
+  private void showGroupMembersNicknameDialog() {
+    groupNicknamesDialogBuilder = new AlertDialog.Builder(context);
+    groupNicknamesDialogBuilder.setTitle(R.string.dialog_nickname_title);
+    groupNicknamesDialogBuilder.setCancelable(true);
+
+    if (recipientsList.size() == 0) {
+      for (Recipient recipient : recipient.getParticipants()) {
+        if (Util.isOwnNumber(context, recipient.getAddress())) {
+          recipientsList.add("Me");
+          members.add(recipient);
+        } else {
+          members.add(recipient);
+          String name = recipient.toShortString();
+          if (recipient.getName() == null && !TextUtils.isEmpty(recipient.getProfileName())) {
+            name += " ~" + recipient.getProfileName();
+          }
+          recipientsList.add(name);
+        }
+      }
+      names = recipientsList.toArray(new String[recipient.getParticipants().size()]);
+    }
+    // context given is the group conversation, not a specific group member
+    groupNicknamesDialogBuilder.setItems(names, new NicknameChangeOnClickListener(context, members));
+
+    groupNicknamesDialogBuilder.setNegativeButton(R.string.dialog_nickname_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+
+    groupNicknamesDialogBuilder.show();
+
+  }
+
+
   private void soloSaveButton(EditText nicknameEditText) {
-    soloNicknameDialog.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+    soloNicknameDialogBuilder.setPositiveButton(R.string.dialog_nickname_save, new DialogInterface.OnClickListener() {
       @SuppressLint("StaticFieldLeak")
       @Override
       public void onClick(DialogInterface dialog, int which) {
-        if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
+        if(nicknameUtil.isValidNicknameTest(nicknameEditText)) {
           dialog.dismiss();
-          Toast.makeText(context, "Please enter a valid nickname.",
-                  Toast.LENGTH_SHORT).show();
+          nicknameUtil.displayFailureModifyingMessage();
         } else {
           new AsyncTask<Void, Void, Void>() {
             @Override
@@ -145,83 +128,104 @@ public class NicknameChangeActivity extends ConversationActivity implements Pref
               return null;
             }
           }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+          nicknameUtil.displaySuccessModifyingMessage();
         }
       }
     });
   }
 
-    public void groupNicknameDialog2(Context context, Recipient recipient) {
-        groupNicknameDialog2.setTitle("Change/Add");
-        groupNicknameDialog2.setCancelable(false);
-        final EditText nicknameEditText = new EditText(context);
-        Recipient r = recipient;
 
-        groupNicknameDialog2.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+  private void showSpecificGroupMember(Context context, Recipient recipient) {
+    groupNicknameInnerDialogBuilder.setTitle(R.string.dialog_nickname_title);
+    groupNicknameInnerDialogBuilder.setCancelable(false);
+    final EditText nicknameEditText = new EditText(context);
+
+    groupNicknameInnerDialogBuilder.setPositiveButton(R.string.dialog_nickname_save, new DialogInterface.OnClickListener() {
+      @SuppressLint("StaticFieldLeak")
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        if (nicknameUtil.isValidNicknameTest(nicknameEditText)) {
+          dialog.dismiss();
+          nicknameUtil.displayFailureModifyingMessage();
+        } else {
+          new AsyncTask<Void, Void, Void>() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(isDialogNicknameEditTextEmpty(nicknameEditText)) {
-                    dialog.dismiss();
-                    Toast.makeText(context, "Please enter a valid nickname.",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            RecipientDatabase database   = DatabaseFactory.getRecipientDatabase(context);
-                            database.setDisplayName(r, nicknameEditText.getText().toString());
-                            database.setCustomLabel(r, r.getAddress().serialize());
-                            ApplicationContext.getInstance(context)
-                                    .getJobManager()
-                                    .add(new MultiDeviceProfileKeyUpdateJob(context));
-                            groupNicknamesDialog = new AlertDialog.Builder(context);
-                            groupNicknameDialog2 = new AlertDialog.Builder(context);
-                            recipientStrings = new LinkedList<>();
-                            return null;
-                        }
-                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-
+            protected Void doInBackground(Void... params) {
+              RecipientDatabase database = DatabaseFactory.getRecipientDatabase(context);
+              database.setDisplayName(recipient, nicknameEditText.getText().toString());
+              database.setCustomLabel(recipient, recipient.getAddress().serialize());
+              ApplicationContext.getInstance(context)
+                      .getJobManager()
+                      .add(new MultiDeviceProfileKeyUpdateJob(context));
+              groupNicknamesDialogBuilder = new AlertDialog.Builder(context);
+              groupNicknameInnerDialogBuilder = new AlertDialog.Builder(context);
+              recipientsList = new LinkedList<>();
+              return null;
             }
-        });
+          }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+          nicknameUtil.displaySuccessModifyingMessage();
+        }
+      }
+    });
 
-        groupNicknameDialog2.setView(nicknameEditText);
+    groupNicknameInnerDialogBuilder.setView(nicknameEditText);
 
-        //groupSaveButton(nicknameEditText);
-        groupNicknameDialog2.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                groupNicknameDialog();
-            }
-        });
-        groupNicknameDialog2.show();
-    }
-  private boolean isDialogNicknameEditTextEmpty(EditText nicknameEditText) {
-    return Util.isEmpty(nicknameEditText) || nicknameEditText.getText().toString().isEmpty();
+    groupNicknameInnerDialogBuilder.setNegativeButton(R.string.dialog_nickname_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+        showGroupMembersNicknameDialog();
+      }
+    });
+
+    groupNicknameInnerDialogBuilder.show();
   }
 
-    private class NicknameChangeOnClickListener implements DialogInterface.OnClickListener {
-      private final Context context;
-      private final LinkedList<Recipient> members;
 
-        public NicknameChangeOnClickListener(Context context, LinkedList<Recipient> members) {
-            this.context = context;
-            this.members = members;
+  private class NicknameChangeOnClickListener implements DialogInterface.OnClickListener {
+    private final Context context;
+    private final LinkedList<Recipient> members;
 
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int item) {
-            Recipient recipient = members.get(item);
-dialog.dismiss();
-
-groupNicknameDialog2(context, recipient);
-
-
-        }
+    NicknameChangeOnClickListener(Context context, LinkedList<Recipient> members) {
+      this.context = context;
+      this.members = members;
     }
-    private Recipient get(int index){
-      return (recipient.getParticipants()).get(index);
+
+    @Override
+    public void onClick(DialogInterface dialog, int item) {
+      Recipient recipient = members.get(item);
+      dialog.dismiss();
+      showSpecificGroupMember(context, recipient);
     }
+  }
+
+
+  private class NicknameUtil {
+    NicknameUtil() {}
+    private final int MAX_NICKNAME_TEXT_LENGTH = 10;
+    private final int MIN_NICKNAME_TEXT_LENGTH = 1;
+
+    // returns true if nickname is invalid
+    private boolean isValidNicknameTest(EditText nicknameEditText) {
+      boolean condition = false;
+      String editTextStr = String.valueOf(nicknameEditText.getText());
+      if(!Util.isEmpty(nicknameEditText) || editTextStr.length() >= MIN_NICKNAME_TEXT_LENGTH) {
+        if(nicknameEditText.getText().toString().length() > MAX_NICKNAME_TEXT_LENGTH) {
+          condition = true; // invalid nickname, nickname entered is too long
+        }
+      } else {
+        condition = true; // invalid nickname, no nickname entered
+      }
+      return condition;
+    }
+
+    private void displaySuccessModifyingMessage() {
+      Toast.makeText(context, R.string.success_modifying_nickname, Toast.LENGTH_SHORT).show();
+    }
+
+    private void displayFailureModifyingMessage() {
+      Toast.makeText(context, R.string.invalid_nickname, Toast.LENGTH_SHORT).show();
+    }
+  }
+
 }
