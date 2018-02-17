@@ -93,6 +93,7 @@ public class GroupMembersDialog extends AsyncTask<Void, Void, List<Recipient>> {
   private class GroupMembers {
     private final String TAG = GroupMembers.class.getSimpleName();
 
+
     private final LinkedList<Recipient> members = new LinkedList<>();
 
     public GroupMembers(List<Recipient> recipients) {

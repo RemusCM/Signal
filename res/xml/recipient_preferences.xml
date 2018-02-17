@@ -25,6 +25,20 @@
                 android:defaultValue="0"
                 android:persistent="false"/>
 
+        <Preference
+            android:dependency="pref_key_recipient_mute"
+            android:key="pref_key_change_nicknames"
+            android:title="@string/dialog_nickname_title"
+            android:summary="@string/preference_nickname_summary"
+            android:persistent="false">
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="org.thoughtcrime.securesms"
+                android:targetClass="org.thoughtcrime.securesms.ConversationMembersActivity"
+                />
+        </Preference>
+
         <org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference
                 android:key="pref_key_recipient_color"
                 android:title="@string/recipient_preferences__color"
@@ -34,10 +48,6 @@
                 android:persistent="false"
                 app:numColumns="5" />
     </PreferenceCategory>
-
-    <Preference android:title="@string/preference_nickname_title"
-        android:key="pref_key_change_nickname"
-        android:summary="@string/preference_nickname_summary"/>
 
     <PreferenceCategory android:key="divider" android:layout="@layout/preference_divider"/>
 

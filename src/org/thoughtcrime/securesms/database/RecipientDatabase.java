@@ -614,6 +614,4 @@ public class RecipientDatabase extends Database {
     }
   }
 
-
-
 }

@@ -5,6 +5,10 @@
     <string name="no">No</string>
     <string name="delete">Delete</string>
     <string name="please_wait">Please wait...</string>
+    <string name="change_nicknames">Change Nickname</string>
+    <string name="change_nicknames_summary">Tap to modify participant\'s nickname</string>
+    <string name="participant_name">Participant\'s name</string>
+    <string name="participant_summary">Tap to modify</string>
     <string name="preference_nickname_title">Nickname</string>
     <string name="preference_nickname_summary">Tap to add or modify</string>
     <string name="dialog_nickname_title">Change/Add nickname</string>
@@ -312,7 +316,7 @@
     <!-- GiphyFragmentPageAdapter -->
     <string name="GiphyFragmentPagerAdapter_gifs">GIFs</string>
     <string name="GiphyFragmentPagerAdapter_stickers">Stickers</string>
-    
+
     <!-- GroupCreateActivity -->
     <string name="GroupCreateActivity_actionbar_title">New group</string>
     <string name="GroupCreateActivity_actionbar_edit_title">Edit group</string>
@@ -836,7 +840,7 @@
     <!-- expiration -->
 
     <string name="expiration_off">Off</string>
-    
+
     <plurals name="expiration_seconds">
         <item quantity="one">1 second</item>
         <item quantity="other">%d seconds</item>
@@ -871,7 +875,7 @@
     </plurals>
 
     <string name="expiration_weeks_abbreviated">%dw</string>
-    
+
     <!-- unverified safety numbers -->
     <string name="IdentityUtil_unverified_banner_one">Your safety number with %s has changed and is no longer verified</string>
     <string name="IdentityUtil_unverified_banner_two">Your safety numbers with %1$s and %2$s are no longer verified</string>
@@ -1170,7 +1174,7 @@
     <string name="preferences_chats__message_text_size">Message font size</string>
     <string name="preferences_events__contact_joined_signal">Contact joined Signal</string>
     <string name="preferences_notifications__priority">Priority</string>
-    
+
     <!-- **************************************** -->
     <!-- menus -->
     <!-- **************************************** -->
@@ -1323,6 +1327,8 @@
     <string name="Permissions_not_now">Not now</string>
     <string name="ConversationListActivity_signal_needs_contacts_permission_in_order_to_search_your_contacts_but_it_has_been_permanently_denied">Signal needs Contacts permission in order to search your contacts, but it has been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\".</string>
     <string name="conversation_activity__enable_signal_messages">ENABLE SIGNAL MESSAGES</string>
+    <string name="invalid_nickname">Please enter a valid nickname.</string>
+    <string name="success_modifying_nickname">You have successfully modified this nickname.</string>
 
 
     <!-- EOF -->
