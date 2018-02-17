@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -84,7 +85,7 @@ public class RecipientPreferenceActivity extends
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
   // the preference key used in recipient_preferences.xml
-  private static final String PREFERENCE_NICKNAME = "pref_key_change_nickname";
+  private static final String PREFERENCE_NICKNAME = "pref_key_change_nicknames";
 
   private final DynamicTheme    dynamicTheme    = new DynamicNoActionBarTheme();
   private final DynamicLanguage dynamicLanguage = new DynamicLanguage();
