@@ -596,11 +596,11 @@ public class RecipientPreferenceActivity extends
       @Override
       public boolean onPreferenceClick(Preference preference) {
         new AlertDialog.Builder(getActivity())
-                .setTitle("Do you want to clear this conversation?")
-                .setMessage("All of the conversations you had in this chat will be deleted")
+                .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
+                .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
                 .setCancelable(true)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.RecipientPreferenceActivity_clear, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
                     }

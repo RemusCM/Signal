@@ -506,6 +506,10 @@
     <string name="RecipientPreferenceActivity_disabled">Disabled</string>
     <string name="RecipientPreferenceActivity_available_once_a_message_has_been_sent_or_received">Available once a message has been sent or received.</string>
 
+    <string name="RecipientPreferenceActivity_clear_conversation_question">Do you want to clear this conversation?</string>
+    <string name="RecipientPreferenceActivity_clear_conversation_messages">All of the conversations you had in this chat will be deleted.</string>
+    <string name="RecipientPreferenceActivity_clear">Clear</string>
+
     <!-- RecipientProvider -->
     <string name="RecipientProvider_unnamed_group">Unnamed group</string>
 
