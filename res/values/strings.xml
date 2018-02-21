@@ -506,6 +506,10 @@
     <string name="RecipientPreferenceActivity_disabled">Disabled</string>
     <string name="RecipientPreferenceActivity_available_once_a_message_has_been_sent_or_received">Available once a message has been sent or received.</string>
 
+    <string name="RecipientPreferenceActivity_clear_conversation_question">Do you want to clear this conversation?</string>
+    <string name="RecipientPreferenceActivity_clear_conversation_messages">All of the conversations you had in this chat will be deleted.</string>
+    <string name="RecipientPreferenceActivity_clear">Clear</string>
+
     <!-- RecipientProvider -->
     <string name="RecipientProvider_unnamed_group">Unnamed group</string>
 
@@ -968,6 +972,7 @@
     <string name="recipient_preferences__notification_sound">Notification sound</string>
     <string name="recipient_preferences__vibrate">Vibrate</string>
     <string name="recipient_preferences__block">Block</string>
+    <string name="recipient_preferences__clear_conversation">Clear Conversation</string>
     <string name="recipient_preferences__color">Color</string>
     <string name="recipient_preferences__view_safety_number">View safety number</string>
     <string name="recipient_preferences__chat_settings">Chat settings</string>
