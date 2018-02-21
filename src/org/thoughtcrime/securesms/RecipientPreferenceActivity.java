@@ -83,6 +83,7 @@ public class RecipientPreferenceActivity extends
   private static final String PREFERENCE_VIBRATE  = "pref_key_recipient_vibrate";
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
+  private static final String PREFERENCE_CLEAR_CONVERSATION    = "pref_key_clear_conversation";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
   // the preference key used in recipient_preferences.xml
   private static final String PREFERENCE_NICKNAME = "pref_key_change_nicknames";
@@ -265,6 +266,8 @@ public class RecipientPreferenceActivity extends
           .setOnPreferenceChangeListener(new ColorChangeListener());
       // associate the key to an inner class ChangeNicknameClickedListener
       // which contains the method that performs addition or modification of nickname
+      this.findPreference(PREFERENCE_CLEAR_CONVERSATION)
+              .setOnPreferenceClickListener(new ClearConversationClickedListener());
       this.findPreference(PREFERENCE_NICKNAME)
               .setOnPreferenceClickListener(new NicknameChangeActivity(getContext(), recipient));
 
@@ -586,6 +589,23 @@ public class RecipientPreferenceActivity extends
             return null;
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+      }
+    }
+
+    private class ClearConversationClickedListener implements Preference.OnPreferenceClickListener {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Do you want to clear this conversation?")
+                .setMessage("All of the conversations you had in this chat will be deleted")
+                .setCancelable(true)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                    }
+                  }).show();
+        return true;
       }
     }
 
