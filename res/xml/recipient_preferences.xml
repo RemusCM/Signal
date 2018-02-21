@@ -39,6 +39,13 @@
                 />
         </Preference>
 
+        <Preference
+            android:dependency="pref_key_recipient_mute"
+            android:key="pref_key_clear_conversation"
+            android:title="@string/recipient_preferences__clear_conversation"
+            android:persistent="false">
+        </Preference>
+
         <org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference
                 android:key="pref_key_recipient_color"
                 android:title="@string/recipient_preferences__color"
