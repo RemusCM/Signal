@@ -765,6 +765,13 @@ public class SmsDatabase extends MessagingDatabase {
                                      " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
   }
 
+  public void deleteAllMessagesByRecipientId(Address address) {
+    Log.w(TAG, "SmsDatabase: deleteAllMessagesByRecipientId("+address.serialize()+")");
+    String recipientId = address.serialize();
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+    db.delete(TABLE_NAME, ID_WHERE, new String[] {recipientId+""});
+  }
+
   public static class Status {
     public static final int STATUS_NONE     = -1;
     public static final int STATUS_COMPLETE  = 0;
