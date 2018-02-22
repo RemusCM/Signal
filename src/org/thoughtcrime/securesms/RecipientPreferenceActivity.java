@@ -601,12 +601,8 @@ public class RecipientPreferenceActivity extends
                 .setIconAttribute(R.attr.dialog_alert_icon)
                 .setCancelable(true)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.RecipientPreferenceActivity_clear, new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-
-                  }
-                }).show();
+                .setPositiveButton(R.string.RecipientPreferenceActivity_clear, new ClearConversationActivity(getActivity()))
+                .show();
         return true;
       }
     }
