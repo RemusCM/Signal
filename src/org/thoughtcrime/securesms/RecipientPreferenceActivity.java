@@ -598,13 +598,15 @@ public class RecipientPreferenceActivity extends
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
                 .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
+                .setIconAttribute(R.attr.dialog_alert_icon)
                 .setCancelable(true)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.RecipientPreferenceActivity_clear, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
-                    }
-                  }).show();
+
+                  }
+                }).show();
         return true;
       }
     }
