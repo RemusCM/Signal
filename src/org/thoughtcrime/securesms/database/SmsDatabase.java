@@ -49,6 +49,7 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,27 @@ public class SmsDatabase extends MessagingDatabase {
       if (cursor != null)
         cursor.close();
     }
+  }
+
+  public ArrayList<Integer> getMessageIdsByRecipientId(Address address) {
+    Log.w(TAG, "Getting all message ids of this recipient.");
+    ArrayList<Integer> messageIds = new ArrayList<Integer>();
+    String recipientId = address.serialize();
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor     = null;
+    try {
+      cursor = db.query(TABLE_NAME, new String[]{ID}, ADDRESS + " = ?",
+              new String[] {recipientId+""}, null, null, null);
+      cursor.moveToFirst();
+      while(!cursor.isAfterLast()) {
+        messageIds.add(cursor.getInt(cursor.getColumnIndex(ID)));
+        cursor.moveToNext();
+      }
+    } finally {
+      if (cursor != null)
+        cursor.close();
+    }
+    return messageIds;
   }
 
   public int getMessageCountForThread(long threadId) {
@@ -766,8 +788,10 @@ public class SmsDatabase extends MessagingDatabase {
   }
 
   public void deleteAllMessagesByRecipientId(Address address) {
-    Log.w(TAG, "SmsDatabase: deleteAllMessagesByRecipientId("+address.serialize()+")");
     String recipientId = address.serialize();
+    // select all message id by this recipient
+    String sql = "SELECT " + THREAD_ID + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
+    Log.w(TAG, "SmsDatabase: deleteAllMessagesByRecipientId("+recipientId+")");
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.delete(TABLE_NAME, ID_WHERE, new String[] {recipientId+""});
   }

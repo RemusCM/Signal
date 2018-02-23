@@ -403,13 +403,11 @@ public class ThreadDatabase extends Database {
     }
   }
 
-  public void resetMessageCountToZeroByRecipientId(Address address) {
-    Log.i(TAG, "ThreadDatabase: resetMessageCountToZeroByRecipientId(Address address)");
+  public void deleteThreadByRecipientId(Address address) {
     String recipientId = address.serialize();
-    String sql = "UPDATE " + TABLE_NAME + " SET " + MESSAGE_COUNT + " = " + 0 + " WHERE " + ADDRESS + " = ?";
-    Log.w(TAG, "ThreadDatabase (sql): " + sql);
+    Log.w(TAG, "ThreadDatabase: deleteThreadByRecipientId("+recipientId+")");
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
-    db.execSQL(sql, new String[] {recipientId});
+    db.delete(TABLE_NAME, ID_WHERE, new String[] {recipientId+""});
   }
 
   public int getArchivedConversationListCount() {
