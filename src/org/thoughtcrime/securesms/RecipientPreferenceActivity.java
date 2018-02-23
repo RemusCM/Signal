@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,11 +46,13 @@ import org.thoughtcrime.securesms.database.IdentityDatabase;
 import org.thoughtcrime.securesms.database.IdentityDatabase.IdentityRecord;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase.VibrateState;
+import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.loaders.ThreadMediaLoader;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.MultiDeviceContactUpdateJob;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.GlideRequests;
+import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.preferences.CorrectedPreferenceFragment;
 import org.thoughtcrime.securesms.preferences.widgets.ColorPickerPreference;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -601,7 +602,8 @@ public class RecipientPreferenceActivity extends
                 .setIconAttribute(R.attr.dialog_alert_icon)
                 .setCancelable(true)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.RecipientPreferenceActivity_clear, new ClearConversationActivity(getActivity()))
+                .setPositiveButton(R.string.RecipientPreferenceActivity_clear,
+                        new ClearConversationActivity(recipient, getContext()))
                 .show();
         return true;
       }
