@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.thoughtcrime.securesms.BuildConfig;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -56,6 +58,7 @@ public class UpdateApkJob extends ContextJob {
 
     OkHttpClient client  = new OkHttpClient();
     Request      request = new Request.Builder().url(String.format("%s/latest.json", BuildConfig.NOPLAY_UPDATE_URL)).build();
+    client.networkInterceptors().add((Interceptor) new StethoInterceptor());
 
     Response response = client.newCall(request).execute();
 
