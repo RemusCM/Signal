@@ -65,6 +65,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.protobuf.ByteString;
 
@@ -258,6 +259,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   protected void onPreCreate() {
     dynamicTheme.onCreate(this);
     dynamicLanguage.onCreate(this);
+    Stetho.initializeWithDefaults(this);
   }
 
   @Override

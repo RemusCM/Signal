@@ -11,7 +11,7 @@
     <string name="participant_summary">Tap to modify</string>
     <string name="preference_nickname_title">Nickname</string>
     <string name="preference_nickname_summary">Tap to add or modify</string>
-    <string name="dialog_nickname_title">Change/Add nickname</string>
+    <string name="dialog_nickname_title">Change / Add nickname</string>
     <string name="dialog_nickname_save">Save</string>
     <string name="dialog_nickname_cancel">Cancel</string>
 
@@ -509,6 +509,8 @@
     <string name="RecipientPreferenceActivity_clear_conversation_question">Do you want to clear this conversation?</string>
     <string name="RecipientPreferenceActivity_clear_conversation_messages">All of the conversations you had in this chat will be deleted.</string>
     <string name="RecipientPreferenceActivity_clear">Clear</string>
+    <string name="RecipientPreferenceActivity_clear_conversation_nothing_to_delete">There is nothing to delete.</string>
+    <string name="RecipientPreferenceActivity_clear_conversation_successful_deletion">All messages have been deleted.</string>
 
     <!-- RecipientProvider -->
     <string name="RecipientProvider_unnamed_group">Unnamed group</string>
@@ -973,6 +975,7 @@
     <string name="recipient_preferences__vibrate">Vibrate</string>
     <string name="recipient_preferences__block">Block</string>
     <string name="recipient_preferences__clear_conversation">Clear Conversation</string>
+    <string name="recipient_preferences__clear_conversation_subtitle">Delete message history</string>
     <string name="recipient_preferences__color">Color</string>
     <string name="recipient_preferences__view_safety_number">View safety number</string>
     <string name="recipient_preferences__chat_settings">Chat settings</string>

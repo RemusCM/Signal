@@ -382,6 +382,34 @@ public class ThreadDatabase extends Database {
     return db.rawQuery(query, null);
   }
 
+  public int getMessageCountByRecipientId(Address address) {
+    Log.w(TAG, "ThreadDatabase: getMessageCountByRecipientId("+address.serialize()+")");
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT " + MESSAGE_COUNT + " FROM " + TABLE_NAME + " WHERE " + ADDRESS + " = ?";
+    String recipientId = address.serialize();
+    String[] sqlArgs = new String[] {recipientId+""};
+    try {
+      cursor = db.rawQuery(sql, sqlArgs);
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getInt(0);
+      } else {
+        return 0;
+      }
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+  }
+
+  public void deleteThreadByRecipientId(Address address) {
+    String recipientId = address.serialize();
+    Log.w(TAG, "ThreadDatabase: deleteThreadByRecipientId("+recipientId+")");
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+    db.delete(TABLE_NAME, ID_WHERE, new String[] {recipientId+""});
+  }
+
   public int getArchivedConversationListCount() {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor     = null;
