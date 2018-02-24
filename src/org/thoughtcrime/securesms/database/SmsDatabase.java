@@ -922,4 +922,27 @@ public class SmsDatabase extends MessagingDatabase {
     public void onComplete();
   }
 
+  public int getMessageCountForMessageId(Address address) {
+
+    Log.w(TAG, "getMessageCountByRecipientId("+address.serialize()+")");
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT COUNT(_id) FROM " + TABLE_NAME + " WHERE " + ADDRESS + " = ?";
+    String recipientId = address.serialize();
+    String[] sqlArgs = new String[] {recipientId+""};
+
+    try{
+      cursor = db.rawQuery(sql, sqlArgs);
+      if (cursor != null && cursor.moveToFirst()){
+        return cursor.getInt(0);
+      } else {
+        return 0;
+      }
+    }finally{
+      if(cursor != null){
+        cursor.close();
+      }
+    }
+  }
+
 }
