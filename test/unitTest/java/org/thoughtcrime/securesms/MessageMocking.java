@@ -1,5 +1,7 @@
 package org.thoughtcrime.securesms;
 
+import android.content.Context;
+
 import org.junit.runner.RunWith;
 
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -19,13 +21,13 @@ import static org.mockito.Mockito.when;
 @PrepareForTest({DatabaseFactory.class})
 public class MessageMocking extends BaseUnitTest {
 
-  protected DatabaseFactory dbFactory;
-  protected SmsDatabase smsDb;
-  protected ThreadDatabase threadDb;
-  protected Recipient recipient;
-  protected Address address;
+  protected Context contextMock;
+  protected DatabaseFactory dbFactoryMock;
+  protected SmsDatabase smsDbMock;
+  protected ThreadDatabase threadDbMock;
+  protected Recipient recipientMock;
+  protected Address addressMock;
   protected ArrayList<Integer> messageIds;
-  protected int c;
 
   protected void setUpMessageIds(){
     messageIds = new ArrayList<>();
@@ -33,12 +35,12 @@ public class MessageMocking extends BaseUnitTest {
     messageIds.add(222);
     messageIds.add(333);
 
-    when(smsDb.getMessageIdsByRecipientId(address)).thenReturn(messageIds);
+    when(smsDbMock.getMessageIdsByRecipientId(addressMock)).thenReturn(messageIds);
   }
 
   protected void setUpMessageCount(){
-    c = smsDb.getMessageIdsByRecipientId(address).size();
-    when(threadDb.getMessageCountByRecipientId(address)).thenReturn(c);
+    int c = smsDbMock.getMessageIdsByRecipientId(addressMock).size();
+    when(threadDbMock.getMessageCountByRecipientId(addressMock)).thenReturn(c);
   }
 
 }

@@ -318,6 +318,7 @@ public class RecipientPreferenceActivity extends
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
 
       Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
+      Preference                 clearChatPreference = this.findPreference(PREFERENCE_CLEAR_CONVERSATION);
 
 
       mutePreference.setChecked(recipient.isMuted());
@@ -353,6 +354,7 @@ public class RecipientPreferenceActivity extends
         if (identityPreference != null) identityPreference.setVisible(false);
         if (privacyCategory    != null) privacyCategory.setVisible(false);
         if (divider            != null) divider.setVisible(false);
+        if (clearChatPreference!= null) clearChatPreference.setVisible(false);
       } else {
         colorPreference.setColors(MaterialColors.CONVERSATION_PALETTE.asConversationColorArray(getActivity()));
         colorPreference.setColor(recipient.getColor().toActionBarColor(getActivity()));
