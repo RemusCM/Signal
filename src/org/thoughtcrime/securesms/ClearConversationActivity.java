@@ -49,6 +49,12 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
             Log.w(TAG, "Deleting: " + String.valueOf(messageId));
             DatabaseFactory.getSmsDatabase(context).deleteMessage(messageId);
           }
+          if (messageIds.isEmpty() || messageIds.size() == 0) {
+            Toast.makeText(context,
+                    R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
+                    Toast.LENGTH_LONG).show();
+            dialogInterface.dismiss();
+          }
         } else {
           dialogInterface.dismiss();
           Toast.makeText(context,
@@ -59,13 +65,6 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
         return null;
       }
 
-      protected void onPostExecute(Void param) {
-        dialogInterface.dismiss();
-        Toast.makeText(context,
-                R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
-                Toast.LENGTH_LONG).show();
-      }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
   }
-
 }
