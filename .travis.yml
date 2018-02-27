@@ -1,5 +1,7 @@
 language: android
 jdk: oraclejdk8
+sudo: false
+
 android:
   components:
     - tools
@@ -8,10 +10,21 @@ android:
     - android-27
     - extra-android-m2repository
     - extra-google-m2repository
+
 before_install:
   - chmod +x gradlew
   - yes | sdkmanager "platforms;android-27"
-script: ./gradlew assembleplayDebug
-group: stable
-dist: trusty
-os: linux
+
+script:
+  - ./gradlew assemble
+  - ./gradlew check
+
+# Default Test Command for Gradle
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache

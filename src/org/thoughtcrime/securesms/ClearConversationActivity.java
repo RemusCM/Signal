@@ -50,10 +50,10 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
             DatabaseFactory.getSmsDatabase(context).deleteMessage(messageId);
           }
           if (messageIds.isEmpty() || messageIds.size() == 0) {
+            dialogInterface.dismiss();
             Toast.makeText(context,
                     R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
                     Toast.LENGTH_LONG).show();
-            dialogInterface.dismiss();
           }
         } else {
           dialogInterface.dismiss();
