@@ -162,7 +162,6 @@ public class GroupDatabase extends Database {
     contentValues.put(GROUP_ID, groupId);
     contentValues.put(TITLE, title);
     contentValues.put(MEMBERS, Address.toSerializedList(members, ','));
-    // TODO populate moderator column, the local number is the moderator
     if (avatar != null) {
       contentValues.put(AVATAR_ID, avatar.getId());
       contentValues.put(AVATAR_KEY, avatar.getKey());
@@ -177,14 +176,46 @@ public class GroupDatabase extends Database {
 
     databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, contentValues);
 
+    String moderator = String.valueOf(getOwnAddress(context, members));
+    updateModeratorColumn(groupId, moderator);
+
     Recipient.applyCached(Address.fromSerialized(groupId), recipient -> {
       recipient.setName(title);
       recipient.setGroupAvatarId(avatar != null ? avatar.getId() : null);
-      recipient.setParticipants(Stream.of(members).map(memberAddress -> Recipient.from(context, memberAddress, true)).toList());
+      recipient.setParticipants(Stream.of(members).map(memberAddress -> Recipient.from(this.context, memberAddress, true)).toList());
     });
 
     notifyConversationListListeners();
   }
+
+  /**
+   * Returns own address (number) given
+   * a list of members.
+   * @param context
+   * @param members
+   * @return
+   */
+  private Address getOwnAddress(Context context, List<Address> members) {
+    // TODO to be implemented by
+    for (Address member : members) {
+      if(Util.isOwnNumber(context, member)) {
+        return member;
+      }
+    }
+    return null;
+  }
+
+
+  /**
+   * Add address of the person who creates
+   * the group in the moderator column.
+   * Call this method after inserting the
+   * group in the table.
+   */
+  private void updateModeratorColumn(String groupId, String moderator) {
+    // TODO to be implemented by:
+  }
+
 
   public void update(String groupId, String title, SignalServiceAttachmentPointer avatar) {
     ContentValues contentValues = new ContentValues();
