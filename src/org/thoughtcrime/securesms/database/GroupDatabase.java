@@ -197,11 +197,6 @@ public class GroupDatabase extends Database {
    */
   private Address getOwnAddress(Context context, List<Address> members) {
     // TODO to be implemented by
-    for (Address member : members) {
-      if(Util.isOwnNumber(context, member)) {
-        return member;
-      }
-    }
     return null;
   }
 

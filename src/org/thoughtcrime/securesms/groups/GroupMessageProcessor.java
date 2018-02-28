@@ -76,6 +76,16 @@ public class GroupMessageProcessor {
     }
   }
 
+  /**
+   * Handles group creation.
+   * Note: the person who created a group is automatically the moderator.
+   * @param context
+   * @param masterSecret
+   * @param envelope
+   * @param group
+   * @param outgoing
+   * @return
+   */
   private static @Nullable Long handleGroupCreate(@NonNull Context context,
                                                   @NonNull MasterSecretUnion masterSecret,
                                                   @NonNull SignalServiceEnvelope envelope,
