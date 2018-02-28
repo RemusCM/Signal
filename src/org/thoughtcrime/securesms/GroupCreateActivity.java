@@ -98,6 +98,7 @@ public class GroupCreateActivity extends PassphraseRequiredActionBarActivity
   private static final int PICK_CONTACT = 1;
   public static final  int AVATAR_SIZE  = 210;
 
+  // TODO disable edit text groupName if non moderator
   private EditText     groupName;
   private ListView     lv;
   private ImageView    avatar;
@@ -226,8 +227,10 @@ public class GroupCreateActivity extends PassphraseRequiredActionBarActivity
         finish();
         return true;
       case R.id.menu_create_group:
-        if (groupToUpdate.isPresent()) handleGroupUpdate();
-        else                           handleGroupCreate();
+        if (groupToUpdate.isPresent())
+          handleGroupUpdate();
+        else
+          handleGroupCreate();
         return true;
     }
 
@@ -245,6 +248,9 @@ public class GroupCreateActivity extends PassphraseRequiredActionBarActivity
     if (recipients != null && !recipients.isEmpty()) addSelectedContacts(recipients);
   }
 
+  /**
+   * Handles group creation.
+   */
   private void handleGroupCreate() {
     if (getAdapter().getCount() < 1) {
       Log.i(TAG, getString(R.string.GroupCreateActivity_contacts_no_members));
@@ -352,7 +358,6 @@ public class GroupCreateActivity extends PassphraseRequiredActionBarActivity
       String    groupId        = DatabaseFactory.getGroupDatabase(activity).getOrCreateGroupForMembers(memberAddresses, true);
       Recipient groupRecipient = Recipient.from(activity, Address.fromSerialized(groupId), true);
       long      threadId       = DatabaseFactory.getThreadDatabase(activity).getThreadIdFor(groupRecipient, ThreadDatabase.DistributionTypes.DEFAULT);
-
       return new GroupActionResult(groupRecipient, threadId);
     }
 
