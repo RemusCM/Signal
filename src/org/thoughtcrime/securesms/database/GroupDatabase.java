@@ -36,7 +36,8 @@ public class GroupDatabase extends Database {
           static final String TABLE_NAME          = "groups";
   private static final String ID                  = "_id";
           static final String GROUP_ID            = "group_id";
-  private static final String TITLE               = "title";
+  private static final String TITLE               = "title"; // group name
+  private static final String MODERATOR           = "moderator";
   private static final String MEMBERS             = "members";
   private static final String AVATAR              = "avatar";
   private static final String AVATAR_ID           = "avatar_id";
@@ -48,12 +49,14 @@ public class GroupDatabase extends Database {
   private static final String ACTIVE              = "active";
   private static final String MMS                 = "mms";
 
+
   public static final String CREATE_TABLE =
       "CREATE TABLE " + TABLE_NAME +
           " (" + ID + " INTEGER PRIMARY KEY, " +
           GROUP_ID + " TEXT, " +
           TITLE + " TEXT, " +
           MEMBERS + " TEXT, " +
+          MODERATOR + " TEXT DEFAULT NULL, " +
           AVATAR + " BLOB, " +
           AVATAR_ID + " INTEGER, " +
           AVATAR_KEY + " BLOB, " +
@@ -69,7 +72,7 @@ public class GroupDatabase extends Database {
   };
 
   private static final String[] GROUP_PROJECTION = {
-      GROUP_ID, TITLE, MEMBERS, AVATAR, AVATAR_ID, AVATAR_KEY, AVATAR_CONTENT_TYPE, AVATAR_RELAY, AVATAR_DIGEST,
+      GROUP_ID, TITLE, MEMBERS, MODERATOR, AVATAR, AVATAR_ID, AVATAR_KEY, AVATAR_CONTENT_TYPE, AVATAR_RELAY, AVATAR_DIGEST,
       TIMESTAMP, ACTIVE, MMS
   };
 
@@ -259,6 +262,11 @@ public class GroupDatabase extends Database {
                                                 new String[] {groupId});
   }
 
+  /**
+   * Get current members of a group given a group id.
+   * @param groupId
+   * @return
+   */
   private List<Address> getCurrentMembers(String groupId) {
     Cursor cursor = null;
 
@@ -327,6 +335,7 @@ public class GroupDatabase extends Database {
       return new GroupRecord(cursor.getString(cursor.getColumnIndexOrThrow(GROUP_ID)),
                              cursor.getString(cursor.getColumnIndexOrThrow(TITLE)),
                              cursor.getString(cursor.getColumnIndexOrThrow(MEMBERS)),
+                             cursor.getString(cursor.getColumnIndexOrThrow(MODERATOR)),
                              cursor.getBlob(cursor.getColumnIndexOrThrow(AVATAR)),
                              cursor.getLong(cursor.getColumnIndexOrThrow(AVATAR_ID)),
                              cursor.getBlob(cursor.getColumnIndexOrThrow(AVATAR_KEY)),
@@ -348,6 +357,7 @@ public class GroupDatabase extends Database {
     private final String        id;
     private final String        title;
     private final List<Address> members;
+    private final String        moderator;
     private final byte[]        avatar;
     private final long          avatarId;
     private final byte[]        avatarKey;
@@ -357,12 +367,13 @@ public class GroupDatabase extends Database {
     private final boolean       active;
     private final boolean       mms;
 
-    public GroupRecord(String id, String title, String members, byte[] avatar,
+    public GroupRecord(String id, String title, String members, String moderator, byte[] avatar,
                        long avatarId, byte[] avatarKey, String avatarContentType,
                        String relay, boolean active, byte[] avatarDigest, boolean mms)
     {
       this.id                = id;
       this.title             = title;
+      this.moderator         = moderator;
       this.avatar            = avatar;
       this.avatarId          = avatarId;
       this.avatarKey         = avatarKey;
@@ -372,8 +383,10 @@ public class GroupDatabase extends Database {
       this.active            = active;
       this.mms               = mms;
 
-      if (!TextUtils.isEmpty(members)) this.members = Address.fromSerializedList(members, ',');
-      else                             this.members = new LinkedList<>();
+      if (!TextUtils.isEmpty(members))
+        this.members = Address.fromSerializedList(members, ',');
+      else
+        this.members = new LinkedList<>();
     }
 
     public byte[] getId() {
@@ -394,6 +407,10 @@ public class GroupDatabase extends Database {
 
     public List<Address> getMembers() {
       return members;
+    }
+
+    public String getModerator() {
+      return moderator;
     }
 
     public byte[] getAvatar() {
