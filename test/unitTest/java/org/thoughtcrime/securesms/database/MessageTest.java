@@ -32,7 +32,7 @@ public class MessageTest extends MessageMocking {
 
   @Test
   public void testGetMessageIdsByRecipientId(){
-    System.out.println("- Testing Get Message By Recipient Id -");
+    System.out.println("- Testing Get Message By Recipient Id : Outcome #1 -");
     verify(smsDbMock).getMessageIdsByRecipientId(addressMock);
     System.out.println("    Expected: " + messageIds.toString());
     System.out.println("    Actual: " + smsDbMock.getMessageIdsByRecipientId(addressMock).toString());
@@ -41,7 +41,7 @@ public class MessageTest extends MessageMocking {
 
   @Test
   public void testGetMessageCountByRecipientId(){
-    System.out.println("- Testing Message Count -");
+    System.out.println("- Testing Message Count : Outcome #1 -");
     System.out.println("    Expected: " + messageIds.size());
     System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
     assertEquals(messageIds.size(), threadDbMock.getMessageCountByRecipientId(addressMock));
@@ -73,6 +73,43 @@ public class MessageTest extends MessageMocking {
     verify(threadDbMock).getThreadIdFor(argCaptor.capture());
     System.out.println(argCaptor.getValue());
     assertEquals(recipientMock, argCaptor.getValue());
+  }
+
+  /* Fail Case */
+  @Test
+  public void testGetMessageCountByRecipientIdFail1(){
+    System.out.println("- Testing Message Count : Outcome #2 -");
+    System.out.println("    Expected: 2");
+    System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
+    assertEquals(2, threadDbMock.getMessageCountByRecipientId(addressMock));
+  }
+
+  /* Fail Case */
+  @Test
+  public void testGetMessageCountByRecipientIdFail2(){
+    System.out.println("- Testing Message Count : Outcome #3 -");
+    System.out.println("    Expected: 5");
+    System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
+    assertEquals(5, threadDbMock.getMessageCountByRecipientId(addressMock));
+  }
+
+  /* Fail Case */
+  @Test
+  public void testGetMessageCountByRecipientIdFail3(){
+    System.out.println("- Testing Message Count : Outcome #4 -");
+    System.out.println("    Expected: 10");
+    System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
+    assertEquals(10, threadDbMock.getMessageCountByRecipientId(addressMock));
+  }
+
+  /* Fail Case */
+  @Test
+  public void testGetMessageIdsByRecipientIdFail1(){
+    System.out.println("- Testing Get Message By Recipient Id : Outcome #2 -");
+    verify(smsDbMock).getMessageIdsByRecipientId(addressMock);
+    System.out.println("    Expected: [2018, 2019, 2020]" );
+    System.out.println("    Actual: " + smsDbMock.getMessageIdsByRecipientId(addressMock).toString());
+    assertEquals("[2018, 2019, 2020]", smsDbMock.getMessageIdsByRecipientId(addressMock).toString());
   }
 
 }
