@@ -115,9 +115,20 @@ public class DatabaseFactory {
   private static final int GROUP_RECEIPT_TRACKING                          = 45;
   private static final int UNREAD_COUNT_VERSION                            = 46;
   private static final int MORE_RECIPIENT_FIELDS                           = 47;
-  private static final int DATABASE_VERSION                                = 47;
+  private static final int INTRODUCED_MODERATOR                            = 48;
+  private static final int DATABASE_VERSION                                = 49;
 
-  private static final String DATABASE_NAME    = "messages.db";
+  /**
+   * Old database name was messages.db
+   * Changed to messages[#].db for development purpose only.
+   * Revert to old name in production.
+   *
+   * If adding a new column, do the following:
+   * 1. make a constant variable INTRODUCED_<COLUMN_NAME>
+   * 2. increment DATABASE_VERSION
+   * 3. see if statement: if (oldVersion < ....) in onUpgrade
+   */
+  private static final String DATABASE_NAME    = "messages1.db";
   private static final Object lock             = new Object();
 
   private static DatabaseFactory instance;
@@ -820,6 +831,10 @@ public class DatabaseFactory {
 
       if (oldVersion < INTRODUCED_CONVERSATION_LIST_THUMBNAILS_VERSION) {
         db.execSQL("ALTER TABLE thread ADD COLUMN snippet_uri TEXT DEFAULT NULL");
+      }
+
+      if (oldVersion < INTRODUCED_MODERATOR) {
+        db.execSQL("ALTER TABLE groups ADD COLUMN moderator TEXT DEFAULT NULL");
       }
 
       if (oldVersion < INTRODUCED_ARCHIVE_VERSION) {
