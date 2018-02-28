@@ -162,7 +162,7 @@ public class GroupDatabase extends Database {
     contentValues.put(GROUP_ID, groupId);
     contentValues.put(TITLE, title);
     contentValues.put(MEMBERS, Address.toSerializedList(members, ','));
-
+    // TODO populate moderator column, the local number is the moderator
     if (avatar != null) {
       contentValues.put(AVATAR_ID, avatar.getId());
       contentValues.put(AVATAR_KEY, avatar.getKey());
