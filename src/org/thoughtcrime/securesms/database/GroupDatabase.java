@@ -196,10 +196,9 @@ public class GroupDatabase extends Database {
    * @return
    */
   private Address getOwnAddress(Context context, List<Address> members) {
-    // TODO to be implemented by
+    // TODO implemented by
     return null;
   }
-
 
   /**
    * Add address of the person who creates
@@ -208,9 +207,17 @@ public class GroupDatabase extends Database {
    * group in the table.
    */
   private void updateModeratorColumn(String groupId, String moderator) {
-    // TODO to be implemented by:
+    // TODO implemented by
   }
 
+  /**
+   * Check if local number is a moderator.
+   * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   */
+  public boolean isModerator(String moderator, String groupId) {
+    // TODO implemented by
+    return false;
+  }
 
   public void update(String groupId, String title, SignalServiceAttachmentPointer avatar) {
     ContentValues contentValues = new ContentValues();
