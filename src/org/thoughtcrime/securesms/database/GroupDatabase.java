@@ -207,7 +207,10 @@ public class GroupDatabase extends Database {
    * group in the table.
    */
   private void updateModeratorColumn(String groupId, String moderator) {
-    // TODO implemented by
+      ContentValues contentValues = new ContentValues();
+      contentValues.put(TITLE, moderator);
+      databaseHelper.getWritableDatabase().update(TABLE_NAME, contentValues, GROUP_ID +  " = ?",
+              new String[] {groupId});
   }
 
   /**
