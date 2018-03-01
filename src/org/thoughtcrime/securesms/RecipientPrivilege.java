@@ -15,7 +15,7 @@ public class RecipientPrivilege implements Privilege {
   private Recipient recipient;
   private Context context;
 
-  public RecipientPrivilege(Recipient recipient, Context context) {
+  RecipientPrivilege(Recipient recipient, Context context) {
     this.recipient = recipient;
     this.context = context;
   }
@@ -33,6 +33,7 @@ public class RecipientPrivilege implements Privilege {
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
       String localNumber = TextSecurePreferences.getLocalNumber(context);
       if (groupDatabase.isModerator(localNumber, recipient.getAddress().toGroupString())) {
+        PermissionType permissionType = PermissionType.EDIT_GROUP;
         return true;
       }
       // success scenario 2: you have the permission
