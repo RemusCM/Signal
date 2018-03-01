@@ -16,7 +16,6 @@ public class PermissionDatabase extends Database {
 
           static final String TABLE_NAME          = "permission";
   private static final String ID                  = "_id";
-  private static final String PERMISSION_ID = "permission_id";
   private static final String GROUP_ID            = "group_id";
   private static final String ADDRESS             = "address";
   private static final String PRIVILEGES          = "privileges";
@@ -24,17 +23,15 @@ public class PermissionDatabase extends Database {
   public static final String CREATE_TABLE =
           "CREATE TABLE " + TABLE_NAME +
                   " (" + ID + " INTEGER PRIMARY KEY, " +
-                  PERMISSION_ID + " TEXT, " +
                   GROUP_ID + " TEXT, " +
                   ADDRESS + " TEXT, " +
                   PRIVILEGES + " TEXT);";
 
   static final String[] CREATE_INDEXS = {
-          "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON " + TABLE_NAME + " (" + PERMISSION_ID + ");",
+          "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON " + TABLE_NAME + " (" + GROUP_ID + ");",
   };
 
-  private static final String[] PERMISSION_PROJECTION = {
-          PERMISSION_ID, GROUP_ID, ADDRESS, PRIVILEGES  };
+  private static final String[] PERMISSION_PROJECTION = {GROUP_ID, ADDRESS, PRIVILEGES};
 
   static final List<String> TYPED_PERMISSION_PROJECTION = Stream.of(PERMISSION_PROJECTION).map(columnName -> TABLE_NAME + "." + columnName).toList();
 

@@ -223,9 +223,7 @@ public class GroupDatabase extends Database {
    */
   public boolean isModerator(String moderator, String groupId) {
     Optional<GroupRecord> record = getGroup(groupId);
-    if(record.get().getModerator().equals(moderator))
-        return true;
-    return false;
+    return record.get().getModerator().equals(moderator);
   }
 
   public void update(String groupId, String title, SignalServiceAttachmentPointer avatar) {

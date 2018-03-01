@@ -116,6 +116,7 @@ public class DatabaseFactory {
   private static final int UNREAD_COUNT_VERSION                            = 46;
   private static final int MORE_RECIPIENT_FIELDS                           = 47;
   private static final int INTRODUCED_MODERATOR                            = 48;
+  private static final int INTRODUCED_PERMISSION_VERSION = 49;
   private static final int DATABASE_VERSION                                = 49;
 
   /**
@@ -128,7 +129,7 @@ public class DatabaseFactory {
    * 2. increment DATABASE_VERSION
    * 3. see if statement: if (oldVersion < ....) in onUpgrade
    */
-  private static final String DATABASE_NAME = "messages2.db";
+  private static final String DATABASE_NAME = "messages.db";
   private static final Object lock             = new Object();
 
   private static DatabaseFactory instance;
@@ -842,10 +843,6 @@ public class DatabaseFactory {
         db.execSQL("ALTER TABLE thread ADD COLUMN snippet_uri TEXT DEFAULT NULL");
       }
 
-      if (oldVersion < INTRODUCED_MODERATOR) {
-        db.execSQL("ALTER TABLE groups ADD COLUMN moderator TEXT DEFAULT NULL");
-      }
-
       if (oldVersion < INTRODUCED_ARCHIVE_VERSION) {
         db.execSQL("ALTER TABLE thread ADD COLUMN archived INTEGER DEFAULT 0");
         db.execSQL("CREATE INDEX IF NOT EXISTS archived_index ON thread (archived)");
@@ -1438,6 +1435,18 @@ public class DatabaseFactory {
           }
         }
       }
+
+      if (oldVersion < INTRODUCED_MODERATOR) {
+        db.execSQL("ALTER TABLE groups ADD COLUMN moderator TEXT DEFAULT NULL");
+      }
+
+      if (oldVersion < INTRODUCED_PERMISSION_VERSION) {
+        db.execSQL("CREATE TABLE permission (_id INTEGER PRIMARY KEY, group_id TEXT, address TEXT, privileges TEXT);");
+        executeStatements(db, new String[]{
+                "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON permission (group_id);"
+        });
+      }
+
 
       db.setTransactionSuccessful();
       db.endTransaction();
