@@ -1330,6 +1330,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   @Override
   public void onModified(final Recipient recipient) {
     Log.w(TAG, "onModified(" + recipient.getAddress().serialize() + ")");
+    RecipientPrivilege recipientPrivilege = new RecipientPrivilege(recipient, this);
+    Log.i(TAG, "can edit " + recipientPrivilege.canEditGroup());
     Util.runOnMain(() -> {
       Log.w(TAG, "onModifiedRun(): " + recipient.getRegistered());
       titleView.setTitle(glideRequests, recipient);

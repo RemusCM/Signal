@@ -115,9 +115,21 @@ public class DatabaseFactory {
   private static final int GROUP_RECEIPT_TRACKING                          = 45;
   private static final int UNREAD_COUNT_VERSION                            = 46;
   private static final int MORE_RECIPIENT_FIELDS                           = 47;
-  private static final int DATABASE_VERSION                                = 47;
+  private static final int INTRODUCED_MODERATOR                            = 48;
+  private static final int INTRODUCED_PERMISSION_VERSION = 49;
+  private static final int DATABASE_VERSION                                = 49;
 
-  private static final String DATABASE_NAME    = "messages.db";
+  /**
+   * Old database name was messages.db
+   * Changed to messages[#].db for development purpose only.
+   * Revert to old name in production.
+   *
+   * If adding a new column, do the following:
+   * 1. make a constant variable INTRODUCED_<COLUMN_NAME>
+   * 2. increment DATABASE_VERSION
+   * 3. see if statement: if (oldVersion < ....) in onUpgrade
+   */
+  private static final String DATABASE_NAME = "messages.db";
   private static final Object lock             = new Object();
 
   private static DatabaseFactory instance;
@@ -138,6 +150,7 @@ public class DatabaseFactory {
   private final RecipientDatabase recipientDatabase;
   private final ContactsDatabase contactsDatabase;
   private final GroupReceiptDatabase groupReceiptDatabase;
+  private final PermissionDatabase permissionDatabase;
 
   public static DatabaseFactory getInstance(Context context) {
     synchronized (lock) {
@@ -204,6 +217,10 @@ public class DatabaseFactory {
     return getInstance(context).groupReceiptDatabase;
   }
 
+  public static PermissionDatabase getPermissionDatabase(Context context) {
+    return getInstance(context).permissionDatabase;
+  }
+
   private DatabaseFactory(Context context) {
     this.databaseHelper       = new DatabaseHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
     this.sms                  = new SmsDatabase(context, databaseHelper);
@@ -220,6 +237,7 @@ public class DatabaseFactory {
     this.recipientDatabase    = new RecipientDatabase(context, databaseHelper);
     this.groupReceiptDatabase = new GroupReceiptDatabase(context, databaseHelper);
     this.contactsDatabase     = new ContactsDatabase(context);
+    this.permissionDatabase = new PermissionDatabase(context, databaseHelper);
   }
 
   public void reset(Context context) {
@@ -238,6 +256,7 @@ public class DatabaseFactory {
     this.groupDatabase.reset(databaseHelper);
     this.recipientDatabase.reset(databaseHelper);
     this.groupReceiptDatabase.reset(databaseHelper);
+    this.permissionDatabase.reset(databaseHelper);
     old.close();
   }
 
@@ -552,6 +571,7 @@ public class DatabaseFactory {
       db.execSQL(GroupDatabase.CREATE_TABLE);
       db.execSQL(RecipientDatabase.CREATE_TABLE);
       db.execSQL(GroupReceiptDatabase.CREATE_TABLE);
+      db.execSQL(PermissionDatabase.CREATE_TABLE);
 
       executeStatements(db, SmsDatabase.CREATE_INDEXS);
       executeStatements(db, MmsDatabase.CREATE_INDEXS);
@@ -560,6 +580,7 @@ public class DatabaseFactory {
       executeStatements(db, DraftDatabase.CREATE_INDEXS);
       executeStatements(db, GroupDatabase.CREATE_INDEXS);
       executeStatements(db, GroupReceiptDatabase.CREATE_INDEXES);
+      executeStatements(db, PermissionDatabase.CREATE_INDEXS);
     }
 
     @Override
@@ -1414,6 +1435,18 @@ public class DatabaseFactory {
           }
         }
       }
+
+      if (oldVersion < INTRODUCED_MODERATOR) {
+        db.execSQL("ALTER TABLE groups ADD COLUMN moderator TEXT DEFAULT NULL");
+      }
+
+      if (oldVersion < INTRODUCED_PERMISSION_VERSION) {
+        db.execSQL("CREATE TABLE permission (_id INTEGER PRIMARY KEY, group_id TEXT, address TEXT, privileges TEXT);");
+        executeStatements(db, new String[]{
+                "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON permission (group_id);"
+        });
+      }
+
 
       db.setTransactionSuccessful();
       db.endTransaction();

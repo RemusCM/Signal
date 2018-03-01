@@ -16,12 +16,12 @@ import java.util.ArrayList;
 
 @SuppressLint({"Registered", "ValidFragment"})
 public class ClearConversationActivity implements DialogInterface.OnClickListener {
-
   private static final String TAG = ClearConversationActivity.class.getSimpleName();
 
   private final Recipient recipient;
   private final Context context;
 
+  private ClearConversationUtil util = new ClearConversationUtil();
 
   ClearConversationActivity(Recipient recipient, Context context) {
     this.recipient = recipient;
@@ -31,17 +31,16 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
   @SuppressLint("StaticFieldLeak")
   @Override
   public void onClick(DialogInterface dialogInterface, int which) {
-
-    new AsyncTask<Void, Void, Void>() {
-      @Override
-      protected Void doInBackground(Void... params) {
-        Address recipientId = recipient.getAddress();
-
-        ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
-        int oldMessageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
-        Log.w(TAG, "Message count = " + String.valueOf(oldMessageCount));
-
-        if (oldMessageCount > 0) {
+    Address recipientId = recipient.getAddress();
+    ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
+    int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
+    if (messageCount < 1) {
+      dialogInterface.dismiss();
+      util.displayNothingToDeleteMessage();
+    } else {
+      new AsyncTask<Void, Void, Void>() {
+        @Override
+        protected Void doInBackground(Void... params) {
           ArrayList<Integer> messageIds;
           messageIds = DatabaseFactory.getSmsDatabase(context).getMessageIdsByRecipientId(recipientId);
           for (int i = 0; i < messageIds.size(); i++) {
@@ -49,22 +48,35 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
             Log.w(TAG, "Deleting: " + String.valueOf(messageId));
             DatabaseFactory.getSmsDatabase(context).deleteMessage(messageId);
           }
-          if (messageIds.isEmpty() || messageIds.size() == 0) {
-            dialogInterface.dismiss();
-            Toast.makeText(context,
-                    R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
-                    Toast.LENGTH_LONG).show();
-          }
-        } else {
-          dialogInterface.dismiss();
-          Toast.makeText(context,
-                  R.string.RecipientPreferenceActivity_clear_conversation_nothing_to_delete,
-                  Toast.LENGTH_LONG).show();
+          return null;
         }
-
-        return null;
-      }
-
-    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+      }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+      dialogInterface.dismiss();
+      util.displayAllMessagesDeleted();
+    }
   }
+
+  private class ClearConversationUtil {
+    private final String TAG = ClearConversationUtil.class.getSimpleName();
+    ClearConversationUtil() {}
+
+    private void displayNothingToDeleteMessage() {
+      Log.w(TAG, "ClearConversationUtil::displayNothingToDeleteMessage()");
+      Toast.makeText(
+              context,
+              R.string.RecipientPreferenceActivity_clear_conversation_nothing_to_delete,
+              Toast.LENGTH_SHORT
+      ).show();
+    }
+
+    private void displayAllMessagesDeleted() {
+      Log.w(TAG, "ClearConversationUtil::displayAllMessagesDeleted()");
+      Toast.makeText(
+              context,
+              R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
+              Toast.LENGTH_LONG
+      ).show();
+    }
+  }
+
 }
