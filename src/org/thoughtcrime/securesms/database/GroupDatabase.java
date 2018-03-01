@@ -197,8 +197,7 @@ public class GroupDatabase extends Database {
    */
   private Address getOwnAddress(Context context, List<Address> members) {
 
-      for(Address address : members)
-      {
+      for(Address address : members) {
           if(Util.isOwnNumber(context, address))
               return address;
       }
@@ -213,7 +212,7 @@ public class GroupDatabase extends Database {
    */
   private void updateModeratorColumn(String groupId, String moderator) {
       ContentValues contentValues = new ContentValues();
-      contentValues.put(TITLE, moderator);
+      contentValues.put(MODERATOR, moderator);
       databaseHelper.getWritableDatabase().update(TABLE_NAME, contentValues, GROUP_ID +  " = ?",
               new String[] {groupId});
   }
