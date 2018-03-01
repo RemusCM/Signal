@@ -1,6 +1,8 @@
 package org.thoughtcrime.securesms.database;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.annimon.stream.Stream;
@@ -46,8 +48,24 @@ public class PermissionDatabase extends Database {
    * @return string of privileges in the form 64,32,16
    */
   private String getRecipientPrivilegesString(String localNumber, String groupId) {
-    // TODO use select query here SELECT privileges FROM permission WHERE address = localNumber
-    return null;
+
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT privileges FROM permission WHERE address = ? AND group_id = ?";
+    String[] sqlArgs  = new String[] {localNumber, groupId};
+
+    try{
+      cursor = db.rawQuery(sql, sqlArgs);
+      if (cursor != null && cursor.moveToFirst()){
+        return cursor.getString(cursor.getColumnIndex(PRIVILEGES));
+      } else {
+        return null;
+      }
+    }finally{
+      if(cursor != null){
+        cursor.close();
+      }
+    }
   }
 
   /**
