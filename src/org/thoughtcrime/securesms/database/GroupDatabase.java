@@ -215,7 +215,9 @@ public class GroupDatabase extends Database {
    * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
    */
   public boolean isModerator(String moderator, String groupId) {
-    // TODO implemented by
+    Optional<GroupRecord> record = getGroup(groupId);
+    if(record.get().getModerator().equals(moderator))
+        return true;
     return false;
   }
 
