@@ -31,7 +31,7 @@ public class PermissionDatabase extends Database {
 
 
   static final String[] CREATE_INDEXS = {
-          "CREATE UNIQUE INDEX IF NOT EXISTS group_id_index ON " + TABLE_NAME + " (" + PERMISSION_ID + ");",
+          "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON " + TABLE_NAME + " (" + PERMISSION_ID + ");",
   };
 
   private static final String[] PERMISSION_PROJECTION = {
