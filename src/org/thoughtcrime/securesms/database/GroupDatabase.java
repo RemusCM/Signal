@@ -196,8 +196,12 @@ public class GroupDatabase extends Database {
    * @return
    */
   private Address getOwnAddress(Context context, List<Address> members) {
-    // TODO implemented by
-    return null;
+
+      for(Address address : members) {
+          if(Util.isOwnNumber(context, address))
+              return address;
+      }
+      return null;
   }
 
   /**
@@ -207,7 +211,10 @@ public class GroupDatabase extends Database {
    * group in the table.
    */
   private void updateModeratorColumn(String groupId, String moderator) {
-    // TODO implemented by
+      ContentValues contentValues = new ContentValues();
+      contentValues.put(MODERATOR, moderator);
+      databaseHelper.getWritableDatabase().update(TABLE_NAME, contentValues, GROUP_ID +  " = ?",
+              new String[] {groupId});
   }
 
   /**
@@ -215,7 +222,9 @@ public class GroupDatabase extends Database {
    * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
    */
   public boolean isModerator(String moderator, String groupId) {
-    // TODO implemented by
+    Optional<GroupRecord> record = getGroup(groupId);
+    if(record.get().getModerator().equals(moderator))
+        return true;
     return false;
   }
 
