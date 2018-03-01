@@ -10,7 +10,7 @@ import java.util.List;
 public class PermissionDatabase extends Database {
 
 
-  public PermissionDatabase(Context context, SQLiteOpenHelper databaseHelper) {
+  PermissionDatabase(Context context, SQLiteOpenHelper databaseHelper) {
     super(context, databaseHelper);
   }
 
@@ -48,6 +48,11 @@ public class PermissionDatabase extends Database {
     List<String> list = splitPrivilegesIntoList(privileges);
     String editGroupCode = String.valueOf(PermissionType.EDIT_GROUP);
     return list != null && list.contains(editGroupCode);
+  }
+
+  public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
+    // TODO see hasEditGroupPermission for reference
+    return false;
   }
 
 
