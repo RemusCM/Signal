@@ -34,7 +34,6 @@ public class RecipientPrivilege implements Privilege {
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
       String localNumber = TextSecurePreferences.getLocalNumber(context);
       if (groupDatabase.isModerator(localNumber, recipient.getAddress().toGroupString())) {
-        PermissionType permissionType = PermissionType.EDIT_GROUP;
         return true;
       }
 
@@ -45,6 +44,7 @@ public class RecipientPrivilege implements Privilege {
        * in permission table
        */
       PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+      // if () {}
 
     }
 
@@ -53,6 +53,7 @@ public class RecipientPrivilege implements Privilege {
 
   @Override
   public boolean canClearGroupConversation() {
+    // TODO use PermissionDatabase hasClearGroupConversationPermission to verify
     return false;
   }
 
