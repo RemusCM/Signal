@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.GroupDatabase;
+import org.thoughtcrime.securesms.database.PermissionDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
@@ -24,7 +25,7 @@ public class RecipientPrivilege implements Privilege {
   public boolean canEditGroup() {
     if (recipient.isGroupRecipient()) {
     /*
-     * success scenario 1: you are the moderator
+     * Success Scenario 1: you are the moderator
      * Using group database you can determine if you can edit
      * group name.
      *
@@ -36,7 +37,15 @@ public class RecipientPrivilege implements Privilege {
         PermissionType permissionType = PermissionType.EDIT_GROUP;
         return true;
       }
-      // success scenario 2: you have the permission
+
+      /*
+       * Success Scenario 2: you have the permission
+       * TODO check if the current user (localNumber)
+       * has the permission 64 (edit group in column privilege)
+       * in permission table
+       */
+      PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+
     }
 
     return false;
@@ -46,5 +55,6 @@ public class RecipientPrivilege implements Privilege {
   public boolean canClearGroupConversation() {
     return false;
   }
+
 
 }
