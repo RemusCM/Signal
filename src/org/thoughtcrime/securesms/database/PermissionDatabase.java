@@ -16,7 +16,7 @@ public class PermissionDatabase extends Database {
 
           static final String TABLE_NAME          = "permission";
   private static final String ID                  = "_id";
-          static final String PERMISSION_ID       = "permission_id";
+  private static final String PERMISSION_ID = "permission_id";
   private static final String GROUP_ID            = "group_id";
   private static final String ADDRESS             = "address";
   private static final String PRIVILEGES          = "privileges";
@@ -28,7 +28,6 @@ public class PermissionDatabase extends Database {
                   GROUP_ID + " TEXT, " +
                   ADDRESS + " TEXT, " +
                   PRIVILEGES + " TEXT);";
-
 
   static final String[] CREATE_INDEXS = {
           "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON " + TABLE_NAME + " (" + PERMISSION_ID + ");",
@@ -42,8 +41,6 @@ public class PermissionDatabase extends Database {
   PermissionDatabase(Context context, SQLiteOpenHelper databaseHelper) {
     super(context, databaseHelper);
   }
-
-  // TODO create table
 
   /**
    * String localNumber = TextSecurePreferences.getLocalNumber(context);
@@ -82,6 +79,10 @@ public class PermissionDatabase extends Database {
   public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
     // TODO see hasEditGroupPermission for reference
     return false;
+  }
+
+  private void create() {
+
   }
 
 

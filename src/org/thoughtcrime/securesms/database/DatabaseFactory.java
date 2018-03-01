@@ -128,7 +128,7 @@ public class DatabaseFactory {
    * 2. increment DATABASE_VERSION
    * 3. see if statement: if (oldVersion < ....) in onUpgrade
    */
-  private static final String DATABASE_NAME    = "messages1.db";
+  private static final String DATABASE_NAME = "messages2.db";
   private static final Object lock             = new Object();
 
   private static DatabaseFactory instance;
@@ -255,6 +255,7 @@ public class DatabaseFactory {
     this.groupDatabase.reset(databaseHelper);
     this.recipientDatabase.reset(databaseHelper);
     this.groupReceiptDatabase.reset(databaseHelper);
+    this.permissionDatabase.reset(databaseHelper);
     old.close();
   }
 
@@ -569,6 +570,7 @@ public class DatabaseFactory {
       db.execSQL(GroupDatabase.CREATE_TABLE);
       db.execSQL(RecipientDatabase.CREATE_TABLE);
       db.execSQL(GroupReceiptDatabase.CREATE_TABLE);
+      db.execSQL(PermissionDatabase.CREATE_TABLE);
 
       executeStatements(db, SmsDatabase.CREATE_INDEXS);
       executeStatements(db, MmsDatabase.CREATE_INDEXS);
@@ -577,6 +579,7 @@ public class DatabaseFactory {
       executeStatements(db, DraftDatabase.CREATE_INDEXS);
       executeStatements(db, GroupDatabase.CREATE_INDEXS);
       executeStatements(db, GroupReceiptDatabase.CREATE_INDEXES);
+      executeStatements(db, PermissionDatabase.CREATE_INDEXS);
     }
 
     @Override
