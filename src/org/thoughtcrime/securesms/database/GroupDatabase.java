@@ -179,6 +179,9 @@ public class GroupDatabase extends Database {
     String moderator = String.valueOf(getOwnAddress(context, members));
     updateModeratorColumn(groupId, moderator);
 
+    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+    permissionDatabase.create(groupId, moderator, members);
+
     Recipient.applyCached(Address.fromSerialized(groupId), recipient -> {
       recipient.setName(title);
       recipient.setGroupAvatarId(avatar != null ? avatar.getId() : null);
@@ -196,7 +199,6 @@ public class GroupDatabase extends Database {
    * @return
    */
   private Address getOwnAddress(Context context, List<Address> members) {
-
       for(Address address : members) {
           if(Util.isOwnNumber(context, address))
               return address;
