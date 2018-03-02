@@ -56,15 +56,15 @@ public class PermissionDatabase extends Database {
     String sql = "SELECT * FROM permission WHERE address = ? AND group_id = ?";
     String[] sqlArgs  = new String[] {localNumber, groupId};
 
-    try{
+    try {
       cursor = db.rawQuery(sql, sqlArgs);
-      if (cursor != null && cursor.moveToFirst()){
+      if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(cursor.getColumnIndex(PRIVILEGES));
       } else {
         return null;
       }
-    }finally{
-      if(cursor != null){
+    } finally {
+      if (cursor != null) {
         cursor.close();
       }
     }
@@ -113,23 +113,22 @@ public class PermissionDatabase extends Database {
 
   /**
    * Insert records into the permission table.
-   *
    * @param groupId this acts like a primary key
+   * @param givenPrivileges privileges given to this moderator
    * @param members group members
    */
-  public void create(String groupId, String moderator, List<Address> members) {
+  public void create(String groupId, String moderator, String[] givenPrivileges, List<Address> members) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
     PermissionType editGroup = PermissionType.EDIT_GROUP;
     PermissionType clearChat = PermissionType.CLEAR_GROUP_CONVERSATION;
-    String[] str = {editGroup.getPermissionTypeCode(), clearChat.getPermissionTypeCode()};
 
     for (Address member : members) {
       ContentValues values = new ContentValues();
       values.put(GROUP_ID, groupId);
       values.put(ADDRESS, member.serialize());
       if (moderator.equals(member.serialize())) {
-        values.put(PRIVILEGES, joinStringPrivileges(str));
+        values.put(PRIVILEGES, joinStringPrivileges(givenPrivileges));
       } else {
         values.put(PRIVILEGES, "");
       }
@@ -192,7 +191,7 @@ public class PermissionDatabase extends Database {
       return privileges;
     }
   }
-  
+
   /**
    * Reader of permission database (helper class)
    * You can use this reader to read a cursor.
