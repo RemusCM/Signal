@@ -120,15 +120,38 @@ public class PermissionDatabase extends Database {
   public void create(String groupId, String moderator, String[] givenPrivileges, List<Address> members) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
-    PermissionType editGroup = PermissionType.EDIT_GROUP;
-    PermissionType clearChat = PermissionType.CLEAR_GROUP_CONVERSATION;
-
     for (Address member : members) {
       ContentValues values = new ContentValues();
       values.put(GROUP_ID, groupId);
       values.put(ADDRESS, member.serialize());
       if (moderator.equals(member.serialize())) {
         values.put(PRIVILEGES, joinStringPrivileges(givenPrivileges));
+      } else {
+        values.put(PRIVILEGES, "");
+      }
+
+      db.insert(TABLE_NAME, null, values);
+    }
+
+  }
+
+  /**
+   * You can insert a record in the permission table
+   * using this alternative method. It uses PermissionRecord
+   * object (wrapper class)
+   *
+   * @param record  a row to be inserted
+   * @param members to be inserted
+   */
+  public void createUsingObject(PermissionRecord record, List<Address> members) {
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+    for (Address member : members) {
+      ContentValues values = new ContentValues();
+      values.put(GROUP_ID, record.getGroupId());
+      values.put(ADDRESS, member.serialize());
+      if (record.getAddress().equals(member.serialize())) {
+        values.put(PRIVILEGES, record.getPrivileges());
       } else {
         values.put(PRIVILEGES, "");
       }
@@ -163,20 +186,15 @@ public class PermissionDatabase extends Database {
    * permission table.
    */
   public static class PermissionRecord {
-    private final String id;
+
     private final String groupId;
     private final String address;
     private final String privileges;
 
-    public PermissionRecord(String id, String groupId, String address, String privileges) {
-      this.id = id;
+    public PermissionRecord(String groupId, String address, String privileges) {
       this.groupId = groupId;
       this.address = address;
       this.privileges = privileges;
-    }
-
-    public String getId() {
-      return id;
     }
 
     public String getGroupId() {
@@ -221,7 +239,6 @@ public class PermissionDatabase extends Database {
       }
 
       return new PermissionRecord(
-              cursor.getString(cursor.getColumnIndexOrThrow(ID)),
               cursor.getString(cursor.getColumnIndexOrThrow(GROUP_ID)),
               cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)),
               cursor.getString(cursor.getColumnIndexOrThrow(PRIVILEGES))

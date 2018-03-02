@@ -186,6 +186,14 @@ public class GroupDatabase extends Database {
             PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
     };
     permissionDatabase.create(groupId, moderator, givenPrivileges, members);
+    /*
+    PermissionDatabase.PermissionRecord permissionRecord = new PermissionDatabase.PermissionRecord(
+            groupId,
+            moderator,
+            Util.joinStringArray(givenPrivileges)
+    );
+    permissionDatabase.createUsingObject(permissionRecord, members);
+    */
     // END MODERATOR FUNCTIONALITY
 
     Recipient.applyCached(Address.fromSerialized(groupId), recipient -> {
