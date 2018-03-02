@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,7 +32,7 @@ public class PermissionDatabase extends Database {
                   PRIVILEGES + " TEXT);";
 
   static final String[] CREATE_INDEXS = {
-          "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON " + TABLE_NAME + " (" + GROUP_ID + ");",
+          "CREATE INDEX IF NOT EXISTS permission_id_index ON " + TABLE_NAME + " (" + GROUP_ID + ");",
   };
 
   private static final String[] PERMISSION_PROJECTION = {GROUP_ID, ADDRESS, PRIVILEGES};
@@ -43,9 +44,7 @@ public class PermissionDatabase extends Database {
   }
 
   /**
-   * String localNumber = TextSecurePreferences.getLocalNumber(context);
-   * recipient.getAddress().toGroupString()
-   *
+   * Get privileges of user.
    * @return string of privileges in the form 64,32,16
    */
   private String getRecipientPrivilegesString(String localNumber, String groupId) {
@@ -71,17 +70,15 @@ public class PermissionDatabase extends Database {
 
   /**
    * This is a helper method. Don't remove.
-   *
    * Parses String privileges (split comma separated string) into a list
-   *
    * @param privileges from getRecipientPrivilegesString
    * @return array of privileges
    */
   private List<String> splitPrivilegesIntoList(String privileges) {
-    List<String> privilegeList  = new LinkedList<>();
+    List<String> privilegeList = new LinkedList<>();
     String[] privilegeTokens = privileges.split("\\,");
 
-    for(int i=0; i<privilegeTokens.length; i++){
+    for (int i = 0; i < privilegeTokens.length; i++) {
       privilegeList.add(privilegeTokens[i]);
     }
 
@@ -100,6 +97,11 @@ public class PermissionDatabase extends Database {
     return list != null && list.contains(editGroupCode);
   }
 
+  /**
+   * @param localNumber the current user phone number
+   * @param groupId     Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   * @return true if current user has clear group chat permission
+   */
   public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
     String privileges = getRecipientPrivilegesString(localNumber, groupId);
     List<String> list = splitPrivilegesIntoList(privileges);
@@ -107,9 +109,50 @@ public class PermissionDatabase extends Database {
     return list != null && list.contains(clearGroupConversationCode);
   }
 
-  private void create() {
+  /**
+   * Insert records into the permission table.
+   *
+   * @param groupId this acts like a primary key
+   * @param members group members
+   */
+  public void create(String groupId, String moderator, List<Address> members) {
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+    PermissionType editGroup = PermissionType.EDIT_GROUP;
+    PermissionType clearChat = PermissionType.CLEAR_GROUP_CONVERSATION;
+    String[] str = {editGroup.getPermissionTypeCode(), clearChat.getPermissionTypeCode()};
+
+    for (Address member : members) {
+      ContentValues values = new ContentValues();
+      values.put(GROUP_ID, groupId);
+      values.put(ADDRESS, member.serialize());
+      if (moderator.equals(member.serialize())) {
+        values.put(PRIVILEGES, joinStringPrivileges(str));
+      } else {
+        values.put(PRIVILEGES, "");
+      }
+
+      db.insert(TABLE_NAME, null, values);
+    }
 
   }
 
-
+  /**
+   * Concatenate privilege with comma
+   * into one single string variable.
+   *
+   * @param str strings privileges
+   * @return comma separated string
+   */
+  private String joinStringPrivileges(String[] str) {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < str.length; i++) {
+      if (i != str.length - 1) {
+        stringBuilder.append(str[i].concat(","));
+      } else {
+        stringBuilder.append(str[i]);
+      }
+    }
+    return stringBuilder.toString();
+  }
 }
