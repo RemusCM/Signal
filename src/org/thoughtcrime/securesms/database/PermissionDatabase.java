@@ -52,7 +52,7 @@ public class PermissionDatabase extends Database {
 
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
-    String sql = "SELECT privileges FROM permission WHERE address = ? AND group_id = ?";
+    String sql = "SELECT * FROM permission WHERE address = ? AND group_id = ?";
     String[] sqlArgs  = new String[] {localNumber, groupId};
 
     try{
@@ -101,8 +101,10 @@ public class PermissionDatabase extends Database {
   }
 
   public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
-    // TODO see hasEditGroupPermission for reference
-    return false;
+    String privileges = getRecipientPrivilegesString(localNumber, groupId);
+    List<String> list = splitPrivilegesIntoList(privileges);
+    String clearGroupConversationCode = String.valueOf(PermissionType.CLEAR_GROUP_CONVERSATION);
+    return list != null && list.contains(clearGroupConversationCode);
   }
 
   private void create() {
