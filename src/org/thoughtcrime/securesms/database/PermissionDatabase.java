@@ -79,7 +79,7 @@ public class PermissionDatabase extends Database {
    */
   private List<String> splitPrivilegesIntoList(String privileges) {
     List<String> privilegeList  = new LinkedList<>();
-    String[] privilegeTokens = privileges.split("\\,\\s");
+    String[] privilegeTokens = privileges.split("\\,");
 
     for(int i=0; i<privilegeTokens.length; i++){
       privilegeList.add(privilegeTokens[i]);
