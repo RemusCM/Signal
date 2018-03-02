@@ -28,23 +28,23 @@ public class RecipientPrivilege implements Privilege {
      * Success Scenario 1: you are the moderator
      * Using group database you can determine if you can edit
      * group name.
-     *
-     * Util.isOwnNumber(context, recipient.getAddress());
      */
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
       String localNumber = TextSecurePreferences.getLocalNumber(context);
-      if (groupDatabase.isModerator(localNumber, recipient.getAddress().toGroupString())) {
+      String groupId = recipient.getAddress().toGroupString();
+      if (groupDatabase.isModerator(localNumber, groupId)) {
         return true;
       }
 
       /*
        * Success Scenario 2: you have the permission
-       * TODO check if the current user (localNumber)
        * has the permission 64 (edit group in column privilege)
        * in permission table
        */
       PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-      // if () {}
+      if (permissionDatabase.hasEditGroupPermission(localNumber, groupId)) {
+        return true;
+      }
 
     }
 
@@ -53,7 +53,9 @@ public class RecipientPrivilege implements Privilege {
 
   @Override
   public boolean canClearGroupConversation() {
-    // TODO use PermissionDatabase hasClearGroupConversationPermission to verify
+    // TODO to be implemented by @ian-tab
+    // see canEditGroup above
+    // use PermissionDatabase hasClearGroupConversationPermission to verify
     return false;
   }
 
