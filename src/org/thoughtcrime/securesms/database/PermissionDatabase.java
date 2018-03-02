@@ -9,6 +9,7 @@ import com.annimon.stream.Stream;
 
 import org.thoughtcrime.securesms.PermissionType;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class PermissionDatabase extends Database {
@@ -71,12 +72,20 @@ public class PermissionDatabase extends Database {
   /**
    * This is a helper method. Don't remove.
    *
+   * Parses String privileges (split comma separated string) into a list
+   *
    * @param privileges from getRecipientPrivilegesString
    * @return array of privileges
    */
   private List<String> splitPrivilegesIntoList(String privileges) {
-    // TODO parse string privileges (split comma separated string)
-    return null;
+    List<String> privilegeList  = new LinkedList<>();
+    String[] privilegeTokens = privileges.split("\\,\\s");
+
+    for(int i=0; i<privilegeTokens.length; i++){
+      privilegeList.add(privilegeTokens[i]);
+    }
+
+    return privilegeList;
   }
 
   /**
