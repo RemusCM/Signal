@@ -55,16 +55,16 @@ public class RecipientPrivilege implements Privilege {
   public boolean canClearGroupConversation() {
     // TODO to be implemented by @ian-tab
     // see canEditGroup above
-	/*
+    /*
      * Success Scenario 1: you are the moderator
      * has the permission 32 (clear group chat)
      * in permission's privileges table
      */
-	 
-	 /*
+
+	  /*
      * Success Scenario 2: you have the permission
      * in permission's privileges table
-	 * use PermissionDatabase hasClearGroupConversationPermission to verify
+	   * use PermissionDatabase hasClearGroupConversationPermission to verify
      */
     return false;
   }
