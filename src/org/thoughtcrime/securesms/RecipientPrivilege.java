@@ -29,9 +29,15 @@ public class RecipientPrivilege implements Privilege {
      * Using group database you can determine if you can edit
      * group name.
      */
+
+      // Getting the group database
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
+      // Getting the local number (the phone number of the main user
       String localNumber = TextSecurePreferences.getLocalNumber(context);
+
+      // Extracting the groupId from the local number
       String groupId = recipient.getAddress().toGroupString();
+      // if the current user is a moderator then return true and clear the groupChat
       if (groupDatabase.isModerator(localNumber, groupId)) {
         return true;
       }
@@ -42,19 +48,20 @@ public class RecipientPrivilege implements Privilege {
        * in permission table
        */
       PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+
+      // check if the user has edit privileges in that group
       if (permissionDatabase.hasEditGroupPermission(localNumber, groupId)) {
         return true;
       }
 
     }
 
+    // Then user must not have had editing privileges
     return false;
   }
 
   @Override
   public boolean canClearGroupConversation() {
-    // TODO to be implemented by @ian-tab
-    // see canEditGroup above
     /*
      * Success Scenario 1: you are the moderator
      * has the permission 32 (clear group chat)
@@ -63,13 +70,13 @@ public class RecipientPrivilege implements Privilege {
 
     // Getting the group database
     GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
-    // Getting the local number
+    // Getting the local number (the phone number of the main user
     String localNumber = TextSecurePreferences.getLocalNumber(context);
 
     // Extracting the groupId from the local number
     String groupId = recipient.getAddress().toGroupString();
 
-    // if the current user is a moderator then return true and clear the groupChat
+    // check if the current user is a moderator
     if (groupDatabase.isModerator(localNumber, groupId)) {
       return true;
     }
@@ -82,10 +89,12 @@ public class RecipientPrivilege implements Privilege {
 
 	  PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
 
+	  // check if the current user has the privileges to clear conversation in that group
     if (permissionDatabase.hasClearGroupConversationPermission(localNumber, groupId)) {
       return true;
     }
 
+    //Then the user must not have had permission and we return false
     return false;
   }
 }
