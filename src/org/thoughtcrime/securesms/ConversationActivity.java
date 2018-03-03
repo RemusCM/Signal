@@ -474,6 +474,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   public boolean onPrepareOptionsMenu(Menu menu) {
     MenuInflater inflater = this.getMenuInflater();
     menu.clear();
+    Context           context         = ConversationActivity.this;
+    RecipientPrivilege recipientPrivilege = new RecipientPrivilege(recipient, context);
+    Log.i(TAG, "can edit " + recipientPrivilege.canEditGroup());
 
     if (isSecureText) {
       if (recipient.getExpireMessages() > 0) {
