@@ -13,6 +13,8 @@ import org.thoughtcrime.securesms.PermissionType;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class PermissionDatabase extends Database {
 
 
@@ -54,15 +56,15 @@ public class PermissionDatabase extends Database {
     String sql = "SELECT * FROM permission WHERE address = ? AND group_id = ?";
     String[] sqlArgs  = new String[] {localNumber, groupId};
 
-    try{
+    try {
       cursor = db.rawQuery(sql, sqlArgs);
-      if (cursor != null && cursor.moveToFirst()){
+      if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(cursor.getColumnIndex(PRIVILEGES));
       } else {
         return null;
       }
-    }finally{
-      if(cursor != null){
+    } finally {
+      if (cursor != null) {
         cursor.close();
       }
     }
@@ -93,7 +95,7 @@ public class PermissionDatabase extends Database {
   public boolean hasEditGroupPermission(String localNumber, String groupId) {
     String privileges = getRecipientPrivilegesString(localNumber, groupId);
     List<String> list = splitPrivilegesIntoList(privileges);
-    String editGroupCode = String.valueOf(PermissionType.EDIT_GROUP);
+    String editGroupCode = PermissionType.EDIT_GROUP.getPermissionTypeCode();
     return list != null && list.contains(editGroupCode);
   }
 
@@ -105,29 +107,51 @@ public class PermissionDatabase extends Database {
   public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
     String privileges = getRecipientPrivilegesString(localNumber, groupId);
     List<String> list = splitPrivilegesIntoList(privileges);
-    String clearGroupConversationCode = String.valueOf(PermissionType.CLEAR_GROUP_CONVERSATION);
-    return list != null && list.contains(clearGroupConversationCode);
+    String clearGroupChatCode = PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode();
+    return list != null && list.contains(clearGroupChatCode);
   }
 
   /**
    * Insert records into the permission table.
-   *
    * @param groupId this acts like a primary key
+   * @param givenPrivileges privileges given to this moderator
    * @param members group members
    */
-  public void create(String groupId, String moderator, List<Address> members) {
+  public void create(String groupId, String moderator, String[] givenPrivileges, List<Address> members) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
-
-    PermissionType editGroup = PermissionType.EDIT_GROUP;
-    PermissionType clearChat = PermissionType.CLEAR_GROUP_CONVERSATION;
-    String[] str = {editGroup.getPermissionTypeCode(), clearChat.getPermissionTypeCode()};
 
     for (Address member : members) {
       ContentValues values = new ContentValues();
       values.put(GROUP_ID, groupId);
       values.put(ADDRESS, member.serialize());
       if (moderator.equals(member.serialize())) {
-        values.put(PRIVILEGES, joinStringPrivileges(str));
+        values.put(PRIVILEGES, joinStringPrivileges(givenPrivileges));
+      } else {
+        values.put(PRIVILEGES, "");
+      }
+
+      db.insert(TABLE_NAME, null, values);
+    }
+
+  }
+
+  /**
+   * You can insert a record in the permission table
+   * using this alternative method. It uses PermissionRecord
+   * object (wrapper class)
+   *
+   * @param record  a row to be inserted
+   * @param members to be inserted
+   */
+  public void createUsingObject(PermissionRecord record, List<Address> members) {
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+    for (Address member : members) {
+      ContentValues values = new ContentValues();
+      values.put(GROUP_ID, record.getGroupId());
+      values.put(ADDRESS, member.serialize());
+      if (record.getAddress().equals(member.serialize())) {
+        values.put(PRIVILEGES, record.getPrivileges());
       } else {
         values.put(PRIVILEGES, "");
       }
@@ -155,4 +179,79 @@ public class PermissionDatabase extends Database {
     }
     return stringBuilder.toString();
   }
+
+  /**
+   * Permission model (helper class)
+   * use for reading a record from
+   * permission table.
+   */
+  public static class PermissionRecord {
+
+    private final String groupId;
+    private final String address;
+    private final String privileges;
+
+    public PermissionRecord(String groupId, String address, String privileges) {
+      this.groupId = groupId;
+      this.address = address;
+      this.privileges = privileges;
+    }
+
+    public String getGroupId() {
+      return groupId;
+    }
+
+    public String getAddress() {
+      return address;
+    }
+
+    public String getPrivileges() {
+      return privileges;
+    }
+  }
+
+  /**
+   * Reader of permission database (helper class)
+   * You can use this reader to read a cursor.
+   * See getCurrentMembers of GroupDatabase for
+   * usage.
+   */
+  public static class Reader {
+
+    private final Cursor cursor;
+
+    public Reader(Cursor cursor) {
+      this.cursor = cursor;
+    }
+
+    public @Nullable
+    PermissionRecord getNext() {
+      if (cursor == null || !cursor.moveToNext()) {
+        return null;
+      }
+      return getCurrent();
+    }
+
+    public @Nullable
+    PermissionRecord getCurrent() {
+      if (cursor == null || cursor.getString(cursor.getColumnIndexOrThrow(GROUP_ID)) == null) {
+        return null;
+      }
+
+      return new PermissionRecord(
+              cursor.getString(cursor.getColumnIndexOrThrow(GROUP_ID)),
+              cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)),
+              cursor.getString(cursor.getColumnIndexOrThrow(PRIVILEGES))
+      );
+    }
+
+    public void close() {
+      if (this.cursor != null) {
+        this.cursor.close();
+      }
+    }
+
+  }
+
+  
 }
