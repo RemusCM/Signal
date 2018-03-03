@@ -474,6 +474,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   public boolean onPrepareOptionsMenu(Menu menu) {
     MenuInflater inflater = this.getMenuInflater();
     menu.clear();
+    Context           context         = ConversationActivity.this;
+    RecipientPrivilege recipientPrivilege = new RecipientPrivilege(recipient, context);
+    Log.i(TAG, "can edit " + recipientPrivilege.canEditGroup());
 
     if (isSecureText) {
       if (recipient.getExpireMessages() > 0) {
@@ -504,7 +507,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           menu.findItem(R.id.menu_distribution_conversation).setChecked(true);
         }
       } else if (isActiveGroup()) {
-        inflater.inflate(R.menu.conversation_push_group_options, menu);
+          if(recipientPrivilege.canEditGroup())
+              inflater.inflate(R.menu.conversation_push_group_options, menu);
+          else
+            inflater.inflate(R.menu.conversation_push_group_options_restriction, menu);
       }
     }
 
