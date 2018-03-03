@@ -18,6 +18,7 @@ public class RecipientPrivilege implements Privilege {
   private String localNumber;
   GroupDatabase groupDatabase;
   PermissionDatabase permissionDatabase;
+  String groupId;
 
   RecipientPrivilege(Recipient recipient, Context context) {
     this.recipient = recipient;
@@ -32,6 +33,9 @@ public class RecipientPrivilege implements Privilege {
     // Getting the local number (the phone number of the main user
     String localNumber = TextSecurePreferences.getLocalNumber(context);
     this.localNumber = localNumber;
+
+    // Extracting the groupId from the local number
+    groupId = recipient.getAddress().toGroupString();
   }
 
   @Override
@@ -43,8 +47,7 @@ public class RecipientPrivilege implements Privilege {
      * group name.
      */
 
-      // Extracting the groupId from the local number
-      String groupId = recipient.getAddress().toGroupString();
+
 
       if (groupDatabase.isModerator(localNumber, groupId)) {
         return true;
@@ -73,10 +76,6 @@ public class RecipientPrivilege implements Privilege {
      * has the permission 32 (clear group chat)
      * in permission's privileges table
      */
-
-
-    // Extracting the groupId from the local number
-    String groupId = recipient.getAddress().toGroupString();
 
     // check if the current user is a moderator
     if (groupDatabase.isModerator(localNumber, groupId)) {
