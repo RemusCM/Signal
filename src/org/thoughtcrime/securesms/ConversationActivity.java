@@ -509,6 +509,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       } else if (isActiveGroup()) {
           if(recipientPrivilege.canEditGroup())
               inflater.inflate(R.menu.conversation_push_group_options, menu);
+          else
+            inflater.inflate(R.menu.conversation_push_group_options_restriction, menu);
       }
     }
 
