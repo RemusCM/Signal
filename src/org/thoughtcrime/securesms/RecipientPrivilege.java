@@ -15,10 +15,17 @@ public class RecipientPrivilege implements Privilege {
   private static final String TAG = RecipientPrivilege.class.getSimpleName();
   private Recipient recipient;
   private Context context;
+  private String localNumber;
 
   RecipientPrivilege(Recipient recipient, Context context) {
     this.recipient = recipient;
     this.context = context;
+
+    // Getting the group database
+    GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
+    // Getting the local number (the phone number of the main user
+    String localNumber = TextSecurePreferences.getLocalNumber(context);
+    this.localNumber = localNumber;
   }
 
   @Override
@@ -32,8 +39,6 @@ public class RecipientPrivilege implements Privilege {
 
       // Getting the group database
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
-      // Getting the local number (the phone number of the main user
-      String localNumber = TextSecurePreferences.getLocalNumber(context);
 
       // Extracting the groupId from the local number
       String groupId = recipient.getAddress().toGroupString();
@@ -70,8 +75,6 @@ public class RecipientPrivilege implements Privilege {
 
     // Getting the group database
     GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
-    // Getting the local number (the phone number of the main user
-    String localNumber = TextSecurePreferences.getLocalNumber(context);
 
     // Extracting the groupId from the local number
     String groupId = recipient.getAddress().toGroupString();
