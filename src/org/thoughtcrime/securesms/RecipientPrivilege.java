@@ -61,13 +61,31 @@ public class RecipientPrivilege implements Privilege {
      * in permission's privileges table
      */
 
+    // Getting the group database
+    GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
+    // Getting the local number
+    String localNumber = TextSecurePreferences.getLocalNumber(context);
+
+    // Extracting the groupId from the local number
+    String groupId = recipient.getAddress().toGroupString();
+
+    // if the current user is a moderator then return true and clear the groupChat
+    if (groupDatabase.isModerator(localNumber, groupId)) {
+      return true;
+    }
+
 	  /*
      * Success Scenario 2: you have the permission
      * in permission's privileges table
 	   * use PermissionDatabase hasClearGroupConversationPermission to verify
      */
+
+	  PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+
+    if (permissionDatabase.hasClearGroupConversationPermission(localNumber, groupId)) {
+      return true;
+    }
+
     return false;
   }
-
-
 }
