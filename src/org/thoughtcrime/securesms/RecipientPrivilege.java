@@ -8,91 +8,78 @@ import org.thoughtcrime.securesms.database.PermissionDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
-import javax.annotation.Nullable;
-
 public class RecipientPrivilege implements Privilege {
 
   private static final String TAG = RecipientPrivilege.class.getSimpleName();
+
   private Recipient recipient;
-  private Context context;
-  private String localNumber;
-  GroupDatabase groupDatabase;
-  PermissionDatabase permissionDatabase;
-  String groupId;
+
+  /**
+   * databases needed for determining if one is permitted
+   *   groupDatabase: use to determine who's moderator in a group
+   *   permissionDatabase: use to determine user privileges
+   */
+  private GroupDatabase groupDatabase;
+  private PermissionDatabase permissionDatabase;
+
+  /**
+   * parameters required for determining if one is permitted
+   *   currentUserPhoneNumber: current user's phone number
+   *   groupId: unique group id
+   */
+  private final String currentUserPhoneNumber;
+  private final String groupId;
 
   RecipientPrivilege(Recipient recipient, Context context) {
     this.recipient = recipient;
-    this.context = context;
 
-    // Getting the group database
-    groupDatabase = DatabaseFactory.getGroupDatabase(context);
+    this.groupDatabase = DatabaseFactory.getGroupDatabase(context);
+    this.permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
 
-    // Getting the permission database
-    permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-
-    // Getting the local number (the phone number of the main user
-    String localNumber = TextSecurePreferences.getLocalNumber(context);
-    this.localNumber = localNumber;
-
-    // Extracting the groupId from the local number
-    groupId = recipient.getAddress().toGroupString();
+    this.currentUserPhoneNumber = TextSecurePreferences.getLocalNumber(context);
+    this.groupId = recipient.getAddress().toGroupString();
   }
 
+
+  /*
+   * Success Scenario 1: if you are the moderator
+   * and you have the permission to edit a group.
+   * With this permission you can: edit group name
+   * and add group member(s)
+   *
+   * Success Scenario 2 (for non-moderator): if you're granted the permission
+   * to edit a group
+   */
   @Override
   public boolean canEditGroup() {
     if (recipient.isGroupRecipient()) {
-    /*
-     * Success Scenario 1: you are the moderator
-     * Using group database you can determine if you can edit
-     * group name.
-     */
-
-
-
-      if (groupDatabase.isModerator(localNumber, groupId)) {
+      if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         return true;
       }
-
-      /*
-       * Success Scenario 2: you have the permission
-       * has the permission 64 (edit group in column privilege)
-       * in permission table
-       */
-
-      if (permissionDatabase.hasEditGroupPermission(localNumber, groupId)) {
+      if (permissionDatabase.hasEditGroupPermission(currentUserPhoneNumber, groupId)) {
         return true;
       }
-
     }
-
-    // Then user must not have had editing privileges
     return false;
   }
 
+  /*
+   * Success Scenario 1: if you are the moderator
+   * and you have the permission to clear a group chat
+   *
+   * Success Scenario 2 (for non-moderator): you are granted the
+   * permission to clear a conversation in a group chat
+   */
   @Override
   public boolean canClearGroupConversation() {
-    /*
-     * Success Scenario 1: you are the moderator
-     * has the permission 32 (clear group chat)
-     * in permission's privileges table
-     */
-
-    // check if the current user is a moderator
-    if (groupDatabase.isModerator(localNumber, groupId)) {
-      return true;
+    if (recipient.isGroupRecipient()) {
+      if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
+        return true;
+      }
+      if (permissionDatabase.hasClearGroupConversationPermission(currentUserPhoneNumber, groupId)) {
+        return true;
+      }
     }
-
-	  /*
-     * Success Scenario 2: you have the permission
-     * in permission's privileges table
-	   * use PermissionDatabase hasClearGroupConversationPermission to verify
-     */
-
-    if (permissionDatabase.hasClearGroupConversationPermission(localNumber, groupId)) {
-      return true;
-    }
-
-    //Then the user must not have had permission and we return false
     return false;
   }
 }
