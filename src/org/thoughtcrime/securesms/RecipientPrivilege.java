@@ -8,54 +8,78 @@ import org.thoughtcrime.securesms.database.PermissionDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
-import javax.annotation.Nullable;
-
 public class RecipientPrivilege implements Privilege {
 
   private static final String TAG = RecipientPrivilege.class.getSimpleName();
+
   private Recipient recipient;
-  private Context context;
+
+  /**
+   * databases needed for determining if one is permitted
+   *   groupDatabase: use to determine who's moderator in a group
+   *   permissionDatabase: use to determine user privileges
+   */
+  private GroupDatabase groupDatabase;
+  private PermissionDatabase permissionDatabase;
+
+  /**
+   * parameters required for determining if one is permitted
+   *   currentUserPhoneNumber: current user's phone number
+   *   groupId: unique group id
+   */
+  private final String currentUserPhoneNumber;
+  private final String groupId;
 
   RecipientPrivilege(Recipient recipient, Context context) {
     this.recipient = recipient;
-    this.context = context;
+
+    this.groupDatabase = DatabaseFactory.getGroupDatabase(context);
+    this.permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+
+    this.currentUserPhoneNumber = TextSecurePreferences.getLocalNumber(context);
+    this.groupId = recipient.getAddress().toGroupString();
   }
 
+
+  /*
+   * Success Scenario 1: if you are the moderator
+   * and you have the permission to edit a group.
+   * With this permission you can: edit group name
+   * and add group member(s)
+   *
+   * Success Scenario 2 (for non-moderator): if you're granted the permission
+   * to edit a group
+   */
   @Override
   public boolean canEditGroup() {
     if (recipient.isGroupRecipient()) {
-    /*
-     * Success Scenario 1: you are the moderator
-     * Using group database you can determine if you can edit
-     * group name.
-     *
-     * Util.isOwnNumber(context, recipient.getAddress());
-     */
-      GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
-      String localNumber = TextSecurePreferences.getLocalNumber(context);
-      if (groupDatabase.isModerator(localNumber, recipient.getAddress().toGroupString())) {
+      if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         return true;
       }
-
-      /*
-       * Success Scenario 2: you have the permission
-       * TODO check if the current user (localNumber)
-       * has the permission 64 (edit group in column privilege)
-       * in permission table
-       */
-      PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-      // if () {}
-
+      if (permissionDatabase.hasEditGroupPermission(currentUserPhoneNumber, groupId)) {
+        return true;
+      }
     }
-
     return false;
   }
 
+  /*
+   * Success Scenario 1: if you are the moderator
+   * and you have the permission to clear a group chat
+   *
+   * Success Scenario 2 (for non-moderator): you are granted the
+   * permission to clear a conversation in a group chat
+   */
   @Override
   public boolean canClearGroupConversation() {
-    // TODO use PermissionDatabase hasClearGroupConversationPermission to verify
+    if (recipient.isGroupRecipient()) {
+      if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
+        return true;
+      }
+      if (permissionDatabase.hasClearGroupConversationPermission(currentUserPhoneNumber, groupId)) {
+        return true;
+      }
+    }
     return false;
   }
-
-
 }

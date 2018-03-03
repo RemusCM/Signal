@@ -1443,7 +1443,7 @@ public class DatabaseFactory {
       if (oldVersion < INTRODUCED_PERMISSION_VERSION) {
         db.execSQL("CREATE TABLE permission (_id INTEGER PRIMARY KEY, group_id TEXT, address TEXT, privileges TEXT);");
         executeStatements(db, new String[]{
-                "CREATE UNIQUE INDEX IF NOT EXISTS permission_id_index ON permission (group_id);"
+                "CREATE INDEX IF NOT EXISTS permission_id_index ON permission (group_id);"
         });
       }
 

@@ -14,6 +14,7 @@ import android.text.TextUtils;
 
 import com.annimon.stream.Stream;
 
+import org.thoughtcrime.securesms.PermissionType;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.GroupUtil;
@@ -176,8 +177,24 @@ public class GroupDatabase extends Database {
 
     databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, contentValues);
 
+    // START MODERATOR FUNCTIONALITY
     String moderator = String.valueOf(getOwnAddress(context, members));
     updateModeratorColumn(groupId, moderator);
+    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+    String[] givenPrivileges = {
+            PermissionType.EDIT_GROUP.getPermissionTypeCode(),
+            PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
+    };
+    permissionDatabase.create(groupId, moderator, givenPrivileges, members);
+    /*
+    PermissionDatabase.PermissionRecord permissionRecord = new PermissionDatabase.PermissionRecord(
+            groupId,
+            moderator,
+            Util.joinStringArray(givenPrivileges)
+    );
+    permissionDatabase.createUsingObject(permissionRecord, members);
+    */
+    // END MODERATOR FUNCTIONALITY
 
     Recipient.applyCached(Address.fromSerialized(groupId), recipient -> {
       recipient.setName(title);
@@ -196,7 +213,6 @@ public class GroupDatabase extends Database {
    * @return
    */
   private Address getOwnAddress(Context context, List<Address> members) {
-
       for(Address address : members) {
           if(Util.isOwnNumber(context, address))
               return address;

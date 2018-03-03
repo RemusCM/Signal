@@ -11,8 +11,8 @@ public enum PermissionType {
     this.permissionCode = permissionCode;
   }
 
-  public int getPermissionTypeCode() {
-    return this.permissionCode;
+  public String getPermissionTypeCode() {
+    return String.valueOf(this.permissionCode);
   }
 
 }
