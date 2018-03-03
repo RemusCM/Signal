@@ -45,7 +45,7 @@ public class RecipientPrivilege implements Privilege {
 
       // Extracting the groupId from the local number
       String groupId = recipient.getAddress().toGroupString();
-      // if the current user is a moderator then return true and clear the groupChat
+
       if (groupDatabase.isModerator(localNumber, groupId)) {
         return true;
       }
@@ -56,7 +56,6 @@ public class RecipientPrivilege implements Privilege {
        * in permission table
        */
 
-      // check if the user has edit privileges in that group
       if (permissionDatabase.hasEditGroupPermission(localNumber, groupId)) {
         return true;
       }
@@ -90,7 +89,6 @@ public class RecipientPrivilege implements Privilege {
 	   * use PermissionDatabase hasClearGroupConversationPermission to verify
      */
 
-	  // check if the current user has the privileges to clear conversation in that group
     if (permissionDatabase.hasClearGroupConversationPermission(localNumber, groupId)) {
       return true;
     }
