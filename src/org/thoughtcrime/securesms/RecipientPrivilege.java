@@ -28,8 +28,8 @@ public class RecipientPrivilege implements Privilege {
    *   currentUserPhoneNumber: current user's phone number
    *   groupId: unique group id
    */
-  private final String currentUserPhoneNumber;
-  private final String groupId;
+  private String currentUserPhoneNumber;
+  private String groupId;
 
   RecipientPrivilege(Recipient recipient, Context context) {
     this.recipient = recipient;
@@ -53,17 +53,23 @@ public class RecipientPrivilege implements Privilege {
    */
   @Override
   public boolean canEditGroup() {
+    boolean condition = false;
     if (recipient.isGroupRecipient()) {
       Log.i(TAG, "canEditGroup[currentUserPhoneNumber]: " + currentUserPhoneNumber);
       Log.i(TAG, "canEditGroup[groupId]: " + groupId);
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
-        return true;
+        condition = true;
       }
+      /*
       if (permissionDatabase.hasEditGroupPermission(currentUserPhoneNumber, groupId)) {
-        return true;
+        condition = true;
       }
+      */
     }
-    return false;
+    Log.i(TAG, "canEditGroup() : boolean -> " + condition);
+    Log.i(TAG, "canEditGroup(): currentUserPhoneNumber -> " + currentUserPhoneNumber);
+    Log.i(TAG, "canEditGroup(): groupId -> " + groupId);
+    return condition;
   }
 
   /*
@@ -75,14 +81,20 @@ public class RecipientPrivilege implements Privilege {
    */
   @Override
   public boolean canClearGroupConversation() {
+    boolean condition = false;
     if (recipient.isGroupRecipient()) {
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
-        return true;
+        condition = true;
       }
+      /*
       if (permissionDatabase.hasClearGroupConversationPermission(currentUserPhoneNumber, groupId)) {
-        return true;
+        condition = true;
       }
+      */
     }
-    return false;
+    Log.i(TAG, "canClearGroupConversation() : boolean -> " + condition);
+    Log.i(TAG, "canClearGroupConversation() : currentUserPhoneNumber -> " + currentUserPhoneNumber);
+    Log.i(TAG, "canClearGroupConversation() : groupId -> " + groupId);
+    return condition;
   }
 }

@@ -128,17 +128,6 @@ public class GroupDatabase extends Database {
       } else {
         String groupId = GroupUtil.getEncodedId(allocateGroupId(), mms);
         create(groupId, null, members, null, null);
-
-        String moderator = String.valueOf(getOwnAddress(context, members));
-        updateModeratorColumn(groupId, moderator);
-        // --------------------------------------------------------------
-        PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-        String[] givenPrivileges = {
-                PermissionType.EDIT_GROUP.getPermissionTypeCode(),
-                PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
-        };
-        permissionDatabase.create(groupId, moderator, givenPrivileges, members);
-
         return groupId;
       }
     } finally {
@@ -190,14 +179,15 @@ public class GroupDatabase extends Database {
     databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, contentValues);
 
     // START MODERATOR FUNCTIONALITY
-//    String moderator = String.valueOf(getOwnAddress(context, members));
-//    updateModeratorColumn(groupId, moderator);
-//    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-//    String[] givenPrivileges = {
-//            PermissionType.EDIT_GROUP.getPermissionTypeCode(),
-//            PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
-//    };
-//    permissionDatabase.create(groupId, moderator, givenPrivileges, members);
+    String moderator = String.valueOf(getOwnAddress(context, members));
+    // updateModeratorColumn(groupId, moderator);
+    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+    String[] givenPrivileges = {
+            PermissionType.EDIT_GROUP.getPermissionTypeCode(),
+            PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
+    };
+    Log.i(TAG, "populating permission table...");
+    // permissionDatabase.create(groupId, moderator, givenPrivileges, members);
     /*
     PermissionDatabase.PermissionRecord permissionRecord = new PermissionDatabase.PermissionRecord(
             groupId,
@@ -238,11 +228,15 @@ public class GroupDatabase extends Database {
    * Call this method after inserting the
    * group in the table.
    */
-  private void updateModeratorColumn(String groupId, String moderator) {
-      ContentValues contentValues = new ContentValues();
-      contentValues.put(MODERATOR, moderator);
-      databaseHelper.getWritableDatabase().update(TABLE_NAME, contentValues, GROUP_ID +  " = ?",
-              new String[] {groupId});
+  public void updateModeratorColumnByGroupName(String moderator, String groupName) {
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(MODERATOR, moderator);
+    databaseHelper.getWritableDatabase().update(
+            TABLE_NAME,
+            contentValues,
+            TITLE + " = ?",
+            new String[]{groupName}
+    );
   }
 
   /**
@@ -250,10 +244,27 @@ public class GroupDatabase extends Database {
    * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
    */
   public boolean isModerator(String moderator, String groupId) {
-    Log.i(TAG, "isModerator[moderator]: " + moderator);
-    Log.i(TAG, "isModerator[groupId]: " + groupId);
-    Optional<GroupRecord> record = getGroup(groupId);
-    return record.get().getModerator().equals(moderator);
+    String sql = "SELECT * FROM " +
+            TABLE_NAME + " WHERE " +
+            GROUP_ID + " = ? AND " +
+            MODERATOR + " = ?";
+    String[] sqlArgs = new String[]{groupId, moderator};
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Log.i(TAG, "isModerator:sql -> " + sql);
+    Cursor cursor = null;
+
+    try {
+      cursor = db.rawQuery(sql, sqlArgs);
+      if (cursor != null && cursor.moveToFirst()) {
+        return !cursor.getString(0).isEmpty() &&
+                moderator.equals(cursor.getString(cursor.getColumnIndex(MODERATOR)));
+      } else {
+        return false;
+      }
+    } finally {
+      if (cursor != null)
+        cursor.close();
+    }
   }
 
   public void update(String groupId, String title, SignalServiceAttachmentPointer avatar) {
