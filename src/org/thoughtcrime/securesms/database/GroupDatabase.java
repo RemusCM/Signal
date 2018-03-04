@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.annimon.stream.Stream;
 
@@ -127,6 +128,17 @@ public class GroupDatabase extends Database {
       } else {
         String groupId = GroupUtil.getEncodedId(allocateGroupId(), mms);
         create(groupId, null, members, null, null);
+
+        String moderator = String.valueOf(getOwnAddress(context, members));
+        updateModeratorColumn(groupId, moderator);
+        // --------------------------------------------------------------
+        PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+        String[] givenPrivileges = {
+                PermissionType.EDIT_GROUP.getPermissionTypeCode(),
+                PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
+        };
+        permissionDatabase.create(groupId, moderator, givenPrivileges, members);
+
         return groupId;
       }
     } finally {
@@ -178,14 +190,14 @@ public class GroupDatabase extends Database {
     databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, contentValues);
 
     // START MODERATOR FUNCTIONALITY
-    String moderator = String.valueOf(getOwnAddress(context, members));
-    updateModeratorColumn(groupId, moderator);
-    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-    String[] givenPrivileges = {
-            PermissionType.EDIT_GROUP.getPermissionTypeCode(),
-            PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
-    };
-    permissionDatabase.create(groupId, moderator, givenPrivileges, members);
+//    String moderator = String.valueOf(getOwnAddress(context, members));
+//    updateModeratorColumn(groupId, moderator);
+//    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+//    String[] givenPrivileges = {
+//            PermissionType.EDIT_GROUP.getPermissionTypeCode(),
+//            PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
+//    };
+//    permissionDatabase.create(groupId, moderator, givenPrivileges, members);
     /*
     PermissionDatabase.PermissionRecord permissionRecord = new PermissionDatabase.PermissionRecord(
             groupId,
@@ -238,6 +250,8 @@ public class GroupDatabase extends Database {
    * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
    */
   public boolean isModerator(String moderator, String groupId) {
+    Log.i(TAG, "isModerator[moderator]: " + moderator);
+    Log.i(TAG, "isModerator[groupId]: " + groupId);
     Optional<GroupRecord> record = getGroup(groupId);
     return record.get().getModerator().equals(moderator);
   }

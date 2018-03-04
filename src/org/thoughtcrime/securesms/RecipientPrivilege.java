@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.GroupDatabase;
@@ -53,6 +54,8 @@ public class RecipientPrivilege implements Privilege {
   @Override
   public boolean canEditGroup() {
     if (recipient.isGroupRecipient()) {
+      Log.i(TAG, "canEditGroup[currentUserPhoneNumber]: " + currentUserPhoneNumber);
+      Log.i(TAG, "canEditGroup[groupId]: " + groupId);
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         return true;
       }
