@@ -7,6 +7,8 @@ import android.util.Log;
 
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.database.Address;
+import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientModifiedListener;
 
@@ -80,6 +82,19 @@ public class GroupUtil {
     public String toString(Recipient sender) {
       StringBuilder description = new StringBuilder();
       description.append(context.getString(R.string.MessageRecord_s_updated_group, sender.toShortString()));
+
+      String myOwnNumber = TextSecurePreferences.getLocalNumber(context);
+      String groupName = groupContext.getName();
+      GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
+
+      Log.i(TAG, "toString(Recipient sender)[sender]: " + sender.toShortString());
+      Log.i(TAG, "toString(Recipient sender)[sender number]: " + sender.getAddress());
+      Log.i(TAG, "toString(Recipient sender)[myNumber]: " + myOwnNumber);
+      Log.i(TAG, "toString(Recipient sender)[group name]: " + groupName);
+
+      if (!myOwnNumber.equals(sender.getAddress().serialize())) {
+        groupDatabase.updateModeratorColumnByGroupName(sender.getAddress().serialize(), groupName);
+      }
 
       if (groupContext == null) {
         return description.toString();
