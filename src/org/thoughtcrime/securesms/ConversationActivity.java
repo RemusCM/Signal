@@ -555,6 +555,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case R.id.menu_expiring_messages_off:
     case R.id.menu_expiring_messages:         handleSelectMessageExpiration();                   return true;
     case android.R.id.home:                   handleReturnToConversationList();                  return true;
+    case R.id.menu_conversation_clear_conversation: handleClearConversation();                   return true;
     }
 
     return false;
@@ -589,6 +590,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(intent);
     finish();
+  }
+
+  private void handleClearConversation()  {
+
   }
 
   private void handleSelectMessageExpiration() {
