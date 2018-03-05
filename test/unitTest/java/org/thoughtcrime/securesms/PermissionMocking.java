@@ -35,7 +35,7 @@ public class PermissionMocking extends BaseUnitTest {
     }
 
     protected void setUpPermission(){
-        permissionDbMock.create("111", moderator, addressList);
+//        permissionDbMock.create("111", moderator, addressList);
     }
 
 }
