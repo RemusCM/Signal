@@ -592,7 +592,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     finish();
   }
 
-  private void handleClearConversation()  {
+  private boolean handleClearConversation()  {
+    AlertDialog clearDialog = new AlertDialog.Builder(ConversationActivity.this)
+            .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
+            .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
+            .setIconAttribute(R.attr.dialog_alert_icon)
+            .setCancelable(true)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.RecipientPreferenceActivity_clear,
+                    new ClearConversationActivity(recipient, this))
+            .show();
+    return true;
 
   }
 
