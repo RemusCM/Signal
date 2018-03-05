@@ -21,8 +21,11 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.database.MmsSmsColumns;
 import org.thoughtcrime.securesms.database.SmsDatabase;
 import org.thoughtcrime.securesms.database.documents.IdentityKeyMismatch;
@@ -30,6 +33,7 @@ import org.thoughtcrime.securesms.database.documents.NetworkFailure;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.ExpirationUtil;
 import org.thoughtcrime.securesms.util.GroupUtil;
+import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
 import java.util.List;
 
@@ -42,7 +46,7 @@ import java.util.List;
  *
  */
 public abstract class MessageRecord extends DisplayRecord {
-
+  private static final String TAG = MessageRecord.class.getSimpleName();
   private static final int MAX_DISPLAY_LENGTH = 2000;
 
   private final Recipient                 individualRecipient;
@@ -93,7 +97,21 @@ public abstract class MessageRecord extends DisplayRecord {
   @Override
   public SpannableString getDisplayBody() {
     if (isGroupUpdate() && isOutgoing()) {
+      String groupId = getIndividualRecipient().getAddress().toGroupString();
+      GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
+      String myOwnNumber = TextSecurePreferences.getLocalNumber(context);
+
+      Log.i(TAG, "getDisplayBody() : group id " + groupId);
+      Log.i(TAG, "getDisplayBody() : myOwnNumber " + myOwnNumber);
+
+      // R.string.MessageRecord_you_updated_group (in the return statement):
+      // states you created the group
+      // thats mean you can set the moderator to your self. Therefore call the method
+      // call updateModeratorColumnByGroupId to update local number as moderator
+      groupDatabase.updateModeratorColumnByGroupId(myOwnNumber, groupId);
+
       return emphasisAdded(context.getString(R.string.MessageRecord_you_updated_group));
+
     } else if (isGroupUpdate()) {
       return emphasisAdded(GroupUtil.getDescription(context, getBody().getBody()).toString(getIndividualRecipient()));
     } else if (isGroupQuit() && isOutgoing()) {
