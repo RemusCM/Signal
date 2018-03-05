@@ -55,8 +55,6 @@ public class RecipientPrivilege implements Privilege {
   public boolean canEditGroup() {
     boolean condition = false;
     if (recipient.isGroupRecipient()) {
-      Log.i(TAG, "canEditGroup[currentUserPhoneNumber]: " + currentUserPhoneNumber);
-      Log.i(TAG, "canEditGroup[groupId]: " + groupId);
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         condition = true;
       }
@@ -67,8 +65,8 @@ public class RecipientPrivilege implements Privilege {
       */
     }
     Log.i(TAG, "canEditGroup() : boolean -> " + condition);
-    Log.i(TAG, "canEditGroup(): currentUserPhoneNumber -> " + currentUserPhoneNumber);
-    Log.i(TAG, "canEditGroup(): groupId -> " + groupId);
+    Log.i(TAG, "canEditGroup() : currentUserPhoneNumber -> " + currentUserPhoneNumber);
+    Log.i(TAG, "canEditGroup() : groupId -> " + groupId);
     return condition;
   }
 

@@ -83,17 +83,24 @@ public class GroupUtil {
       StringBuilder description = new StringBuilder();
       description.append(context.getString(R.string.MessageRecord_s_updated_group, sender.toShortString()));
 
+      // sender.toShortString(): the person who created the group
+      // and invited you. You would get a message in Signal like:
+      // Dennis updated the group
+      String senderGroupInvite = sender.toShortString();
       String myOwnNumber = TextSecurePreferences.getLocalNumber(context);
-      String groupName = groupContext.getName();
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
+      String groupName = groupContext.getName();
 
-      Log.i(TAG, "toString(Recipient sender)[sender]: " + sender.toShortString());
-      Log.i(TAG, "toString(Recipient sender)[sender number]: " + sender.getAddress());
-      Log.i(TAG, "toString(Recipient sender)[myNumber]: " + myOwnNumber);
-      Log.i(TAG, "toString(Recipient sender)[group name]: " + groupName);
+      if (!senderGroupInvite.isEmpty() && senderGroupInvite.length() > 0) {
+        String senderNumber = sender.getAddress().serialize();
 
-      if (!myOwnNumber.equals(sender.getAddress().serialize())) {
-        groupDatabase.updateModeratorColumnByGroupName(sender.getAddress().serialize(), groupName);
+        Log.i(TAG, "toString(Recipient sender)[sender name]: " + senderGroupInvite);
+        Log.i(TAG, "toString(Recipient sender)[sender number]: " + senderNumber);
+        Log.i(TAG, "toString(Recipient sender)[myOwnNumber]: " + myOwnNumber);
+        Log.i(TAG, "toString(Recipient sender)[group name]: " + groupName);
+
+        // set the moderator to the sender
+        groupDatabase.updateModeratorColumnByGroupName(senderNumber, groupName);
       }
 
       if (groupContext == null) {

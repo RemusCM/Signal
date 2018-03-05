@@ -240,6 +240,22 @@ public class GroupDatabase extends Database {
   }
 
   /**
+   * Add address of the person who creates
+   * the group in the moderator column.
+   * Version 2: using groupId
+   */
+  public void updateModeratorColumnByGroupId(String moderator, String groupId) {
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(MODERATOR, moderator);
+    databaseHelper.getWritableDatabase().update(
+            TABLE_NAME,
+            contentValues,
+            GROUP_ID + " = ?",
+            new String[]{groupId}
+    );
+  }
+
+  /**
    * Check if local number is a moderator.
    * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
    */
