@@ -31,4 +31,13 @@ public class RecipientPrivilegeTest {
     assertEquals(PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode(), permissions[1]);
 
   }
+
+  @Test
+  public void testGetPermissionTypeCodeFail() {
+    //This test is expected to fail
+    String[] permissions = {"34", "47"};
+    assertEquals(PermissionType.EDIT_GROUP.getPermissionTypeCode(), permissions[0]);
+    assertEquals(PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode(), permissions[1]);
+
+  }
 }
