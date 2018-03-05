@@ -474,6 +474,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   public boolean onPrepareOptionsMenu(Menu menu) {
     MenuInflater inflater = this.getMenuInflater();
     menu.clear();
+    Context           context         = ConversationActivity.this;
 
     if (isSecureText) {
       if (recipient.getExpireMessages() > 0) {
@@ -504,7 +505,12 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           menu.findItem(R.id.menu_distribution_conversation).setChecked(true);
         }
       } else if (isActiveGroup()) {
-        inflater.inflate(R.menu.conversation_push_group_options, menu);
+        RecipientPrivilege recipientPrivilege = new RecipientPrivilege(recipient, context);
+        if (recipientPrivilege.canEditGroup()) {
+          inflater.inflate(R.menu.conversation_push_group_options, menu);
+        } else {
+          inflater.inflate(R.menu.conversation_push_group_options_restriction, menu);
+        }
       }
     }
 
@@ -1330,8 +1336,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   @Override
   public void onModified(final Recipient recipient) {
     Log.w(TAG, "onModified(" + recipient.getAddress().serialize() + ")");
-    RecipientPrivilege recipientPrivilege = new RecipientPrivilege(recipient, this);
-    Log.i(TAG, "can edit " + recipientPrivilege.canEditGroup());
     Util.runOnMain(() -> {
       Log.w(TAG, "onModifiedRun(): " + recipient.getRegistered());
       titleView.setTitle(glideRequests, recipient);
