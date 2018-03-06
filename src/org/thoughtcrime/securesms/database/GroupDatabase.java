@@ -179,7 +179,7 @@ public class GroupDatabase extends Database {
     databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, contentValues);
 
     // START MODERATOR FUNCTIONALITY
-    String moderator = String.valueOf(getOwnAddress(context, members));
+    // String moderator = String.valueOf(getOwnAddress(context, members));
     // updateModeratorColumn(groupId, moderator);
     PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
     String[] givenPrivileges = {
@@ -207,19 +207,24 @@ public class GroupDatabase extends Database {
     notifyConversationListListeners();
   }
 
-  /**
-   * Returns own address (number) given
-   * a list of members.
-   * @param context
-   * @param members
-   * @return
-   */
-  private Address getOwnAddress(Context context, List<Address> members) {
-      for(Address address : members) {
-          if(Util.isOwnNumber(context, address))
-              return address;
+  public String getGroupModerator(String groupId) {
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT * FROM groups WHERE groupId = ?";
+    String[] sqlArgs = new String[]{groupId};
+
+    try {
+      cursor = db.rawQuery(sql, sqlArgs);
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getString(cursor.getColumnIndex(MODERATOR));
+      } else {
+        return null;
       }
-      return null;
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
   }
 
   /**
