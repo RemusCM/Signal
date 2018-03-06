@@ -487,4 +487,24 @@ public class Util {
 
     return new DecimalFormat("#,##0.#").format(sizeBytes/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
   }
+
+
+  /**
+   * Concatenate privilege with comma
+   * into one single string variable.
+   *
+   * @param str strings privileges
+   * @return comma separated string
+   */
+  public static String joinStringPrivileges(String[] str) {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < str.length; i++) {
+      if (i != str.length - 1) {
+        stringBuilder.append(str[i].concat(","));
+      } else {
+        stringBuilder.append(str[i]);
+      }
+    }
+    return stringBuilder.toString();
+  }
 }
