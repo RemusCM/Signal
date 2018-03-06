@@ -24,6 +24,11 @@ public class RecipientPrivilegeTest {
 
         @Override
         public boolean canEditGroup() {
+            recipient = mock(Recipient.class);
+            when(recipient.isGroupRecipient()).thenReturn(true);
+
+            groupDatabase = mock(GroupDatabase.class);
+            when(groupDatabase.isModerator(currentUserPhoneNumber, groupId)).thenReturn(true);
 
             boolean condition = false;
             if (recipient.isGroupRecipient()) {
