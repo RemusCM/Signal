@@ -48,7 +48,7 @@ public class RecipientPrivilegeTest {
 
             groupDatabase = mock(GroupDatabase.class);
             when(groupDatabase.isModerator(currentUserPhoneNumber, groupId)).thenReturn(true);
-            
+
             boolean condition = false;
             if (recipient.isGroupRecipient()) {
                 if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
@@ -69,7 +69,10 @@ public class RecipientPrivilegeTest {
 
   @Test
   public void testCanClearGroup() {
+    FakeRecipientPrivilege fakeRecipientPrivilege = new FakeRecipientPrivilege();
+    FakeRecipientPrivilege spy = spy(fakeRecipientPrivilege);
 
+    assertTrue(spy.canEditGroup());
   }
 
   @Test
