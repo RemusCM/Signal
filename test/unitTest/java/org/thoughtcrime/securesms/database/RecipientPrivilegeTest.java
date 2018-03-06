@@ -12,7 +12,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.spy;
 import static org.thoughtcrime.securesms.PermissionType.EDIT_GROUP;
 
 @RunWith(JUnit4.class)
@@ -62,17 +61,13 @@ public class RecipientPrivilegeTest {
     @Test
   public void testCanEditGroup() {
     FakeRecipientPrivilege fakeRecipientPrivilege = new FakeRecipientPrivilege();
-    FakeRecipientPrivilege spy = spy(fakeRecipientPrivilege);
-
-    assertTrue(spy.canEditGroup());
+    assertTrue(fakeRecipientPrivilege.canEditGroup());
   }
 
   @Test
   public void testCanClearGroup() {
     FakeRecipientPrivilege fakeRecipientPrivilege = new FakeRecipientPrivilege();
-    FakeRecipientPrivilege spy = spy(fakeRecipientPrivilege);
-
-    assertTrue(spy.canEditGroup());
+    assertTrue(fakeRecipientPrivilege.canEditGroup());
   }
 
   @Test
