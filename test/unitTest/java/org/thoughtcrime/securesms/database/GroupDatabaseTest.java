@@ -14,17 +14,17 @@ public class GroupDatabaseTest {
 
 
   @Test
-  public void testUpdateModeratorColumnByGroupName(String moderator, String groupName) {
+  public void testUpdateModeratorColumnByGroupName() {
 
   }
   
   @Test
-  public void testUpdateModeratorColumnByGroupId(String moderator, String groupId) {
+  public void testUpdateModeratorColumnByGroupId() {
 
   }
 
   @Test
-  public void testIsModerator(String moderator, String groupId) {
+  public void testIsModerator() {
 
   }
 

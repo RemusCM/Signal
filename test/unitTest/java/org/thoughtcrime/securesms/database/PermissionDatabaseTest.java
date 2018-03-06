@@ -10,32 +10,32 @@ import java.util.List;
 public class PermissionDatabaseTest {
 
   @Test
-  public void testGetRecipientPrivilegesString(String localNumber, String groupId) {
+  public void testGetRecipientPrivilegesString() {
 
   }
 
   @Test
-  public void testSplitPrivilegesIntoList(String privileges) {
+  public void testSplitPrivilegesIntoList() {
 
   }
 
   @Test
-  public void testHasEditGroupPermission(String localNumber, String groupId) {
+  public void testHasEditGroupPermission() {
 
   }
 
   @Test
-  public void testHasClearGroupChatPermission(String localNumber, String groupId) {
+  public void testHasClearGroupChatPermission() {
 
   }
 
   @Test
-  public void testCreate(String groupId, String moderator, String[] givenPrivileges, List members) {
+  public void testCreate() {
 
   }
 
   @Test
-  public void testCreateUsingObject(PermissionDatabase.PermissionRecord record, List members) {
+  public void testCreateUsingObject() {
 
   }
 
