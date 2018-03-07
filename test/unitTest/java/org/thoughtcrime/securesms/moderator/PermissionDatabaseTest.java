@@ -1,9 +1,11 @@
-package org.thoughtcrime.securesms.database;
+package org.thoughtcrime.securesms.moderator;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.thoughtcrime.securesms.PermissionMocking;
+import org.thoughtcrime.securesms.database.Address;
+import org.thoughtcrime.securesms.database.PermissionDatabase;
 import org.thoughtcrime.securesms.util.Util;
 
 import java.util.LinkedList;

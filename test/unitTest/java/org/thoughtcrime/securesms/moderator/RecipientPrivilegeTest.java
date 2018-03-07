@@ -1,4 +1,4 @@
-package org.thoughtcrime.securesms.database;
+package org.thoughtcrime.securesms.moderator;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -6,6 +6,7 @@ import org.junit.runners.JUnit4;
 import org.thoughtcrime.securesms.PermissionMocking;
 import org.thoughtcrime.securesms.PermissionType;
 import org.thoughtcrime.securesms.Privilege;
+import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 
 import static junit.framework.Assert.assertEquals;
