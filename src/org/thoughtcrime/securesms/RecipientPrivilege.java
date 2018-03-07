@@ -58,11 +58,9 @@ public class RecipientPrivilege implements Privilege {
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         condition = true;
       }
-      /*
       if (permissionDatabase.hasEditGroupPermission(currentUserPhoneNumber, groupId)) {
         condition = true;
       }
-      */
     }
     Log.i(TAG, "canEditGroup() : boolean -> " + condition);
     Log.i(TAG, "canEditGroup() : currentUserPhoneNumber -> " + currentUserPhoneNumber);
