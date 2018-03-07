@@ -516,7 +516,7 @@ public class Util {
    */
   public static List<String> splitStringIntoList(String str) {
     List<String> stringList = new LinkedList<>();
-    String[] privilegeTokens = str.trim().split("\\,");
+    String[] privilegeTokens = str.split("\\,");
 
     for (int i = 0; i < privilegeTokens.length; i++) {
       stringList.add(privilegeTokens[i]);
