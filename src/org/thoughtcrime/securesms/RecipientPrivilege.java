@@ -58,8 +58,10 @@ public class RecipientPrivilege implements Privilege {
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         condition = true;
       }
-      if (permissionDatabase.hasEditGroupPermission(currentUserPhoneNumber, groupId)) {
-        condition = true;
+      if (permissionDatabase.isGroupExistByGroupId(groupId)) {
+        if (permissionDatabase.hasEditGroupPermission(currentUserPhoneNumber, groupId)) {
+          condition = true;
+        }
       }
     }
     Log.i(TAG, "canEditGroup() : boolean -> " + condition);
@@ -82,11 +84,11 @@ public class RecipientPrivilege implements Privilege {
       if (groupDatabase.isModerator(currentUserPhoneNumber, groupId)) {
         condition = true;
       }
-      /*
-      if (permissionDatabase.hasClearGroupConversationPermission(currentUserPhoneNumber, groupId)) {
-        condition = true;
+      if (permissionDatabase.isGroupExistByGroupId(groupId)) {
+        if (permissionDatabase.hasClearGroupChatPermission(currentUserPhoneNumber, groupId)) {
+          condition = true;
+        }
       }
-      */
     }
     Log.i(TAG, "canClearGroupConversation() : boolean -> " + condition);
     Log.i(TAG, "canClearGroupConversation() : currentUserPhoneNumber -> " + currentUserPhoneNumber);

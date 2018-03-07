@@ -91,7 +91,7 @@ public class PermissionDatabase extends Database {
    * @param groupId group id of the current group of the user
    * @return true if current user has clear group chat permission
    */
-  public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
+  public boolean hasClearGroupChatPermission(String localNumber, String groupId) {
     String privileges = getRecipientPrivilegesString(localNumber, groupId);
     List<String> list = Util.splitStringIntoList(privileges);
     String clearGroupChatCode = PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode();
@@ -120,6 +120,30 @@ public class PermissionDatabase extends Database {
       db.insert(TABLE_NAME, null, values);
     }
 
+  }
+
+  /**
+   * @param groupId group to search for
+   * @return true if this group exists
+   */
+  public boolean isGroupExistByGroupId(String groupId) {
+    String sql = "SELECT COUNT(*) " +
+            " FROM " + TABLE_NAME +
+            " WHERE " + GROUP_ID + " = ?";
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    try {
+      cursor = db.rawQuery(sql, new String[]{groupId});
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getInt(0) >= 1;
+      } else {
+        return false;
+      }
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
   }
 
   /**
