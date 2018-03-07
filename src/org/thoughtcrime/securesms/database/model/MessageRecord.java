@@ -23,10 +23,13 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 
+import org.thoughtcrime.securesms.PermissionType;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.database.MmsSmsColumns;
+import org.thoughtcrime.securesms.database.PermissionDatabase;
 import org.thoughtcrime.securesms.database.SmsDatabase;
 import org.thoughtcrime.securesms.database.documents.IdentityKeyMismatch;
 import org.thoughtcrime.securesms.database.documents.NetworkFailure;
@@ -35,6 +38,8 @@ import org.thoughtcrime.securesms.util.ExpirationUtil;
 import org.thoughtcrime.securesms.util.GroupUtil;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -106,9 +111,24 @@ public abstract class MessageRecord extends DisplayRecord {
 
       // R.string.MessageRecord_you_updated_group (in the return statement):
       // states you created the group
-      // thats mean you can set the moderator to your self. Therefore call the method
+      // that's mean you can set the moderator to your self. Therefore call the method
       // call updateModeratorColumnByGroupId to update local number as moderator
       groupDatabase.updateModeratorColumnByGroupId(myOwnNumber, groupId);
+
+      /*
+      String[] permissions = {
+              PermissionType.EDIT_GROUP.getPermissionTypeCode(),
+              PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
+      };
+      String members = groupDatabase.getMembersByGroupId(groupId);
+      List<String> memberList = Arrays.asList(members.split(","));
+      List<Address> addresses = new LinkedList<>();
+      for (String groupMember : memberList) {
+        addresses.add(Address.fromSerialized(groupMember));
+      }
+      PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+      permissionDatabase.create(groupId, myOwnNumber, permissions, addresses);
+      */
 
       return emphasisAdded(context.getString(R.string.MessageRecord_you_updated_group));
 
