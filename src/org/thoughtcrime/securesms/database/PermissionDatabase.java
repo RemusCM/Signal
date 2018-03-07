@@ -53,7 +53,11 @@ public class PermissionDatabase extends Database {
   private String getRecipientPrivilegesString(String localNumber, String groupId) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
-    String sql = "SELECT * FROM permission WHERE address = ? AND group_id = ?";
+    String sql = "SELECT " + PRIVILEGES +
+            " FROM " + TABLE_NAME +
+            " WHERE " + ADDRESS + " = ?" +
+            " AND " + GROUP_ID + " = ?";
+
     String[] sqlArgs  = new String[] {localNumber, groupId};
 
     try {
@@ -72,7 +76,7 @@ public class PermissionDatabase extends Database {
 
   /**
    * @param localNumber the current user phone number
-   * @param groupId     Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   * @param groupId group id of the current group of the user
    * @return true if current user has edit group permission
    */
   public boolean hasEditGroupPermission(String localNumber, String groupId) {
@@ -84,7 +88,7 @@ public class PermissionDatabase extends Database {
 
   /**
    * @param localNumber the current user phone number
-   * @param groupId     Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   * @param groupId group id of the current group of the user
    * @return true if current user has clear group chat permission
    */
   public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
