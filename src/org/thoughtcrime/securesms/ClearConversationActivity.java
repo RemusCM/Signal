@@ -3,7 +3,6 @@ package org.thoughtcrime.securesms;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,9 +10,6 @@ import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressLint({"Registered", "ValidFragment"})
 public class ClearConversationActivity implements DialogInterface.OnClickListener {
@@ -33,59 +29,23 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
   @Override
   public void onClick(DialogInterface dialogInterface, int which) {
     if (recipient != null) {
-      if (recipient.isGroupRecipient()) {
-        manageClearGroupConversation(dialogInterface);
+      Address recipientId = recipient.getAddress();
+      ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
+      int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
+      if (messageCount < 1) {
+        dialogInterface.dismiss();
+        util.displayNothingToDeleteMessage();
       } else {
-        manageClearSingleConversation(dialogInterface);
+
+        long threadId = DatabaseFactory.getThreadDatabase(context)
+                .getThreadIdFor(recipient,
+                        ThreadDatabase.DistributionTypes.DEFAULT);
+        DatabaseFactory.getThreadDatabase(context).deleteConversation(threadId);
+        DatabaseFactory.getThreadDatabase(context).update(threadId, false);
+
+        dialogInterface.dismiss();
+        util.displayAllMessagesDeleted();
       }
-    }
-  }
-
-  private void manageClearGroupConversation(DialogInterface dialogInterface) {
-    List<Recipient> recipientList = recipient.getParticipants();
-    ArrayList<String> members = new ArrayList<>();
-    for (Recipient recipient : recipientList) {
-      members.add(recipient.getAddress().serialize());
-    }
-    String groupId = recipient.getAddress().toGroupString();
-  }
-
-  private void manageClearSingleConversation(DialogInterface dialogInterface) {
-    Address recipientId = recipient.getAddress();
-    ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
-    int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
-
-    if (messageCount < 1) {
-      dialogInterface.dismiss();
-      util.displayNothingToDeleteMessage();
-    }
-
-    //This part of the code completely clears group conversations, including the system messages.
-    else if(recipient.isGroupRecipient()){
-
-      long      threadId       = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient, ThreadDatabase.DistributionTypes.DEFAULT);
-      DatabaseFactory.getSmsDatabase(context).deleteThread(threadId);
-      DatabaseFactory.getMmsDatabase(context).deleteThread(threadId);
-      dialogInterface.dismiss();
-      util.displayAllMessagesDeleted();
-
-    }
-    else {
-      new AsyncTask<Void, Void, Void>() {
-        @Override
-        protected Void doInBackground(Void... params) {
-          ArrayList<Integer> messageIds;
-          messageIds = DatabaseFactory.getSmsDatabase(context).getMessageIdsByRecipientId(recipientId);
-          for (int i = 0; i < messageIds.size(); i++) {
-            long messageId = messageIds.get(i);
-            Log.w(TAG, "Deleting: " + String.valueOf(messageId));
-            DatabaseFactory.getSmsDatabase(context).deleteMessage(messageId);
-          }
-          return null;
-        }
-      }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-      dialogInterface.dismiss();
-      util.displayAllMessagesDeleted();
     }
   }
 
