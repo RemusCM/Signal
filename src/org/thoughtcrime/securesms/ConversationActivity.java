@@ -562,6 +562,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       case R.id.menu_clear_group_chat:
         handleClearGroupChat();
         return true;
+
     }
 
     return false;
