@@ -13,6 +13,7 @@ import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressLint({"Registered", "ValidFragment"})
 public class ClearConversationActivity implements DialogInterface.OnClickListener {
@@ -31,6 +32,25 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
   @SuppressLint("StaticFieldLeak")
   @Override
   public void onClick(DialogInterface dialogInterface, int which) {
+    if (recipient != null) {
+      if (recipient.isGroupRecipient()) {
+        manageClearGroupConversation(dialogInterface);
+      } else {
+        manageClearSingleConversation(dialogInterface);
+      }
+    }
+  }
+
+  private void manageClearGroupConversation(DialogInterface dialogInterface) {
+    List<Recipient> recipientList = recipient.getParticipants();
+    ArrayList<String> members = new ArrayList<>();
+    for (Recipient recipient : recipientList) {
+      members.add(recipient.getAddress().serialize());
+    }
+    String groupId = recipient.getAddress().toGroupString();
+  }
+
+  private void manageClearSingleConversation(DialogInterface dialogInterface) {
     Address recipientId = recipient.getAddress();
     ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
     int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
