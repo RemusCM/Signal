@@ -10,7 +10,4 @@
     <item android:title="@string/conversation__menu_conversation_settings"
           android:id="@+id/menu_conversation_settings"/>
 
-    <item android:title="@string/conversation_menu_clear_conversation"
-          android:id="@+id/menu_conversation_clear_conversation"/>
-
 </menu>
