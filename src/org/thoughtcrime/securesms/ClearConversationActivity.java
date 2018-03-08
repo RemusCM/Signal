@@ -54,10 +54,23 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
     Address recipientId = recipient.getAddress();
     ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
     int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
+
     if (messageCount < 1) {
       dialogInterface.dismiss();
       util.displayNothingToDeleteMessage();
-    } else {
+    }
+
+    //This part of the code completely clears group conversations, including the system messages.
+    else if(recipient.isGroupRecipient()){
+
+      long      threadId       = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient, ThreadDatabase.DistributionTypes.DEFAULT);
+      DatabaseFactory.getSmsDatabase(context).deleteThread(threadId);
+      DatabaseFactory.getMmsDatabase(context).deleteThread(threadId);
+      dialogInterface.dismiss();
+      util.displayAllMessagesDeleted();
+
+    }
+    else {
       new AsyncTask<Void, Void, Void>() {
         @Override
         protected Void doInBackground(Void... params) {
