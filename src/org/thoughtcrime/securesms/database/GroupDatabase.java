@@ -178,26 +178,6 @@ public class GroupDatabase extends Database {
 
     databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, contentValues);
 
-    // START MODERATOR FUNCTIONALITY
-    String moderator = String.valueOf(getOwnAddress(context, members));
-    // updateModeratorColumn(groupId, moderator);
-    PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-    String[] givenPrivileges = {
-            PermissionType.EDIT_GROUP.getPermissionTypeCode(),
-            PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
-    };
-    Log.i(TAG, "populating permission table...");
-    // permissionDatabase.create(groupId, moderator, givenPrivileges, members);
-    /*
-    PermissionDatabase.PermissionRecord permissionRecord = new PermissionDatabase.PermissionRecord(
-            groupId,
-            moderator,
-            Util.joinStringArray(givenPrivileges)
-    );
-    permissionDatabase.createUsingObject(permissionRecord, members);
-    */
-    // END MODERATOR FUNCTIONALITY
-
     Recipient.applyCached(Address.fromSerialized(groupId), recipient -> {
       recipient.setName(title);
       recipient.setGroupAvatarId(avatar != null ? avatar.getId() : null);
@@ -208,25 +188,35 @@ public class GroupDatabase extends Database {
   }
 
   /**
-   * Returns own address (number) given
-   * a list of members.
-   * @param context
-   * @param members
-   * @return
+   * @param groupId for searching moderator
+   * @return moderator of this group
    */
-  private Address getOwnAddress(Context context, List<Address> members) {
-      for(Address address : members) {
-          if(Util.isOwnNumber(context, address))
-              return address;
+  private String getGroupModeratorByGroupId(String groupId) {
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT " + MODERATOR +
+            " FROM " + TABLE_NAME +
+            " WHERE " + GROUP_ID + " = ?";
+
+    try {
+      cursor = db.rawQuery(sql, new String[]{groupId});
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getString(cursor.getColumnIndex(MODERATOR));
+      } else {
+        return null;
       }
-      return null;
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
   }
 
   /**
    * Add address of the person who creates
    * the group in the moderator column.
-   * Call this method after inserting the
-   * group in the table.
+   * Version 2: using groupId, this is when
+   * you don't have access to group id
    */
   public void updateModeratorColumnByGroupName(String moderator, String groupName) {
     ContentValues contentValues = new ContentValues();
@@ -242,7 +232,6 @@ public class GroupDatabase extends Database {
   /**
    * Add address of the person who creates
    * the group in the moderator column.
-   * Version 2: using groupId
    */
   public void updateModeratorColumnByGroupId(String moderator, String groupId) {
     ContentValues contentValues = new ContentValues();
@@ -257,29 +246,51 @@ public class GroupDatabase extends Database {
 
   /**
    * Check if local number is a moderator.
-   * Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   * given a group id
    */
   public boolean isModerator(String moderator, String groupId) {
-    String sql = "SELECT * FROM " +
-            TABLE_NAME + " WHERE " +
-            GROUP_ID + " = ? AND " +
-            MODERATOR + " = ?";
-    String[] sqlArgs = new String[]{groupId, moderator};
+    if (getGroupModeratorByGroupId(groupId) != null) {
+      String realModerator = getGroupModeratorByGroupId(groupId);
+      assert realModerator != null;
+      return realModerator.equals(moderator);
+    }
+    return false;
+  }
+
+  /**
+   * @param recipients members to parse address from
+   * @return a list of recipient address
+   */
+  public List<Address> getRecipientsAddress(List<Recipient> recipients) {
+    List<Address> addressList = new LinkedList<>();
+    for (Recipient recipient : recipients) {
+      addressList.add(recipient.getAddress());
+    }
+    return addressList;
+  }
+
+  /**
+   * @param groupId to search from
+   * @return group members' addresses
+   */
+  public String getMembersByGroupId(String groupId) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
-    Log.i(TAG, "isModerator:sql -> " + sql);
     Cursor cursor = null;
+    String sql = "SELECT " + MEMBERS +
+            " FROM " + TABLE_NAME +
+            " WHERE " + GROUP_ID + " = ?";
 
     try {
-      cursor = db.rawQuery(sql, sqlArgs);
+      cursor = db.rawQuery(sql, new String[]{groupId});
       if (cursor != null && cursor.moveToFirst()) {
-        return !cursor.getString(0).isEmpty() &&
-                moderator.equals(cursor.getString(cursor.getColumnIndex(MODERATOR)));
+        return cursor.getString(cursor.getColumnIndex(MEMBERS)).trim();
       } else {
-        return false;
+        return null;
       }
     } finally {
-      if (cursor != null)
+      if (cursor != null) {
         cursor.close();
+      }
     }
   }
 

@@ -487,4 +487,42 @@ public class Util {
 
     return new DecimalFormat("#,##0.#").format(sizeBytes/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
   }
+
+
+  /**
+   * Concatenate string elements with comma
+   * into one single variable.
+   *
+   * @param str strings elements
+   * @return comma separated string
+   */
+  public static String joinStringElements(String[] str) {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < str.length; i++) {
+      if (i != str.length - 1) {
+        stringBuilder.append(str[i].concat(","));
+      } else {
+        stringBuilder.append(str[i]);
+      }
+    }
+    return stringBuilder.toString();
+  }
+
+  /**
+   * Parses string (split comma separated string) into a list
+   *
+   * @param str to split into comma
+   * @return a list
+   */
+  public static List<String> splitStringIntoList(String str) {
+    List<String> stringList = new LinkedList<>();
+    String[] privilegeTokens = str.split("\\,");
+
+    for (int i = 0; i < privilegeTokens.length; i++) {
+      stringList.add(privilegeTokens[i]);
+    }
+
+    return stringList;
+  }
+
 }
