@@ -170,7 +170,7 @@ public class ThreadDatabase extends Database {
     notifyConversationListListeners();
   }
 
-  private void deleteThread(long threadId) {
+  public void deleteThread(long threadId) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.delete(TABLE_NAME, ID_WHERE, new String[] {threadId + ""});
     notifyConversationListListeners();

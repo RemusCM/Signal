@@ -593,7 +593,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   }
 
   private boolean handleClearConversation()  {
-    AlertDialog clearDialog = new AlertDialog.Builder(ConversationActivity.this)
+    AlertDialog clearDialog = new AlertDialog.Builder(this)
             .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
             .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
             .setIconAttribute(R.attr.dialog_alert_icon)

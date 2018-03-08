@@ -723,7 +723,8 @@ public class SmsDatabase extends MessagingDatabase {
     }
   }
 
-  /*package */void deleteThread(long threadId) {
+  /*package */
+  public void deleteThread(long threadId) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.delete(TABLE_NAME, THREAD_ID + " = ?", new String[] {threadId+""});
   }
