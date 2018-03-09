@@ -11,13 +11,8 @@ import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 @SuppressLint({"Registered", "ValidFragment"})
 public class ClearConversationActivity implements DialogInterface.OnClickListener {
-    LinkedList<Recipient> members;
-    long threadIdForMember;
   private static final String TAG = ClearConversationActivity.class.getSimpleName();
 
   private final Recipient recipient;
@@ -44,25 +39,11 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
         util.displayNothingToDeleteMessage();
       } else {
 
-
-
-          for(Recipient recipient : recipient.getParticipants()){
-              members.add(recipient);
-          }
-          for(Recipient recipient : members){
-              threadIdForMember = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient);
-              //DatabaseFactory.getThreadDatabase(context).deleteConversation(threadIdForMember);
-              //DatabaseFactory.getThreadDatabase(context).update(threadIdForMember, false);
-              DatabaseFactory.getSmsDatabase(context).deleteMessagesInThreadBeforeDate(threadIdForMember,System.currentTimeMillis());
-              DatabaseFactory.getMmsDatabase(context).deleteMessagesInThreadBeforeDate(threadIdForMember,System.currentTimeMillis());
-
-          }
-        //This part deletes the conversation locally.
-//        long threadId = DatabaseFactory.getThreadDatabase(context)
-//                .getThreadIdFor(recipient,
-//                        ThreadDatabase.DistributionTypes.DEFAULT);
-//        DatabaseFactory.getThreadDatabase(context).deleteConversation(threadId);
-//        DatabaseFactory.getThreadDatabase(context).update(threadId, false);
+        long threadId = DatabaseFactory.getThreadDatabase(context)
+                .getThreadIdFor(recipient,
+                        ThreadDatabase.DistributionTypes.DEFAULT);
+        DatabaseFactory.getThreadDatabase(context).deleteConversation(threadId);
+        DatabaseFactory.getThreadDatabase(context).update(threadId, false);
 
         dialogInterface.dismiss();
         util.displayAllMessagesDeleted();
