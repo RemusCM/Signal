@@ -30,8 +30,10 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
   public void onClick(DialogInterface dialogInterface, int which) {
     if (recipient != null) {
       Address recipientId = recipient.getAddress();
+
       ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
       int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
+
       if (messageCount < 1) {
         dialogInterface.dismiss();
         util.displayNothingToDeleteMessage();
@@ -54,16 +56,14 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
     ClearConversationUtil() {}
 
     private void displayNothingToDeleteMessage() {
-      Log.w(TAG, "ClearConversationUtil::displayNothingToDeleteMessage()");
       Toast.makeText(
               context,
               R.string.RecipientPreferenceActivity_clear_conversation_nothing_to_delete,
-              Toast.LENGTH_SHORT
+              Toast.LENGTH_LONG
       ).show();
     }
 
     private void displayAllMessagesDeleted() {
-      Log.w(TAG, "ClearConversationUtil::displayAllMessagesDeleted()");
       Toast.makeText(
               context,
               R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
