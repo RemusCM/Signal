@@ -508,7 +508,11 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         RecipientPrivilege recipientPrivilege = new RecipientPrivilege(recipient, context);
         if (recipientPrivilege.canEditGroup()) {
           inflater.inflate(R.menu.conversation_push_group_options, menu);
-        } else {
+        }
+        if (recipientPrivilege.canClearGroupConversation()) {
+          inflater.inflate(R.menu.conversation_clear_group_chat, menu);
+        }
+        if (!recipientPrivilege.canEditGroup() || !recipientPrivilege.canClearGroupConversation()) {
           inflater.inflate(R.menu.conversation_push_group_options_restriction, menu);
         }
       }
@@ -555,6 +559,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case R.id.menu_expiring_messages_off:
     case R.id.menu_expiring_messages:         handleSelectMessageExpiration();                   return true;
     case android.R.id.home:                   handleReturnToConversationList();                  return true;
+      case R.id.menu_clear_group_chat:
+        handleClearGroupChat();
+        return true;
+
     }
 
     return false;
@@ -589,6 +597,20 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(intent);
     finish();
+  }
+
+  private boolean handleClearGroupChat() {
+    new AlertDialog.Builder(ConversationActivity.this)
+            .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
+            .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
+            .setIconAttribute(R.attr.dialog_alert_icon)
+            .setCancelable(true)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.RecipientPreferenceActivity_clear,
+                    new ClearConversationActivity(this.recipient, this))
+            .show();
+    return true;
+
   }
 
   private void handleSelectMessageExpiration() {

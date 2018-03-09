@@ -3,7 +3,6 @@ package org.thoughtcrime.securesms;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,8 +10,6 @@ import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
-
-import java.util.ArrayList;
 
 @SuppressLint({"Registered", "ValidFragment"})
 public class ClearConversationActivity implements DialogInterface.OnClickListener {
@@ -31,28 +28,26 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
   @SuppressLint("StaticFieldLeak")
   @Override
   public void onClick(DialogInterface dialogInterface, int which) {
-    Address recipientId = recipient.getAddress();
-    ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
-    int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
-    if (messageCount < 1) {
-      dialogInterface.dismiss();
-      util.displayNothingToDeleteMessage();
-    } else {
-      new AsyncTask<Void, Void, Void>() {
-        @Override
-        protected Void doInBackground(Void... params) {
-          ArrayList<Integer> messageIds;
-          messageIds = DatabaseFactory.getSmsDatabase(context).getMessageIdsByRecipientId(recipientId);
-          for (int i = 0; i < messageIds.size(); i++) {
-            long messageId = messageIds.get(i);
-            Log.w(TAG, "Deleting: " + String.valueOf(messageId));
-            DatabaseFactory.getSmsDatabase(context).deleteMessage(messageId);
-          }
-          return null;
-        }
-      }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-      dialogInterface.dismiss();
-      util.displayAllMessagesDeleted();
+    if (recipient != null) {
+      Address recipientId = recipient.getAddress();
+
+      ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
+      int messageCount = threadDatabase.getMessageCountByRecipientId(recipientId);
+
+      if (messageCount < 1) {
+        dialogInterface.dismiss();
+        util.displayNothingToDeleteMessage();
+      } else {
+
+        long threadId = DatabaseFactory.getThreadDatabase(context)
+                .getThreadIdFor(recipient,
+                        ThreadDatabase.DistributionTypes.DEFAULT);
+        DatabaseFactory.getThreadDatabase(context).deleteConversation(threadId);
+        DatabaseFactory.getThreadDatabase(context).update(threadId, false);
+
+        dialogInterface.dismiss();
+        util.displayAllMessagesDeleted();
+      }
     }
   }
 
@@ -61,16 +56,14 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
     ClearConversationUtil() {}
 
     private void displayNothingToDeleteMessage() {
-      Log.w(TAG, "ClearConversationUtil::displayNothingToDeleteMessage()");
       Toast.makeText(
               context,
               R.string.RecipientPreferenceActivity_clear_conversation_nothing_to_delete,
-              Toast.LENGTH_SHORT
+              Toast.LENGTH_LONG
       ).show();
     }
 
     private void displayAllMessagesDeleted() {
-      Log.w(TAG, "ClearConversationUtil::displayAllMessagesDeleted()");
       Toast.makeText(
               context,
               R.string.RecipientPreferenceActivity_clear_conversation_successful_deletion,
