@@ -5,10 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.thoughtcrime.securesms.PermissionType;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.GroupDatabase;
+import org.thoughtcrime.securesms.database.PermissionDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientModifiedListener;
 
@@ -91,9 +93,9 @@ public class GroupUtil {
       GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
       String groupName = groupContext.getName();
 
+
       if (!senderGroupInvite.isEmpty() && senderGroupInvite.length() > 0) {
         String senderNumber = sender.getAddress().serialize();
-
         Log.i(TAG, "toString(Recipient sender)[sender name]: " + senderGroupInvite);
         Log.i(TAG, "toString(Recipient sender)[sender number]: " + senderNumber);
         Log.i(TAG, "toString(Recipient sender)[myOwnNumber]: " + myOwnNumber);
@@ -101,6 +103,21 @@ public class GroupUtil {
 
         // set the moderator to the sender
         groupDatabase.updateModeratorColumnByGroupName(senderNumber, groupName);
+        /*
+        String[] givenPrivileges = {
+                PermissionType.EDIT_GROUP.getPermissionTypeCode(),
+                PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
+        };
+        // populate permission table with the other group members
+
+        PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
+        permissionDatabase.create(
+                groupId,
+                senderNumber,
+                givenPrivileges,
+                groupDatabase.getRecipientsAddress(members)
+        );
+        */
       }
 
       if (groupContext == null) {

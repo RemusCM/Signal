@@ -490,13 +490,13 @@ public class Util {
 
 
   /**
-   * Concatenate privilege with comma
-   * into one single string variable.
+   * Concatenate string elements with comma
+   * into one single variable.
    *
-   * @param str strings privileges
+   * @param str strings elements
    * @return comma separated string
    */
-  public static String joinStringPrivileges(String[] str) {
+  public static String joinStringElements(String[] str) {
     StringBuilder stringBuilder = new StringBuilder();
     for (int i = 0; i < str.length; i++) {
       if (i != str.length - 1) {
@@ -507,4 +507,22 @@ public class Util {
     }
     return stringBuilder.toString();
   }
+
+  /**
+   * Parses string (split comma separated string) into a list
+   *
+   * @param str to split into comma
+   * @return a list
+   */
+  public static List<String> splitStringIntoList(String str) {
+    List<String> stringList = new LinkedList<>();
+    String[] privilegeTokens = str.split("\\,");
+
+    for (int i = 0; i < privilegeTokens.length; i++) {
+      stringList.add(privilegeTokens[i]);
+    }
+
+    return stringList;
+  }
+
 }

@@ -965,7 +965,8 @@ public class MmsDatabase extends MessagingDatabase {
     }
   }
 
-  /*package*/void deleteMessagesInThreadBeforeDate(long threadId, long date) {
+  /*package*/
+  public void deleteMessagesInThreadBeforeDate(long threadId, long date) {
     Cursor cursor = null;
 
     try {

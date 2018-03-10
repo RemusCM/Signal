@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.annimon.stream.Stream;
 
 import org.thoughtcrime.securesms.PermissionType;
+import org.thoughtcrime.securesms.util.Util;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,10 +51,13 @@ public class PermissionDatabase extends Database {
    * @return string of privileges in the form 64,32,16
    */
   private String getRecipientPrivilegesString(String localNumber, String groupId) {
-
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
-    String sql = "SELECT * FROM permission WHERE address = ? AND group_id = ?";
+    String sql = "SELECT " + PRIVILEGES +
+            " FROM " + TABLE_NAME +
+            " WHERE " + ADDRESS + " = ?" +
+            " AND " + GROUP_ID + " = ?";
+
     String[] sqlArgs  = new String[] {localNumber, groupId};
 
     try {
@@ -71,42 +75,25 @@ public class PermissionDatabase extends Database {
   }
 
   /**
-   * This is a helper method. Don't remove.
-   * Parses String privileges (split comma separated string) into a list
-   * @param privileges from getRecipientPrivilegesString
-   * @return array of privileges
-   */
-  private List<String> splitPrivilegesIntoList(String privileges) {
-    List<String> privilegeList = new LinkedList<>();
-    String[] privilegeTokens = privileges.split("\\,");
-
-    for (int i = 0; i < privilegeTokens.length; i++) {
-      privilegeList.add(privilegeTokens[i]);
-    }
-
-    return privilegeList;
-  }
-
-  /**
    * @param localNumber the current user phone number
-   * @param groupId     Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   * @param groupId group id of the current group of the user
    * @return true if current user has edit group permission
    */
   public boolean hasEditGroupPermission(String localNumber, String groupId) {
     String privileges = getRecipientPrivilegesString(localNumber, groupId);
-    List<String> list = splitPrivilegesIntoList(privileges);
+    List<String> list = Util.splitStringIntoList(privileges);
     String editGroupCode = PermissionType.EDIT_GROUP.getPermissionTypeCode();
     return list != null && list.contains(editGroupCode);
   }
 
   /**
    * @param localNumber the current user phone number
-   * @param groupId     Typical groupId: __textsecure_group__!a266a5868e682c63b2fd41e2484e007a
+   * @param groupId group id of the current group of the user
    * @return true if current user has clear group chat permission
    */
-  public boolean hasClearGroupConversationPermission(String localNumber, String groupId) {
+  public boolean hasClearGroupChatPermission(String localNumber, String groupId) {
     String privileges = getRecipientPrivilegesString(localNumber, groupId);
-    List<String> list = splitPrivilegesIntoList(privileges);
+    List<String> list = Util.splitStringIntoList(privileges);
     String clearGroupChatCode = PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode();
     return list != null && list.contains(clearGroupChatCode);
   }
@@ -125,7 +112,7 @@ public class PermissionDatabase extends Database {
       values.put(GROUP_ID, groupId);
       values.put(ADDRESS, member.serialize());
       if (moderator.equals(member.serialize())) {
-        values.put(PRIVILEGES, joinStringPrivileges(givenPrivileges));
+        values.put(PRIVILEGES, Util.joinStringElements(givenPrivileges));
       } else {
         values.put(PRIVILEGES, "");
       }
@@ -136,48 +123,27 @@ public class PermissionDatabase extends Database {
   }
 
   /**
-   * You can insert a record in the permission table
-   * using this alternative method. It uses PermissionRecord
-   * object (wrapper class)
-   *
-   * @param record  a row to be inserted
-   * @param members to be inserted
+   * @param groupId group to search for
+   * @return true if this group exists
    */
-  public void createUsingObject(PermissionRecord record, List<Address> members) {
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();
-
-    for (Address member : members) {
-      ContentValues values = new ContentValues();
-      values.put(GROUP_ID, record.getGroupId());
-      values.put(ADDRESS, member.serialize());
-      if (record.getAddress().equals(member.serialize())) {
-        values.put(PRIVILEGES, record.getPrivileges());
+  public boolean isGroupExistByGroupId(String groupId) {
+    String sql = "SELECT COUNT(*) " +
+            " FROM " + TABLE_NAME +
+            " WHERE " + GROUP_ID + " = ?";
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    try {
+      cursor = db.rawQuery(sql, new String[]{groupId});
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getInt(0) >= 1;
       } else {
-        values.put(PRIVILEGES, "");
+        return false;
       }
-
-      db.insert(TABLE_NAME, null, values);
-    }
-
-  }
-
-  /**
-   * Concatenate privilege with comma
-   * into one single string variable.
-   *
-   * @param str strings privileges
-   * @return comma separated string
-   */
-  private String joinStringPrivileges(String[] str) {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (int i = 0; i < str.length; i++) {
-      if (i != str.length - 1) {
-        stringBuilder.append(str[i].concat(","));
-      } else {
-        stringBuilder.append(str[i]);
+    } finally {
+      if (cursor != null) {
+        cursor.close();
       }
     }
-    return stringBuilder.toString();
   }
 
   /**
