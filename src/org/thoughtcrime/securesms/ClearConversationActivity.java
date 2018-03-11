@@ -42,8 +42,7 @@ public class ClearConversationActivity implements DialogInterface.OnClickListene
         long threadId = DatabaseFactory.getThreadDatabase(context)
                 .getThreadIdFor(recipient,
                         ThreadDatabase.DistributionTypes.DEFAULT);
-        DatabaseFactory.getSmsDatabase(context).deleteMessagesInThreadBeforeDate(threadId, System.currentTimeMillis());
-        DatabaseFactory.getMmsDatabase(context).deleteMessagesInThreadBeforeDate(threadId, System.currentTimeMillis());
+        DatabaseFactory.getThreadDatabase(context).deleteConversation(threadId);
         DatabaseFactory.getThreadDatabase(context).update(threadId, false);
 
         dialogInterface.dismiss();
