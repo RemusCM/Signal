@@ -492,6 +492,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     }
 
     if (isSingleConversation()) {
+      inflater.inflate(R.menu.conversation_clear_chat, menu);
       if (isSecureText) inflater.inflate(R.menu.conversation_callable_secure, menu);
       else              inflater.inflate(R.menu.conversation_callable_insecure, menu);
     } else if (isGroupConversation()) {
@@ -510,7 +511,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           inflater.inflate(R.menu.conversation_push_group_options, menu);
         }
         if (recipientPrivilege.canClearGroupConversation()) {
-          inflater.inflate(R.menu.conversation_clear_group_chat, menu);
+          inflater.inflate(R.menu.conversation_clear_chat, menu);
         }
         if (!recipientPrivilege.canEditGroup() || !recipientPrivilege.canClearGroupConversation()) {
           inflater.inflate(R.menu.conversation_push_group_options_restriction, menu);
