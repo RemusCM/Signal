@@ -21,6 +21,7 @@ public class PermissionMocking extends BaseUnitTest {
     protected PermissionType canClear = PermissionType.CLEAR_GROUP_CONVERSATION;
     protected String[] privileges;
     protected String moderator = "222";
+    protected PermissionDatabase.PermissionRecord pr1;
 
     //Address.ExternalAddressFormatter formatter = new Address.ExternalAddressFormatter("+12223334444");
 
@@ -35,7 +36,7 @@ public class PermissionMocking extends BaseUnitTest {
     }
 
     protected void setUpPermission(){
-//        permissionDbMock.create("111", moderator, addressList);
+        pr1 = new PermissionDatabase.PermissionRecord("111", "123", "64");
     }
 
 }

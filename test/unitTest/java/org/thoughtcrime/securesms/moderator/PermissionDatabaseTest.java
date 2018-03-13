@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
@@ -24,8 +25,8 @@ public class PermissionDatabaseTest extends PermissionMocking {
     permissionDbMock = mock(PermissionDatabase.class);
     privileges = new String[2];
 
-    //setUpAddressList();
-    //setUpPermission();
+    setUpAddressList();
+    setUpPermission();
     setUpPrivileges();
   }
 
@@ -36,12 +37,18 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testHasEditGroupPermission() {
-
+    System.out.println("- Testing hasEditGroupPermission : Outcome #1 -");
+    System.out.println("    Expected: True");
+    System.out.println("    Actual: " + permissionDbMock.hasEditGroupPermission("123","111"));
+    assertTrue(permissionDbMock.hasEditGroupPermission("123","111"));
   }
 
   @Test
   public void testHasClearGroupChatPermission() {
-
+    System.out.println("- Testing hasClearGroupChatPermission : Outcome #1 -");
+    System.out.println("    Expected: True");
+    System.out.println("    Actual: " + permissionDbMock.hasClearGroupChatPermission("123","111"));
+    assertTrue(permissionDbMock.hasClearGroupChatPermission("123","111"));
   }
 
   @Test
