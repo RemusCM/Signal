@@ -28,11 +28,16 @@ public class PermissionDatabaseTest extends PermissionMocking {
     setUpAddressList();
     setUpPermission();
     setUpPrivileges();
+    setUpPermissionRecord();
+    setUpRecipientPrivilegeString();
   }
 
   @Test
   public void testGetRecipientPrivilegesString() {
-
+    System.out.println("- Testing getRecipientPrivilegesString : Outcome #1 -");
+    System.out.println("    Expected: 64");
+    System.out.println("    Actual: " + permissionDbMock.getRecipientPrivilegesString("123","111"));
+    assertEquals("64",permissionDbMock.getRecipientPrivilegesString("123","111"));
   }
 
   @Test
@@ -52,8 +57,11 @@ public class PermissionDatabaseTest extends PermissionMocking {
   }
 
   @Test
-  public void testCreate() {
-
+  public void testGetPrivileges() {
+    System.out.println("- Testing getPrivileges : Outcome #1 -");
+    System.out.println("    Expected: 64");
+    System.out.println("    Actual: " + pr1.getPrivileges());
+    assertEquals("64",pr1.getPrivileges());
   }
 
   @Test

@@ -50,7 +50,7 @@ public class PermissionDatabase extends Database {
    * Get privileges of user.
    * @return string of privileges in the form 64,32,16
    */
-  private String getRecipientPrivilegesString(String localNumber, String groupId) {
+  public String getRecipientPrivilegesString(String localNumber, String groupId) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
     String sql = "SELECT " + PRIVILEGES +
