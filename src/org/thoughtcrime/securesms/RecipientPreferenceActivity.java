@@ -84,7 +84,7 @@ public class RecipientPreferenceActivity extends
   private static final String PREFERENCE_VIBRATE  = "pref_key_recipient_vibrate";
   private static final String PREFERENCE_BLOCK    = "pref_key_recipient_block";
   private static final String PREFERENCE_COLOR    = "pref_key_recipient_color";
-  private static final String PREFERENCE_CLEAR_CONVERSATION    = "pref_key_clear_conversation";
+//  private static final String PREFERENCE_CLEAR_CONVERSATION    = "pref_key_clear_conversation";
   private static final String PREFERENCE_IDENTITY = "pref_key_recipient_identity";
   // the preference key used in recipient_preferences.xml
   private static final String PREFERENCE_NICKNAME = "pref_key_change_nicknames";
@@ -267,8 +267,8 @@ public class RecipientPreferenceActivity extends
           .setOnPreferenceChangeListener(new ColorChangeListener());
       // associate the key to an inner class ChangeNicknameClickedListener
       // which contains the method that performs addition or modification of nickname
-      this.findPreference(PREFERENCE_CLEAR_CONVERSATION)
-              .setOnPreferenceClickListener(new ClearConversationClickedListener());
+//      this.findPreference(PREFERENCE_CLEAR_CONVERSATION)
+//              .setOnPreferenceClickListener(new ClearConversationClickedListener());
       this.findPreference(PREFERENCE_NICKNAME)
               .setOnPreferenceClickListener(new NicknameChangeActivity(getContext(), recipient));
 
@@ -318,7 +318,7 @@ public class RecipientPreferenceActivity extends
       PreferenceCategory         divider            = (PreferenceCategory)this.findPreference("divider");
 
       Preference                 changeNicknamePreference = this.findPreference(PREFERENCE_NICKNAME);
-      Preference                 clearChatPreference = this.findPreference(PREFERENCE_CLEAR_CONVERSATION);
+//      Preference                 clearChatPreference = this.findPreference(PREFERENCE_CLEAR_CONVERSATION);
 
 
       mutePreference.setChecked(recipient.isMuted());
@@ -354,7 +354,7 @@ public class RecipientPreferenceActivity extends
         if (identityPreference != null) identityPreference.setVisible(false);
         if (privacyCategory    != null) privacyCategory.setVisible(false);
         if (divider            != null) divider.setVisible(false);
-        if (clearChatPreference!= null) clearChatPreference.setVisible(false);
+//        if (clearChatPreference!= null) clearChatPreference.setVisible(false);
       } else {
         colorPreference.setColors(MaterialColors.CONVERSATION_PALETTE.asConversationColorArray(getActivity()));
         colorPreference.setColor(recipient.getColor().toActionBarColor(getActivity()));
@@ -595,21 +595,21 @@ public class RecipientPreferenceActivity extends
       }
     }
 
-    private class ClearConversationClickedListener implements Preference.OnPreferenceClickListener {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
-                .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
-                .setIconAttribute(R.attr.dialog_alert_icon)
-                .setCancelable(true)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.RecipientPreferenceActivity_clear,
-                        new ClearConversationActivity(recipient, getContext()))
-                .show();
-        return true;
-      }
-    }
+//    private class ClearConversationClickedListener implements Preference.OnPreferenceClickListener {
+//      @Override
+//      public boolean onPreferenceClick(Preference preference) {
+//        new AlertDialog.Builder(getActivity())
+//                .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
+//                .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
+//                .setIconAttribute(R.attr.dialog_alert_icon)
+//                .setCancelable(true)
+//                .setNegativeButton(android.R.string.cancel, null)
+//                .setPositiveButton(R.string.RecipientPreferenceActivity_clear,
+//                        new ClearConversationActivity(recipient, getContext()))
+//                .show();
+//        return true;
+//      }
+//    }
 
   }
 }

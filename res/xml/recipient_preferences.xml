@@ -48,13 +48,13 @@
                 />
         </Preference>
 
-        <Preference
-            android:dependency="pref_key_recipient_mute"
-            android:key="pref_key_clear_conversation"
-            android:title="@string/recipient_preferences__clear_conversation"
-            android:summary="@string/recipient_preferences__clear_conversation_subtitle"
-            android:persistent="false">
-        </Preference>
+        <!--<Preference-->
+            <!--android:dependency="pref_key_recipient_mute"-->
+            <!--android:key="pref_key_clear_conversation"-->
+            <!--android:title="@string/recipient_preferences__clear_conversation"-->
+            <!--android:summary="@string/recipient_preferences__clear_conversation_subtitle"-->
+            <!--android:persistent="false">-->
+        <!--</Preference>-->
 
     </PreferenceCategory>
 

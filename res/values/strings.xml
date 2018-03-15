@@ -974,8 +974,8 @@
     <string name="recipient_preferences__notification_sound">Notification sound</string>
     <string name="recipient_preferences__vibrate">Vibrate</string>
     <string name="recipient_preferences__block">Block</string>
-    <string name="recipient_preferences__clear_conversation">Clear Conversation</string>
-    <string name="recipient_preferences__clear_conversation_subtitle">Delete message history</string>
+    <!--<string name="recipient_preferences__clear_conversation">Clear Conversation</string>-->
+    <!--<string name="recipient_preferences__clear_conversation_subtitle">Delete message history</string>-->
     <string name="recipient_preferences__color">Color</string>
     <string name="recipient_preferences__view_safety_number">View safety number</string>
     <string name="recipient_preferences__chat_settings">Chat settings</string>
@@ -1257,6 +1257,7 @@
     <string name="conversation__menu_leave_group">Leave group</string>
     <string name="conversation__menu_view_all_media">All media</string>
     <string name="conversation__menu_conversation_settings">Conversation settings</string>
+    <string name="conversation__menu_clear_group_chat">Clear conversation</string>
 
     <!-- conversation_popup -->
     <string name="conversation_popup__menu_expand_popup">Expand popup</string>
