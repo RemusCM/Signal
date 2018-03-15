@@ -39,6 +39,7 @@ import android.util.Log;
 
 import org.thoughtcrime.securesms.ConversationActivity;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.ShortcutCreator;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MessagingDatabase.MarkedMessageInfo;
@@ -272,6 +273,10 @@ public class MessageNotifier {
         sendMultipleThreadNotification(context, notificationState, signal);
       } else {
         sendSingleThreadNotification(context, masterSecret, notificationState, signal, false);
+      }
+
+      if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+        new ShortcutCreator(context).createShortcuts();
       }
 
       cancelOrphanedNotifications(context, notificationState);

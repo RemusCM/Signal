@@ -16,7 +16,6 @@
  */
 package org.thoughtcrime.securesms;
 
-import android.*;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
@@ -24,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
@@ -63,6 +63,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   private MasterSecret             masterSecret;
   private SearchToolbar            searchToolbar;
   private ImageView                searchAction;
+  private ShortcutCreator shortcutHelper = null;
 
   @Override
   protected void onPreCreate() {
@@ -84,8 +85,9 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     fragment      = initFragment(R.id.fragment_container, new ConversationListFragment(), masterSecret, dynamicLanguage.getCurrentLocale());
 
     initializeSearchListener();
-
     RatingManager.showRatingDialogIfNecessary(this);
+    initializeShortcuts();
+
   }
 
   @Override
@@ -93,6 +95,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     super.onResume();
     dynamicTheme.onResume(this);
     dynamicLanguage.onResume(this);
+    initializeShortcuts();
   }
 
   @Override
@@ -111,6 +114,15 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
 
     super.onPrepareOptionsMenu(menu);
     return true;
+  }
+
+  private void initializeShortcuts() {
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+      if (shortcutHelper == null) {
+        shortcutHelper = new ShortcutCreator(this);
+      }
+      shortcutHelper.createShortcuts();
+    }
   }
 
   private void initializeSearchListener() {
