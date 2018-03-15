@@ -48,4 +48,9 @@ public class PermissionMocking extends BaseUnitTest {
         pr1 = new PermissionDatabase.PermissionRecord("111", "123", "64");
     }
 
+    protected void setUpCreateRecord() {
+        when(permissionDbMock.create("ABC123", "111", privileges, addressList)).thenReturn(true);
+        when(permissionDbMock.getRecipientPrivilegesString("111", "ABC123")).thenReturn(privileges.toString());
+    }
+
 }

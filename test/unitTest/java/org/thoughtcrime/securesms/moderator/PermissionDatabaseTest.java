@@ -30,6 +30,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
     setUpPrivileges();
     setUpPermissionRecord();
     setUpRecipientPrivilegeString();
+    setUpCreateRecord();
   }
 
   @Test
@@ -90,6 +91,23 @@ public class PermissionDatabaseTest extends PermissionMocking {
     System.out.println("    Expected: " + stringList.toString());
     System.out.println("    Actual: " + Util.splitStringIntoList(str));
     assertEquals(stringList, Util.splitStringIntoList(str));
+  }
+
+  @Test
+  public void testCreateRecord() {
+    System.out.println("- Testing testCreateRecord : Outcome #1 -");
+    boolean isCreated = permissionDbMock.create("ABC123", "111", privileges, addressList);
+    assertTrue(isCreated);
+    assertEquals(privileges.toString(), permissionDbMock.getRecipientPrivilegesString("111", "ABC123"));
+  }
+
+  @Test
+  public void testCreateRecordFail() {
+    System.out.println("- Testing testCreateRecordFail : Will fail -");
+    boolean isCreated;
+    isCreated = permissionDbMock.create("ABC123", "222", privileges, addressList);
+    assertTrue(isCreated);
+    assertEquals(privileges.toString(), permissionDbMock.getRecipientPrivilegesString("222", "ABC123"));
   }
 
 }
