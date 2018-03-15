@@ -62,7 +62,7 @@ public class GroupDatabaseTest extends BaseUnitTest {
 
   @Test
   public void testUpdateModeratorColumnByGroupName() {
-    System.out.println("testUpdateModeratorColumnByGroupName(): - " + "Will pass");
+    System.out.println("\ntestUpdateModeratorColumnByGroupName(): - " + "Will pass");
     boolean isUpdated = groupDatabase.updateModeratorColumnByGroupName("999", "SOEN390");
     assertEquals("999", groupDatabase.getMembersByGroupId("SOEN390"));
     assertTrue(isUpdated);
@@ -70,7 +70,7 @@ public class GroupDatabaseTest extends BaseUnitTest {
 
   @Test
   public void testUpdateModeratorColumnByGroupId() {
-    System.out.println("testUpdateModeratorColumnByGroupId(): - " + "Will pass");
+    System.out.println("\ntestUpdateModeratorColumnByGroupId(): - " + "Will pass");
     boolean isUpdated = groupDatabase.updateModeratorColumnByGroupId("777", "ABC123");
     assertEquals("777", groupDatabase.getGroupModeratorByGroupId("ABC123"));
     assertTrue(isUpdated);
@@ -78,7 +78,7 @@ public class GroupDatabaseTest extends BaseUnitTest {
 
   @Test
   public void testIsModerator() {
-    System.out.println("testIsModerator(): - " + "Will pass");
+    System.out.println("\ntestIsModerator(): - " + "Will pass");
     assertTrue(groupDatabase.isModerator("111", groupId));
     assertTrue(groupDatabase.isModerator("222", groupId));
     assertFalse(groupDatabase.isModerator("333", groupId));
@@ -87,7 +87,7 @@ public class GroupDatabaseTest extends BaseUnitTest {
 
   @Test
   public void testIsModeratorFail() {
-    System.out.println("testIsModeratorFail(): - " + "Will fail");
+    System.out.println("\ntestIsModeratorFail(): - " + "Will fail");
     assertFalse(groupDatabase.isModerator("111", groupId));
     assertFalse(groupDatabase.isModerator("222", groupId));
     assertTrue(groupDatabase.isModerator("333", groupId));

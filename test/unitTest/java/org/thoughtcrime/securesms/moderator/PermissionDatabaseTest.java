@@ -35,7 +35,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testGetRecipientPrivilegesString() {
-    System.out.println("- Testing getRecipientPrivilegesString : Outcome #1 -");
+    System.out.println("\n- Testing getRecipientPrivilegesString : Outcome #1 -");
     System.out.println("    Expected: 64");
     System.out.println("    Actual: " + permissionDbMock.getRecipientPrivilegesString("123","111"));
     assertEquals("64",permissionDbMock.getRecipientPrivilegesString("123","111"));
@@ -43,7 +43,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testHasEditGroupPermission() {
-    System.out.println("- Testing hasEditGroupPermission : Outcome #1 -");
+    System.out.println("\n- Testing hasEditGroupPermission : Outcome #1 -");
     System.out.println("    Expected: True");
     System.out.println("    Actual: " + permissionDbMock.hasEditGroupPermission("123","111"));
     assertTrue(permissionDbMock.hasEditGroupPermission("123","111"));
@@ -51,7 +51,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testHasClearGroupChatPermission() {
-    System.out.println("- Testing hasClearGroupChatPermission : Outcome #1 -");
+    System.out.println("\n- Testing hasClearGroupChatPermission : Outcome #1 -");
     System.out.println("    Expected: True");
     System.out.println("    Actual: " + permissionDbMock.hasClearGroupChatPermission("123","111"));
     assertTrue(permissionDbMock.hasClearGroupChatPermission("123","111"));
@@ -59,7 +59,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testGetPrivileges() {
-    System.out.println("- Testing getPrivileges : Outcome #1 -");
+    System.out.println("\n- Testing getPrivileges : Outcome #1 -");
     System.out.println("    Expected: 64");
     System.out.println("    Actual: " + pr1.getPrivileges());
     assertEquals("64",pr1.getPrivileges());
@@ -69,7 +69,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
   public void testJoinStringPrivileges() {
     // Testing Util:joinStringElements(String[] str)
     String[] arr = {privileges[0], privileges[1]};
-    System.out.println("- Testing joinStringPrivileges : Outcome #1 -");
+    System.out.println("\n- Testing joinStringPrivileges : Outcome #1 -");
     System.out.println("    Expected: 64,32");
     System.out.println("    Actual: " + Util.joinStringElements(arr));
     assertEquals("64,32", Util.joinStringElements(arr));
@@ -80,7 +80,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
   public void testSplitStringIntoList() {
     // Testing Util:splitStringIntoList(String str)
     String str = "64,32,16,8,4,2";
-    System.out.println("- Testing splitStringIntoList : Outcome #1 -");
+    System.out.println("\n- Testing splitStringIntoList : Outcome #1 -");
     List<String> stringList = new LinkedList<>();
     stringList.add("64");
     stringList.add("32");
@@ -95,7 +95,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testCreateRecord() {
-    System.out.println("- Testing testCreateRecord : Outcome #1 -");
+    System.out.println("\n- Testing testCreateRecord : Outcome #1 -");
     boolean isCreated = permissionDbMock.create("ABC123", "111", privileges, addressList);
     assertTrue(isCreated);
     assertEquals(privileges.toString(), permissionDbMock.getRecipientPrivilegesString("111", "ABC123"));
