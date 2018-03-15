@@ -48,7 +48,7 @@ public class GroupDatabaseTest extends BaseUnitTest {
     BDDMockito.given(DatabaseFactory.getGroupDatabase(context)).willReturn(groupDatabase);
   }
 
-  public void setUpGroupDatabase() {
+  private void setUpGroupDatabase() {
     when(groupDatabase.isModerator("111", groupId)).thenReturn(true);
     when(groupDatabase.isModerator("222", groupId)).thenReturn(true);
     when(groupDatabase.isModerator("333", groupId)).thenReturn(false);
