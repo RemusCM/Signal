@@ -595,21 +595,5 @@ public class RecipientPreferenceActivity extends
       }
     }
 
-//    private class ClearConversationClickedListener implements Preference.OnPreferenceClickListener {
-//      @Override
-//      public boolean onPreferenceClick(Preference preference) {
-//        new AlertDialog.Builder(getActivity())
-//                .setTitle(R.string.RecipientPreferenceActivity_clear_conversation_question)
-//                .setMessage(R.string.RecipientPreferenceActivity_clear_conversation_messages)
-//                .setIconAttribute(R.attr.dialog_alert_icon)
-//                .setCancelable(true)
-//                .setNegativeButton(android.R.string.cancel, null)
-//                .setPositiveButton(R.string.RecipientPreferenceActivity_clear,
-//                        new ClearConversationActivity(recipient, getContext()))
-//                .show();
-//        return true;
-//      }
-//    }
-
   }
 }

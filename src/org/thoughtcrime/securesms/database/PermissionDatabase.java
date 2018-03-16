@@ -11,7 +11,6 @@ import com.annimon.stream.Stream;
 import org.thoughtcrime.securesms.PermissionType;
 import org.thoughtcrime.securesms.util.Util;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -50,7 +49,7 @@ public class PermissionDatabase extends Database {
    * Get privileges of user.
    * @return string of privileges in the form 64,32,16
    */
-  private String getRecipientPrivilegesString(String localNumber, String groupId) {
+  public String getRecipientPrivilegesString(String localNumber, String groupId) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
     String sql = "SELECT " + PRIVILEGES +
@@ -104,9 +103,9 @@ public class PermissionDatabase extends Database {
    * @param givenPrivileges privileges given to this moderator
    * @param members group members
    */
-  public void create(String groupId, String moderator, String[] givenPrivileges, List<Address> members) {
+  public boolean create(String groupId, String moderator, String[] givenPrivileges, List<Address> members) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
-
+    boolean cond = false;
     for (Address member : members) {
       ContentValues values = new ContentValues();
       values.put(GROUP_ID, groupId);
@@ -116,10 +115,11 @@ public class PermissionDatabase extends Database {
       } else {
         values.put(PRIVILEGES, "");
       }
-
-      db.insert(TABLE_NAME, null, values);
+      if (db.insert(TABLE_NAME, null, values) > 0) {
+        cond = true;
+      }
     }
-
+    return cond;
   }
 
   /**

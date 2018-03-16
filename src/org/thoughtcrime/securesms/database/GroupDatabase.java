@@ -11,11 +11,9 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.annimon.stream.Stream;
 
-import org.thoughtcrime.securesms.PermissionType;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.GroupUtil;
@@ -191,7 +189,7 @@ public class GroupDatabase extends Database {
    * @param groupId for searching moderator
    * @return moderator of this group
    */
-  private String getGroupModeratorByGroupId(String groupId) {
+  public String getGroupModeratorByGroupId(String groupId) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
     String sql = "SELECT " + MODERATOR +
@@ -218,30 +216,30 @@ public class GroupDatabase extends Database {
    * Version 2: using groupId, this is when
    * you don't have access to group id
    */
-  public void updateModeratorColumnByGroupName(String moderator, String groupName) {
+  public boolean updateModeratorColumnByGroupName(String moderator, String groupName) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(MODERATOR, moderator);
-    databaseHelper.getWritableDatabase().update(
+    return databaseHelper.getWritableDatabase().update(
             TABLE_NAME,
             contentValues,
             TITLE + " = ?",
             new String[]{groupName}
-    );
+    ) > 0;
   }
 
   /**
    * Add address of the person who creates
    * the group in the moderator column.
    */
-  public void updateModeratorColumnByGroupId(String moderator, String groupId) {
+  public boolean updateModeratorColumnByGroupId(String moderator, String groupId) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(MODERATOR, moderator);
-    databaseHelper.getWritableDatabase().update(
+    return databaseHelper.getWritableDatabase().update(
             TABLE_NAME,
             contentValues,
             GROUP_ID + " = ?",
             new String[]{groupId}
-    );
+    ) > 0;
   }
 
   /**

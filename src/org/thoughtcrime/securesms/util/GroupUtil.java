@@ -88,36 +88,14 @@ public class GroupUtil {
       // sender.toShortString(): the person who created the group
       // and invited you. You would get a message in Signal like:
       // Dennis updated the group
+      // set the moderator to the sender
       String senderGroupInvite = sender.toShortString();
-      String myOwnNumber = TextSecurePreferences.getLocalNumber(context);
-      GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
       String groupName = groupContext.getName();
-
-
       if (!senderGroupInvite.isEmpty() && senderGroupInvite.length() > 0) {
         String senderNumber = sender.getAddress().serialize();
-        Log.i(TAG, "toString(Recipient sender)[sender name]: " + senderGroupInvite);
-        Log.i(TAG, "toString(Recipient sender)[sender number]: " + senderNumber);
-        Log.i(TAG, "toString(Recipient sender)[myOwnNumber]: " + myOwnNumber);
-        Log.i(TAG, "toString(Recipient sender)[group name]: " + groupName);
-
-        // set the moderator to the sender
-        groupDatabase.updateModeratorColumnByGroupName(senderNumber, groupName);
-        /*
-        String[] givenPrivileges = {
-                PermissionType.EDIT_GROUP.getPermissionTypeCode(),
-                PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
-        };
-        // populate permission table with the other group members
-
-        PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-        permissionDatabase.create(
-                groupId,
-                senderNumber,
-                givenPrivileges,
-                groupDatabase.getRecipientsAddress(members)
+        DatabaseFactory.getGroupDatabase(context).updateModeratorColumnByGroupName(
+                senderNumber, groupName
         );
-        */
       }
 
       if (groupContext == null) {
