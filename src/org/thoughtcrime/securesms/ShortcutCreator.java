@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ShortcutCreator {
+public class ShortcutCreator implements ShortcutCreatorInterface {
 
   private Context context;
   private ShortcutManager shortcutManager;
@@ -133,7 +133,7 @@ public class ShortcutCreator {
    * @param recipient used for configuration
    * @return a text drawable to be used for icon
    */
-  private Drawable getTextDrawable(Recipient recipient) {
+  public Drawable getTextDrawable(Recipient recipient) {
     return TextDrawable.builder()
             .beginConfig()
             .bold()
@@ -147,7 +147,7 @@ public class ShortcutCreator {
    * @return the icon created with drawable
    */
   @SuppressLint("NewApi")
-  private Icon getIconBitmapFromDrawable(Drawable drawable) {
+  public Icon getIconBitmapFromDrawable(Drawable drawable) {
     Bitmap bitmap = BitmapUtil.createFromDrawable(drawable, 500, 500);
     return Icon.createWithBitmap(bitmap);
   }
@@ -159,7 +159,7 @@ public class ShortcutCreator {
    * @param recipient full name
    * @return initial of the recipient
    */
-  private String getRecipientInitial(Recipient recipient) {
+  public String getRecipientInitial(Recipient recipient) {
     if (recipient.getName() != null) {
       String recipientName = recipient.getName();
       List<String> list = Arrays.asList(recipientName.split("\\s+"));
