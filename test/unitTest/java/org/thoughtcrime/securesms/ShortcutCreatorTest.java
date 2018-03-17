@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.model.ThreadRecord;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.service.KeyCachingService;
+import org.thoughtcrime.securesms.util.BitmapUtil;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,14 +40,13 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 public class ShortcutCreatorTest {
 
-  private class FakeShortcutCreator implements ShortcutCreatorInterface {
+  private class FakeShortcutCreator {
 
     private Context context;
     ShortcutManager shortcutManager;
     List<ShortcutInfo> shortcutInfoList = mock(LinkedList.class);
 
 
-    @Override
     public void createShortcuts() {
       context = mock(Context.class);
       shortcutManager = context.getSystemService(ShortcutManager.class);;
@@ -54,7 +55,6 @@ public class ShortcutCreatorTest {
 
 
         @RequiresApi(api = Build.VERSION_CODES.N_MR1)
-        @Override
         protected Void doInBackground(Void... voids) {
 
           // required to create a reader
@@ -95,14 +95,20 @@ public class ShortcutCreatorTest {
                 if (shortLabel == null) {
                   shortLabel = recipient.getAddress().serialize();
                 }
-
-                Drawable drawable = getTextDrawable(recipient);
+                
+                Drawable drawable =    TextDrawable.builder()
+                        .beginConfig()
+                        .bold()
+                        .endConfig()
+                        .buildRound(getRecipientInitial(recipient),
+                                recipient.getColor().toConversationColor(context));
+                Bitmap bitmap = BitmapUtil.createFromDrawable(drawable, 500, 500);
                 shortcutInfoList.add(new ShortcutInfo.Builder(context, record.getRecipient().getName())
                         .setIntent(intent)
                         .setRank(shortcutInfoList.size())
                         .setShortLabel(shortLabel)
                         .setLongLabel(longLabel)
-                        .setIcon(getIconBitmapFromDrawable(drawable))
+                        .setIcon(Icon.createWithBitmap(bitmap))
                         .build());
 
               }
@@ -126,22 +132,7 @@ public class ShortcutCreatorTest {
 
     }
 
-    @Override
-    public Drawable getTextDrawable(Recipient recipient) {
-      //Drawable drawable = TextDrawable.builder().buildRect("A", Color.BLACK);
-      //when(drawable.canApplyTheme()).thenReturn(true);
-      //return drawable;
 
-      return null;
-    }
-
-    @Override
-    public Icon getIconBitmapFromDrawable(Drawable drawable) {
-      // TODO
-      return null;
-    }
-
-    @Override
     public String getRecipientInitial(Recipient recipient) {
 
       when(recipient.getName()).thenReturn("John Doe");
@@ -169,21 +160,6 @@ public class ShortcutCreatorTest {
     fakeShortcutCreator.createShortcuts();
 
     assertTrue(!fakeShortcutCreator.shortcutInfoList.isEmpty());
-  }
-
-  @Test
-  public void testGetTextDrawable() {
-    //FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
-    //Recipient recipient = mock(Recipient.class);
-
-    //Drawable d = TextDrawable.builder().buildRect("A", Color.BLACK);
-
-    //assertTrue(d.canApplyTheme());
-  }
-
-  @Test
-  public void testGetIconBitmapFromDrawable() {
-    // TODO
   }
 
   @Test
