@@ -23,6 +23,7 @@ import org.thoughtcrime.securesms.database.model.ThreadRecord;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.service.KeyCachingService;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -142,7 +143,18 @@ public class ShortcutCreatorTest {
 
     @Override
     public String getRecipientInitial(Recipient recipient) {
-      // TODO
+
+      when(recipient.getName()).thenReturn("John Doe");
+
+      if (recipient.getName() != null) {
+        String recipientName = recipient.getName();
+        List<String> list = Arrays.asList(recipientName.split("\\s+"));
+        StringBuilder sb = new StringBuilder();
+        for (String str : list) {
+          sb.append(str.substring(0, 1));
+        }
+        return sb.toString();
+      }
       return null;
     }
   }
@@ -176,6 +188,11 @@ public class ShortcutCreatorTest {
 
   @Test
   public void testGetRecipientInitial() {
-    // TODO
+    Recipient mockRecipient = mock(Recipient.class);
+    FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
+    fakeShortcutCreator.getRecipientInitial(mockRecipient);
+
+    assertEquals(fakeShortcutCreator.getRecipientInitial(mockRecipient), "JD");
+
   }
 }
