@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+
 import org.junit.Test;
 import org.thoughtcrime.securesms.crypto.MasterCipher;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
@@ -24,6 +26,7 @@ import org.thoughtcrime.securesms.service.KeyCachingService;
 import java.util.LinkedList;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -36,13 +39,14 @@ public class ShortcutCreatorTest {
 
   private class FakeShortcutCreator implements ShortcutCreatorInterface {
 
-    private Context context = mock(Context.class);
+    private Context context;
     ShortcutManager shortcutManager;
     List<ShortcutInfo> shortcutInfoList = mock(LinkedList.class);
 
 
     @Override
     public void createShortcuts() {
+      context = mock(Context.class);
       shortcutManager = context.getSystemService(ShortcutManager.class);;
 
       new AsyncTask<Void, Void, Void>() {
@@ -92,7 +96,6 @@ public class ShortcutCreatorTest {
                 }
 
                 Drawable drawable = getTextDrawable(recipient);
-
                 shortcutInfoList.add(new ShortcutInfo.Builder(context, record.getRecipient().getName())
                         .setIntent(intent)
                         .setRank(shortcutInfoList.size())
@@ -124,7 +127,10 @@ public class ShortcutCreatorTest {
 
     @Override
     public Drawable getTextDrawable(Recipient recipient) {
-      // TODO
+      //Drawable drawable = TextDrawable.builder().buildRect("A", Color.BLACK);
+      //when(drawable.canApplyTheme()).thenReturn(true);
+      //return drawable;
+
       return null;
     }
 
@@ -149,13 +155,18 @@ public class ShortcutCreatorTest {
   public void testCreateShortcuts() {
     FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
     fakeShortcutCreator.createShortcuts();
-    
+
     assertTrue(!fakeShortcutCreator.shortcutInfoList.isEmpty());
   }
 
   @Test
   public void testGetTextDrawable() {
-    // TODO
+    //FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
+    //Recipient recipient = mock(Recipient.class);
+
+    //Drawable d = TextDrawable.builder().buildRect("A", Color.BLACK);
+
+    //assertTrue(d.canApplyTheme());
   }
 
   @Test
