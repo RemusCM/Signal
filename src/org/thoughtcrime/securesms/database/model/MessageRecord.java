@@ -103,35 +103,11 @@ public abstract class MessageRecord extends DisplayRecord {
   public SpannableString getDisplayBody() {
     if (isGroupUpdate() && isOutgoing()) {
       String groupId = getIndividualRecipient().getAddress().toGroupString();
-      GroupDatabase groupDatabase = DatabaseFactory.getGroupDatabase(context);
       String myOwnNumber = TextSecurePreferences.getLocalNumber(context);
-
-      Log.i(TAG, "getDisplayBody() : group id " + groupId);
-      Log.i(TAG, "getDisplayBody() : myOwnNumber " + myOwnNumber);
-
-      // R.string.MessageRecord_you_updated_group (in the return statement):
-      // states you created the group
-      // that's mean you can set the moderator to your self. Therefore call the method
-      // call updateModeratorColumnByGroupId to update local number as moderator
-      groupDatabase.updateModeratorColumnByGroupId(myOwnNumber, groupId);
-
-      /*
-      String[] permissions = {
-              PermissionType.EDIT_GROUP.getPermissionTypeCode(),
-              PermissionType.CLEAR_GROUP_CONVERSATION.getPermissionTypeCode()
-      };
-      String members = groupDatabase.getMembersByGroupId(groupId);
-      List<String> memberList = Arrays.asList(members.split(","));
-      List<Address> addresses = new LinkedList<>();
-      for (String groupMember : memberList) {
-        addresses.add(Address.fromSerialized(groupMember));
-      }
-      PermissionDatabase permissionDatabase = DatabaseFactory.getPermissionDatabase(context);
-      permissionDatabase.create(groupId, myOwnNumber, permissions, addresses);
-      */
-
+      DatabaseFactory.getGroupDatabase(context).updateModeratorColumnByGroupId(
+              myOwnNumber, groupId
+      );
       return emphasisAdded(context.getString(R.string.MessageRecord_you_updated_group));
-
     } else if (isGroupUpdate()) {
       return emphasisAdded(GroupUtil.getDescription(context, getBody().getBody()).toString(getIndividualRecipient()));
     } else if (isGroupQuit() && isOutgoing()) {
