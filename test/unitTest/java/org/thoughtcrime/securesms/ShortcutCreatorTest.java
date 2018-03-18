@@ -1,6 +1,5 @@
 package org.thoughtcrime.securesms;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
@@ -30,11 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -46,10 +41,9 @@ public class ShortcutCreatorTest {
     ShortcutManager shortcutManager;
     List<ShortcutInfo> shortcutInfoList = mock(LinkedList.class);
 
-
-    public void createShortcuts() {
+    void createShortcuts() {
       context = mock(Context.class);
-      shortcutManager = context.getSystemService(ShortcutManager.class);;
+      shortcutManager = context.getSystemService(ShortcutManager.class);
 
       new AsyncTask<Void, Void, Void>() {
 
@@ -57,24 +51,17 @@ public class ShortcutCreatorTest {
         @RequiresApi(api = Build.VERSION_CODES.N_MR1)
         protected Void doInBackground(Void... voids) {
 
-          // required to create a reader
           MasterSecret masterSecret = KeyCachingService.getMasterSecret(context);
           if (masterSecret == null) {
             return null;
           }
-          // get the most recent conversations from the database
           ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
-          // limit the results to 5 conversations
           Cursor cursor = threadDatabase.getRecentConversationList(5);
 
           try {
-            // record contains the five most recent conversation
-            // reader is used for reading the result you get from the database
             ThreadRecord record;
             ThreadDatabase.Reader reader = threadDatabase.readerFor(cursor, new MasterCipher(masterSecret));
 
-            // initialized the intent with each recipient so that when you click the shortcut you get
-            // to conversation with all the necessary information i.e. messages and last seen date
             while ((record = reader.getNext()) != null) {
               Recipient recipient = record.getRecipient();
               if (recipient.getName() != null) {
@@ -133,7 +120,7 @@ public class ShortcutCreatorTest {
     }
 
 
-    public String getRecipientInitial(Recipient recipient) {
+    String getRecipientInitial(Recipient recipient) {
 
       when(recipient.getName()).thenReturn("John Doe");
 
@@ -169,6 +156,16 @@ public class ShortcutCreatorTest {
     fakeShortcutCreator.getRecipientInitial(mockRecipient);
 
     assertEquals(fakeShortcutCreator.getRecipientInitial(mockRecipient), "JD");
+
+  }
+
+  @Test
+  public void testGetRecipientInitialFail() {
+    Recipient mockRecipient = mock(Recipient.class);
+    FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
+    fakeShortcutCreator.getRecipientInitial(mockRecipient);
+    System.out.println("It's suppose to be JD.");
+    assertEquals(fakeShortcutCreator.getRecipientInitial(mockRecipient), "JE");
 
   }
 }
