@@ -93,6 +93,7 @@ dependencies {
     
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.5.0'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
     annotationProcessor 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile ("com.doomonafireball.betterpickers:library:1.5.3") {
@@ -258,7 +259,7 @@ android {
         multiDexEnabled true
 
         vectorDrawables.useSupportLibrary = true
-        project.ext.set("archivesBaseName", "Signal");
+        project.ext.set("archivesBaseName", "Signal")
 
         buildConfigField "long", "BUILD_TIMESTAMP", getLastCommitTimestamp() + "L"
         buildConfigField "String", "SIGNAL_URL", "\"https://textsecure-service.whispersystems.org\""
@@ -375,12 +376,12 @@ task assembleWebsiteDescriptor << {
             File file = new File(variant.outputs[0].outputFile.path)
 
             if (file.exists()) {
-                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                MessageDigest md = MessageDigest.getInstance("SHA-256")
                 file.eachByte 4096, {bytes, size ->
-                    md.update(bytes, 0, size);
+                    md.update(bytes, 0, size)
                 }
 
-                String digest = md.digest().collect {String.format "%02x", it}.join();
+                String digest = md.digest().collect {String.format "%02x", it}.join()
                 String url = variant.productFlavors.get(0).ext.websiteUpdateUrl
                 String apkName = variant.outputs[0].outputFile.name
 
@@ -423,7 +424,7 @@ def getLastCommitTimestamp() {
     }
 }
 
-def Properties props = new Properties()
+Properties props = new Properties()
 def propFile = new File('signing.properties')
 
 if (propFile.canRead()){

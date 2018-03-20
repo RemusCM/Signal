@@ -34,12 +34,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.Vibrator;
 import android.provider.Browser;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBar;
@@ -470,6 +472,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     }
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     MenuInflater inflater = this.getMenuInflater();
@@ -538,28 +541,30 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     return true;
   }
 
+  @SuppressLint("NewApi")
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     super.onOptionsItemSelected(item);
     switch (item.getItemId()) {
-    case R.id.menu_call_secure:
-    case R.id.menu_call_insecure:             handleDial(getRecipient());                        return true;
-    case R.id.menu_add_attachment:            handleAddAttachment();                             return true;
-    case R.id.menu_view_media:                handleViewMedia();                                 return true;
-    case R.id.menu_add_to_contacts:           handleAddToContacts();                             return true;
-    case R.id.menu_reset_secure_session:      handleResetSecureSession();                        return true;
-    case R.id.menu_group_recipients:          handleDisplayGroupRecipients();                    return true;
-    case R.id.menu_distribution_broadcast:    handleDistributionBroadcastEnabled(item);          return true;
-    case R.id.menu_distribution_conversation: handleDistributionConversationEnabled(item);       return true;
-    case R.id.menu_edit_group:                handleEditPushGroup();                             return true;
-    case R.id.menu_leave:                     handleLeavePushGroup();                            return true;
-    case R.id.menu_invite:                    handleInviteLink();                                return true;
-    case R.id.menu_mute_notifications:        handleMuteNotifications();                         return true;
-    case R.id.menu_unmute_notifications:      handleUnmuteNotifications();                       return true;
-    case R.id.menu_conversation_settings:     handleConversationSettings();                      return true;
-    case R.id.menu_expiring_messages_off:
-    case R.id.menu_expiring_messages:         handleSelectMessageExpiration();                   return true;
-    case android.R.id.home:                   handleReturnToConversationList();                  return true;
+      case R.id.menu_call_secure:
+      case R.id.menu_call_insecure:             handleDial(getRecipient());                        return true;
+      case R.id.menu_add_attachment:            handleAddAttachment();                             return true;
+      case R.id.menu_view_media:                handleViewMedia();                                 return true;
+      case R.id.menu_add_to_contacts:           handleAddToContacts();                             return true;
+      case R.id.menu_reset_secure_session:      handleResetSecureSession();                        return true;
+      case R.id.menu_group_recipients:          handleDisplayGroupRecipients();                    return true;
+      case R.id.menu_distribution_broadcast:    handleDistributionBroadcastEnabled(item);          return true;
+      case R.id.menu_distribution_conversation: handleDistributionConversationEnabled(item);       return true;
+      case R.id.menu_edit_group:                handleEditPushGroup();                             return true;
+      case R.id.menu_leave:                     handleLeavePushGroup();                            return true;
+      case R.id.menu_invite:                    handleInviteLink();                                return true;
+      case R.id.menu_mute_notifications:        handleMuteNotifications();                         return true;
+      case R.id.menu_unmute_notifications:      handleUnmuteNotifications();                       return true;
+      case R.id.menu_conversation_settings:     handleConversationSettings();                      return true;
+      case R.id.menu_expiring_messages_off:
+      case R.id.menu_expiring_messages:         handleSelectMessageExpiration();                   return true;
+      case android.R.id.home:                   handleReturnToConversationList();                  return true;
       case R.id.menu_clear_group_chat:
         handleClearGroupChat();
         return true;
@@ -1330,7 +1335,16 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private void initializeResources() {
     if (recipient != null) recipient.removeListener(this);
 
-    recipient        = Recipient.from(this, getIntent().getParcelableExtra(ADDRESS_EXTRA), true);
+    Bundle bundle = getIntent().getExtras();
+    Object value = bundle.get(ConversationActivity.ADDRESS_EXTRA);
+    String address = getIntent().getStringExtra(ADDRESS_EXTRA);
+    Address pe = getIntent().getParcelableExtra(ADDRESS_EXTRA);
+    if (value instanceof Parcelable) {
+      recipient = Recipient.from(this, pe, true);
+    } else {
+      recipient = Recipient.from(this, Address.fromSerialized(address), true);
+    }
+
     threadId         = getIntent().getLongExtra(THREAD_ID_EXTRA, -1);
     archived         = getIntent().getBooleanExtra(IS_ARCHIVED_EXTRA, false);
     distributionType = getIntent().getIntExtra(DISTRIBUTION_TYPE_EXTRA, ThreadDatabase.DistributionTypes.DEFAULT);
