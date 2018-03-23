@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.annimon.stream.Stream;
 
@@ -179,6 +180,8 @@ public class SmsDatabase extends MessagingDatabase {
         messageIds.add(cursor.getInt(cursor.getColumnIndex(ID)));
         cursor.moveToNext();
       }
+    } catch (NullPointerException npe) {
+      Toast.makeText(context, "Caught NullPointerException in " + TAG + ":getMessageIdsByRecipientId", Toast.LENGTH_SHORT).show();
     } finally {
       if (cursor != null)
         cursor.close();
@@ -921,7 +924,7 @@ public class SmsDatabase extends MessagingDatabase {
   }
 
   public interface InsertListener {
-    public void onComplete();
+    void onComplete();
   }
 
   public int getMessageCountForMessageId(Address address) {

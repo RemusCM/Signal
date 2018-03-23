@@ -13,12 +13,14 @@ import android.graphics.drawable.Icon;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 
 import org.thoughtcrime.securesms.crypto.MasterCipher;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.model.ThreadRecord;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -30,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ShortcutCreator implements ShortcutCreatorInterface {
+  private static final String TAG = ShortcutCreator.class.getSimpleName();
 
   private Context context;
   private ShortcutManager shortcutManager;
@@ -111,7 +114,8 @@ public class ShortcutCreator implements ShortcutCreatorInterface {
 
             }
           }
-
+        } catch (NullPointerException npe) {
+          Toast.makeText(context, "Caught NullPointerException in " + TAG + ":createShortcuts", Toast.LENGTH_SHORT).show();
         } finally {
           if (cursor != null) {
             cursor.close();

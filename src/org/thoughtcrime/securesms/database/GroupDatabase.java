@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.annimon.stream.Stream;
 
@@ -200,14 +201,15 @@ public class GroupDatabase extends Database {
       cursor = db.rawQuery(sql, new String[]{groupId});
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(cursor.getColumnIndex(MODERATOR));
-      } else {
-        return null;
       }
+    } catch (NullPointerException npe) {
+      Toast.makeText(context, "Caught the NullPointerException in " + TAG + ":getGroupModeratorByGroupId", Toast.LENGTH_SHORT).show();
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
+    return null;
   }
 
   /**
@@ -282,14 +284,15 @@ public class GroupDatabase extends Database {
       cursor = db.rawQuery(sql, new String[]{groupId});
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(cursor.getColumnIndex(MEMBERS)).trim();
-      } else {
-        return null;
       }
+    } catch (NullPointerException npe) {
+      Toast.makeText(context, "Caught NullPointerException in " + TAG + ":getMembersByGroupId", Toast.LENGTH_SHORT).show();
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
+    return null;
   }
 
   public void update(String groupId, String title, SignalServiceAttachmentPointer avatar) {
@@ -368,11 +371,6 @@ public class GroupDatabase extends Database {
                                                 new String[] {groupId});
   }
 
-  /**
-   * Get current members of a group given a group id.
-   * @param groupId
-   * @return
-   */
   private List<Address> getCurrentMembers(String groupId) {
     Cursor cursor = null;
 
