@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import com.annimon.stream.Stream;
 
@@ -63,14 +64,15 @@ public class PermissionDatabase extends Database {
       cursor = db.rawQuery(sql, sqlArgs);
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(cursor.getColumnIndex(PRIVILEGES));
-      } else {
-        return null;
       }
+    } catch (NullPointerException npe) {
+      Toast.makeText(context, "Caught NullPointerException in " + TAG + ":getRecipientPrivilegesString", Toast.LENGTH_SHORT).show();
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
+    return null;
   }
 
   /**
@@ -134,16 +136,15 @@ public class PermissionDatabase extends Database {
     Cursor cursor = null;
     try {
       cursor = db.rawQuery(sql, new String[]{groupId});
-      if (cursor != null && cursor.moveToFirst()) {
-        return cursor.getInt(0) >= 1;
-      } else {
-        return false;
-      }
+      return cursor != null && cursor.moveToFirst() && cursor.getInt(0) >= 1;
+    } catch (NullPointerException npe) {
+      Toast.makeText(context, "Caught NullPointerException in " + TAG + ":isGroupExistByGroupId", Toast.LENGTH_SHORT).show();
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
+    return false;
   }
 
   /**
