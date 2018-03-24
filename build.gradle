@@ -390,6 +390,7 @@ android {
                 exclude '**/*PermissionMocking*'
                 exclude '**/*NicknameMocking*'
                 exclude '**/*MessageMocking*'
+                exclude '**/*ShortcutCreatorTest*'
             }
         }
 
