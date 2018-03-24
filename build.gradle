@@ -433,6 +433,15 @@ task assembleWebsiteDescriptor << {
     }
 }
 
+//this is to show the result of the test (i.e. whether or not the test passes or fails)
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+}
+
 tasks.whenTaskAdded { task ->
     if (task.name.equals("lint")) {
         task.enabled = false
