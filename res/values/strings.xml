@@ -1187,6 +1187,10 @@
     <!-- menus -->
     <!-- **************************************** -->
 
+    <!-- passcode -->
+    <string name="passcode_lock_selected__menu">Lock with passcode</string>
+    <string name="passcode_lock_confirmation__dialog">Lock with passcode</string>
+
     <!-- contact_selection_list -->
     <string name="contact_selection_list__unknown_contact">New message to...</string>
 
