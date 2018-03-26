@@ -15,8 +15,11 @@ jobs:
   include:
     - stage: Compile
       script: ./gradlew assembleDebug
+    - stage : Findbugs Static Analysis
+      script: ./gradlew findbugs
     - stage: Unit Test
       script: ./gradlew test
+
 cache:
   directories:
     - $HOME/.gradle/caches/
