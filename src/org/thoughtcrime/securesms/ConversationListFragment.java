@@ -333,7 +333,6 @@ public class ConversationListFragment extends Fragment
     builder.setMessage(R.string.passcode_lock_confirmation__dialog);
     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-        /*
         Intent intent = new Intent(getActivity(), PasscodeActivity.class);
         List<Long> threadIds = new ArrayList<>();
         if (!selectedConversations.isEmpty()) {
@@ -342,7 +341,6 @@ public class ConversationListFragment extends Fragment
         String threadStr = String.valueOf(threadIds.get(0));
         intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
         startActivity(intent);
-        */
       }
     });
     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
