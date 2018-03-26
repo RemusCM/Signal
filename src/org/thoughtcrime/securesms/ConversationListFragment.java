@@ -19,6 +19,7 @@ package org.thoughtcrime.securesms;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -52,6 +53,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -83,6 +85,7 @@ import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.task.SnackbarAsyncTask;
 import org.whispersystems.libsignal.util.guava.Optional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -322,6 +325,34 @@ public class ConversationListFragment extends Fragment
     alert.show();
   }
 
+  private void handleLockWithPasscodeSelected() {
+    final Set<Long> selectedConversations = new HashSet<>(getListAdapter().getBatchSelections());
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder.setCancelable(true);
+    builder.setTitle(R.string.passcode_lock_selected__menu);
+    builder.setMessage(R.string.passcode_lock_confirmation__dialog);
+    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+        /*
+        Intent intent = new Intent(getActivity(), PasscodeActivity.class);
+        List<Long> threadIds = new ArrayList<>();
+        if (!selectedConversations.isEmpty()) {
+          threadIds.addAll(selectedConversations);
+        }
+        String threadStr = String.valueOf(threadIds.get(0));
+        intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
+        startActivity(intent);
+        */
+      }
+    });
+    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+        dialog.dismiss();
+      }
+    });
+    builder.show();
+  }
+
   private void handleSelectAllThreads() {
     getListAdapter().selectAllThreads();
     actionMode.setSubtitle(getString(R.string.conversation_fragment_cab__batch_selection_amount,
@@ -380,6 +411,12 @@ public class ConversationListFragment extends Fragment
                                          String.valueOf(adapter.getBatchSelections().size())));
       }
 
+      if (adapter.getBatchSelections().size() == 1) {
+        actionMode.getMenu().findItem(R.id.menu_passcode_lock_selected).setVisible(true);
+      } else if (adapter.getBatchSelections().size() > 1) {
+        actionMode.getMenu().findItem(R.id.menu_passcode_lock_selected).setVisible(false);
+      }
+
       adapter.notifyDataSetChanged();
     }
   }
@@ -411,6 +448,7 @@ public class ConversationListFragment extends Fragment
     else         inflater.inflate(R.menu.conversation_list_batch_archive, menu);
 
     inflater.inflate(R.menu.conversation_list_batch, menu);
+    inflater.inflate(R.menu.passcode_list_lock, menu);
 
     mode.setTitle(R.string.conversation_fragment_cab__batch_selection_mode);
     mode.setSubtitle(getString(R.string.conversation_fragment_cab__batch_selection_amount, "1"));
@@ -430,9 +468,19 @@ public class ConversationListFragment extends Fragment
   @Override
   public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
     switch (item.getItemId()) {
-    case R.id.menu_select_all:       handleSelectAllThreads();   return true;
-    case R.id.menu_delete_selected:  handleDeleteAllSelected();  return true;
-    case R.id.menu_archive_selected: handleArchiveAllSelected(); return true;
+      case R.id.menu_select_all:
+        actionMode.getMenu().findItem(R.id.menu_passcode_lock_selected).setVisible(false);
+        handleSelectAllThreads();
+        return true;
+      case R.id.menu_delete_selected:
+        handleDeleteAllSelected();
+        return true;
+      case R.id.menu_archive_selected:
+        handleArchiveAllSelected();
+        return true;
+      case R.id.menu_passcode_lock_selected:
+        handleLockWithPasscodeSelected();
+        return true;
     }
 
     return false;
