@@ -1,7 +1,10 @@
 package org.thoughtcrime.securesms;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,9 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.PasscodeDatabase;
+import org.thoughtcrime.securesms.recipients.Recipient;
 
 public class PasscodeActivity extends Activity {
 
@@ -19,6 +27,7 @@ public class PasscodeActivity extends Activity {
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
+
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -59,23 +68,19 @@ public class PasscodeActivity extends Activity {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String clickedItem = (String) passcodeListView.getItemAtPosition(position);
         TextView threadIdText = view.findViewById(R.id.thread_id_text);
-        String threadIdStr = threadIdText.toString();
+        String threadIdStr = threadIdText.getText().toString();
         long threadId = Long.parseLong(threadIdStr);
         switch (clickedItem) {
           case ADD:
             handleAdd(threadId);
-            Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
             break;
           case UPDATE:
             handleUpdate(threadId);
-            Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
             break;
           case DELETE:
             handleDelete(threadId);
-            Toast.makeText(getBaseContext(), "Delete was called", Toast.LENGTH_SHORT).show();
             break;
           default:
-            Toast.makeText(getBaseContext(), "Invalid action", Toast.LENGTH_SHORT).show();
             break;
         }
       }
@@ -83,7 +88,36 @@ public class PasscodeActivity extends Activity {
 
   }
 
+  @SuppressLint("NewApi")
   private void handleDelete(long threadId) {
+
+    View addPasscodeDialogView;
+    AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
+    deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
+    deletePasscodeDialog.setCancelable(true);
+    deletePasscodeDialog.setMessage(R.string.confirm_deletion_with_passcode);
+
+    LayoutInflater inflater = this.getLayoutInflater();
+    addPasscodeDialogView = inflater.inflate(R.layout.passcode_delete, null);
+    deletePasscodeDialog.setView(addPasscodeDialogView);
+
+    deletePasscodeDialog.setPositiveButton(R.string.confirm_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        PasscodeDatabase db = (PasscodeDatabase) DatabaseFactory.getThreadDatabase(getApplicationContext());
+        db.removePasscode(threadId);
+      }
+    });
+    deletePasscodeDialog.setNegativeButton(R.string.cancel_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+
+        dialog.cancel();
+      }
+    });
+    deletePasscodeDialog.show();
+
+
     // TODO
     // create an alert dialog
     // insert passcode_add.xml to this dialog
