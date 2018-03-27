@@ -414,13 +414,12 @@ public class ThreadDatabase extends Database {
     }
   }
 
-  public boolean hasPasscodeByRecipientId(Address address) {
-    Log.w(TAG, "ThreadDatabase: hasPasscodeByRecipientId("+address.serialize()+")");
+  public boolean hasPasscodeByThreadId(long threadId) {
+    Log.w(TAG, "ThreadDatabase: hasPasscodeByRecipientId("+threadId+")");
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
-    String sql = "SELECT " + PASSCODE + " FROM " + TABLE_NAME + " WHERE " + ADDRESS + " = ?";
-    String recipientId = address.serialize();
-    String[] sqlArgs = new String[] {recipientId+""};
+    String sql = "SELECT " + PASSCODE + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
+     String[] sqlArgs = new String[] {threadId+""};
     try {
       cursor = db.rawQuery(sql, sqlArgs);
       if (cursor != null && cursor.moveToFirst()) {
