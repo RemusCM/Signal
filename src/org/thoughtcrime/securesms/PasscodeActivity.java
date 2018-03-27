@@ -44,30 +44,47 @@ public class PasscodeActivity extends Activity {
     PasscodeAdapter adapter = new PasscodeAdapter(this, data, threadId);
     passcodeListView.setAdapter(adapter);
 
-      passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+    passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-              String clickedItem = (String) passcodeListView.getItemAtPosition(position);
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String clickedItem = (String) passcodeListView.getItemAtPosition(position);
+        TextView threadIdText = view.findViewById(R.id.thread_id_text);
+        String threadIdStr = threadIdText.toString();
+        long threadId = Long.parseLong(threadIdStr);
+        switch (clickedItem) {
+          case ADD:
+            handleAdd(threadId);
+            Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
+            break;
+          case UPDATE:
+            handleUpdate(threadId);
+            Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
+            break;
+          case DELETE:
+            handleDelete(threadId);
+            Toast.makeText(getBaseContext(), "Delete was called", Toast.LENGTH_SHORT).show();
+            break;
+          default:
+            Toast.makeText(getBaseContext(), "Invalid action", Toast.LENGTH_SHORT).show();
+            break;
+        }
 
-              switch(clickedItem){
-                  case ADD:
-                      Toast.makeText(getBaseContext(), "Add was called", Toast.LENGTH_SHORT).show();
-                      break;
-                  case UPDATE:
-                      Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
-                      break;
-                  case DELETE:
-                      Toast.makeText(getBaseContext(), "Delete was called", Toast.LENGTH_SHORT).show();
-                      break;
-                  default:
-                      Toast.makeText(getBaseContext(), "Invalid action", Toast.LENGTH_SHORT).show();
-                      break;
-              }
+      }
+    });
 
-          }
-      });
+  }
 
+  private void handleDelete(long threadId) {
+    //TODO
+  }
+
+  private void handleUpdate(long threadId) {
+    //TODO
+  }
+
+  private void handleAdd(long threadId) {
+    // TODO
   }
 
   public class PasscodeAdapter extends BaseAdapter {
