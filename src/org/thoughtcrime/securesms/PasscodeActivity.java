@@ -1,13 +1,11 @@
 package org.thoughtcrime.securesms;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,27 +17,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.thoughtcrime.securesms.database.DatabaseFactory;
-import org.thoughtcrime.securesms.database.RecipientDatabase;
-import org.thoughtcrime.securesms.database.ThreadDatabase;
-import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
-
+import org.thoughtcrime.securesms.database.PasscodeDatabase;
+import org.thoughtcrime.securesms.recipients.Recipient;
 
 public class PasscodeActivity extends Activity {
-
-  private final Context context;
-  private final Thread thread;
 
   static final String THREAD_ID = "threadId";
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
+  private final Context context;
+  private final Recipient recipient;
 
-  private AlertDialog.Builder addPasscodeDialog;
-
-  PasscodeActivity(Context context, Thread thread) {
+  public PasscodeActivity(Context context, Recipient recipient){
     this.context = context;
-    this.thread = thread;
-    this.addPasscodeDialog = new AlertDialog.Builder(context);
+    this.recipient = recipient;
   }
 
   @Override
@@ -106,6 +98,31 @@ public class PasscodeActivity extends Activity {
   }
 
   private void handleDelete(long threadId) {
+
+    PasscodeDatabase db = (PasscodeDatabase) DatabaseFactory.getThreadDatabase(this);
+    AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
+    deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
+    deletePasscodeDialog.setCancelable(true);
+    deletePasscodeDialog.setMessage(R.string.confirm_deletion_with_passcode);
+    final EditText passcodeEditText = new EditText(this);
+    deletePasscodeDialog.setView(passcodeEditText);
+
+    deletePasscodeDialog.setPositiveButton(R.string.confirm_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        db.removePasscode(threadId);
+      }
+    });
+    deletePasscodeDialog.setNegativeButton(R.string.cancel_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+
+        dialog.cancel();
+      }
+    });
+    deletePasscodeDialog.show();
+
+
     // TODO
     // create an alert dialog
     // insert passcode_add.xml to this dialog
@@ -121,43 +138,9 @@ public class PasscodeActivity extends Activity {
     //   transaction is done in dialog's ok button
   }
 
-  public void handleAdd(long threadId) {
-    addPasscodeDialog.setTitle("Set Passcode");
-    addPasscodeDialog.setCancelable(true);
-
-    LayoutInflater layoutInf = getLayoutInflater();
-    View v1 = layoutInf.inflate(R.layout.passcode_add,null);
-    addPasscodeDialog.setView(v1);
-
-    EditText et1 = findViewById(R.id.enter_passcode);
-    String passcode = et1.getText().toString();
-
-    addPasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, new DialogInterface.OnClickListener() {
-      @SuppressLint("StaticFieldLeak")
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-              ThreadDatabase db = DatabaseFactory.getThreadDatabase(context);
-              db.updatePasscode(passcode, threadId);
-              ApplicationContext.getInstance(context)
-                      .getJobManager()
-                      .add(new MultiDeviceProfileKeyUpdateJob(context));
-              return null;
-            }
-          }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-      });
-
-    addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
-
-    addPasscodeDialog.show();
+  private void handleAdd(long threadId) {
+    // TODO
+    // do the same thing as add passcode
   }
 
   public class PasscodeAdapter extends BaseAdapter {
