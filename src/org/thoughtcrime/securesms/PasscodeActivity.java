@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by daanish on 3/26/2018.
@@ -42,6 +44,29 @@ public class PasscodeActivity extends Activity {
     PasscodeAdapter adapter = new PasscodeAdapter(this, data, threadId);
     passcodeListView.setAdapter(adapter);
 
+      passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              String clickedItem = (String) passcodeListView.getItemAtPosition(position);
+
+              switch(clickedItem){
+                  case ADD:
+                      Toast.makeText(getBaseContext(), "Add was called", Toast.LENGTH_SHORT).show();
+                      break;
+                  case UPDATE:
+                      Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
+                      break;
+                  case DELETE:
+                      Toast.makeText(getBaseContext(), "Delete was called", Toast.LENGTH_SHORT).show();
+                      break;
+                  default:
+                      Toast.makeText(getBaseContext(), "Invalid action", Toast.LENGTH_SHORT).show();
+                      break;
+              }
+
+          }
+      });
 
   }
 
