@@ -1197,6 +1197,8 @@
     <!-- passcode -->
     <string name="passcode_lock_selected__menu">Lock with passcode</string>
     <string name="passcode_lock_confirmation__dialog">Are you sure you want to lock this conversation with a passcode?</string>
+    <string name="passcode_dialog_save">Save</string>
+    <string name="passcode_dialog_cancel">Cancel</string>
 
     <!-- contact_selection_list -->
     <string name="contact_selection_list__unknown_contact">New message to...</string>

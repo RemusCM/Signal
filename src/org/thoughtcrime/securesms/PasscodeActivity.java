@@ -1,6 +1,5 @@
 package org.thoughtcrime.securesms;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -88,7 +87,6 @@ public class PasscodeActivity extends Activity {
 
   }
 
-  @SuppressLint("NewApi")
   private void handleDelete(long threadId) {
 
     View addPasscodeDialogView;
@@ -133,9 +131,46 @@ public class PasscodeActivity extends Activity {
     //   transaction is done in dialog's ok button
   }
 
-  private void handleAdd(long threadId) {
-    // TODO
-    // do the same thing as add passcode
+  public void handleAdd(long threadId) {
+
+    AlertDialog.Builder addPasscodeDialog = new AlertDialog.Builder(this);
+    addPasscodeDialog.setTitle("Set Passcode");
+    addPasscodeDialog.setCancelable(true);
+
+    LayoutInflater layoutInf = getLayoutInflater();
+    View v1 = layoutInf.inflate(R.layout.passcode_add,null);
+    addPasscodeDialog.setView(v1);
+
+    EditText et1 = findViewById(R.id.enter_passcode);
+    String passcode = et1.getText().toString();
+
+    addPasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, new DialogInterface.OnClickListener() {
+      @SuppressLint("StaticFieldLeak")
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        new AsyncTask<Void, Void, Void>() {
+          @Override
+          protected Void doInBackground(Void... params) {
+            ThreadDatabase db = DatabaseFactory.getThreadDatabase(context);
+            db.updatePasscode(passcode, threadId);
+            ApplicationContext.getInstance(context)
+                    .getJobManager()
+                    .add(new MultiDeviceProfileKeyUpdateJob(context));
+            return null;
+          }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+      }
+    });
+
+    addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+
+    addPasscodeDialog.show();
+
   }
 
   public class PasscodeAdapter extends BaseAdapter {
