@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.PasscodeDatabase;
+import org.thoughtcrime.securesms.recipients.Recipient;
 
 public class PasscodeActivity extends Activity {
 
@@ -25,6 +26,13 @@ public class PasscodeActivity extends Activity {
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
+  private final Context context;
+  private final Recipient recipient;
+
+  public PasscodeActivity(Context context, Recipient recipient){
+    this.context = context;
+    this.recipient = recipient;
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
