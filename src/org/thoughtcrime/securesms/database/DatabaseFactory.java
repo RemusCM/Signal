@@ -117,7 +117,8 @@ public class DatabaseFactory {
   private static final int MORE_RECIPIENT_FIELDS                           = 47;
   private static final int INTRODUCED_MODERATOR                            = 48;
   private static final int INTRODUCED_PERMISSION_VERSION = 49;
-  private static final int DATABASE_VERSION                                = 49;
+  private static final int INTRODUCED_PASSCODE = 50;
+  private static final int DATABASE_VERSION                                = 50;
 
   /**
    * Old database name was messages.db
@@ -1447,6 +1448,9 @@ public class DatabaseFactory {
         });
       }
 
+      if (oldVersion < INTRODUCED_PASSCODE){
+        db.execSQL("ALTER TABLE thread ADD COLUMN passcode INTEGER DEFAULT NULL");
+      }
 
       db.setTransactionSuccessful();
       db.endTransaction();
