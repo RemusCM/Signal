@@ -1,9 +1,11 @@
 package org.thoughtcrime.securesms;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -15,6 +17,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.RecipientDatabase;
+import org.thoughtcrime.securesms.database.ThreadDatabase;
+import org.thoughtcrime.securesms.jobs.MultiDeviceProfileKeyUpdateJob;
 
 
 public class PasscodeActivity extends Activity {
@@ -115,7 +122,6 @@ public class PasscodeActivity extends Activity {
   }
 
   public void handleAdd(long threadId) {
-    //not finished yet
     addPasscodeDialog.setTitle("Set Passcode");
     addPasscodeDialog.setCancelable(true);
 
@@ -123,10 +129,26 @@ public class PasscodeActivity extends Activity {
     View v1 = layoutInf.inflate(R.layout.passcode_add,null);
     addPasscodeDialog.setView(v1);
 
+    EditText et1 = findViewById(R.id.enter_passcode);
+    String passcode = et1.getText().toString();
 
-
-
-
+    addPasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, new DialogInterface.OnClickListener() {
+      @SuppressLint("StaticFieldLeak")
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+              ThreadDatabase db = DatabaseFactory.getThreadDatabase(context);
+              db.updatePasscode(passcode, threadId);
+              ApplicationContext.getInstance(context)
+                      .getJobManager()
+                      .add(new MultiDeviceProfileKeyUpdateJob(context));
+              return null;
+            }
+          }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+      });
 
     addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
       @Override
