@@ -64,13 +64,19 @@ public class PasscodeDBhandler {
     String passcodeInDb = getPasscodeIfExists();
     if (passcodeInDb == null) { // ADD : by default passcode field is null
       DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
-      return "Success";
+      if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId).equals(passcode)) {
+        return "Success";
+      }
     } else if (passcodeInDb.length() > 0) { // UPDATE
-      DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
-      return "Success";
-    } else {
-      return "Error";
+      // confirmation : checks if the one entered is the same as the one in database
+      if (passcodeInDb.equals(passcode)) {
+        DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
+        if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId).equals(passcode)) {
+          return "Success";
+        }
+      }
     }
+    return "Error";
   }
 
   /**
@@ -82,12 +88,15 @@ public class PasscodeDBhandler {
    * in the field
    */
   public String delete() {
-    String currentPasscode = getPasscodeIfExists();
-    if (getPasscode().equals(currentPasscode)) {
-      /*DatabaseFactory.getPasscodeDatabase(context).removePasscode(threadId, passcode);
-      if (DatabaseFactory.getPasscodeDatabase(context).isUpdated(threadId, passcode)) {
-        return "Success";
-      }*/
+    String passcodeInDb = getPasscodeIfExists();
+    if (passcodeInDb.length() > 0) {
+      // confirmation : checks if the one entered is the same as the one in database
+      if (passcodeInDb.equals(passcode)) {
+        DatabaseFactory.getPasscodeDatabase(context).removePasscode(threadId);
+        if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId) == null) {
+          return "Success";
+        }
+      }
     }
     return "Error";
   }
