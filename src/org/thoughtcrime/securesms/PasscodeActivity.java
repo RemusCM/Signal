@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.PasscodeDatabase;
+
 public class PasscodeActivity extends Activity {
 
   static final String THREAD_ID = "threadId";
@@ -88,6 +91,7 @@ public class PasscodeActivity extends Activity {
 
   private void handleDelete(long threadId) {
 
+    PasscodeDatabase db = (PasscodeDatabase) DatabaseFactory.getThreadDatabase(this);
     AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
     deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
     deletePasscodeDialog.setCancelable(true);
@@ -98,7 +102,7 @@ public class PasscodeActivity extends Activity {
     deletePasscodeDialog.setPositiveButton(R.string.confirm_button_passcode, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
-
+        db.removePasscode(threadId);
       }
     });
     deletePasscodeDialog.setNegativeButton(R.string.cancel_button_passcode, new DialogInterface.OnClickListener() {
