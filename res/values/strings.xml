@@ -969,6 +969,9 @@
 
     <!-- passcode strings -->
     <string name="delete_passcode_title">Confirm Deletetion of Passcode?</string>
+    <string name="cancel_button_passcode">Cancel</string>
+    <string name="confirm_button_passcode">Confirm</string>
+    <string name="confirm_deletion_with_passcode">Enter Passcode to Confirm Deletion.</string>
 
     <!-- recipient_preferences_activity -->
     <string name="recipient_preference_activity__shared_media">Shared media</string>
