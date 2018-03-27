@@ -161,6 +161,7 @@ public class ThreadDatabase extends Database {
     contentValues.put(PASSCODE, passcode);
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.update(TABLE_NAME, contentValues, ID + " = ? ", new String[] {threadId + ""});
+
   }
 
   public void updateSnippet(long threadId, String snippet, @Nullable Uri attachment, long date, long type, boolean unarchive) {
@@ -413,6 +414,28 @@ public class ThreadDatabase extends Database {
     }
   }
 
+  public boolean hasPasscodeByRecipientId(Address address) {
+    Log.w(TAG, "ThreadDatabase: hasPasscodeByRecipientId("+address.serialize()+")");
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT " + PASSCODE + " FROM " + TABLE_NAME + " WHERE " + ADDRESS + " = ?";
+    String recipientId = address.serialize();
+    String[] sqlArgs = new String[] {recipientId+""};
+    try {
+      cursor = db.rawQuery(sql, sqlArgs);
+      if (cursor != null && cursor.moveToFirst()) {
+        return true;
+      } else {
+        return false;
+      }
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+
+
+  }
   public void deleteThreadByRecipientId(Address address) {
     String recipientId = address.serialize();
     Log.w(TAG, "ThreadDatabase: deleteThreadByRecipientId("+recipientId+")");
