@@ -2,23 +2,38 @@ package org.thoughtcrime.securesms;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class PasscodeActivity extends Activity {
+
+  private final Context context;
+  private final Thread thread;
 
   static final String THREAD_ID = "threadId";
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
+
+  private AlertDialog.Builder addPasscodeDialog;
+
+  PasscodeActivity(Context context, Thread thread) {
+    this.context = context;
+    this.thread = thread;
+    this.addPasscodeDialog = new AlertDialog.Builder(context);
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -99,9 +114,28 @@ public class PasscodeActivity extends Activity {
     //   transaction is done in dialog's ok button
   }
 
-  private void handleAdd(long threadId) {
-    // TODO
-    // do the same thing as add passcode
+  public void handleAdd(long threadId) {
+    //not finished yet
+    addPasscodeDialog.setTitle("Set Passcode");
+    addPasscodeDialog.setCancelable(true);
+
+    LayoutInflater layoutInf = getLayoutInflater();
+    View v1 = layoutInf.inflate(R.layout.passcode_add,null);
+    addPasscodeDialog.setView(v1);
+
+
+
+
+
+
+    addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+
+    addPasscodeDialog.show();
   }
 
   public class PasscodeAdapter extends BaseAdapter {
