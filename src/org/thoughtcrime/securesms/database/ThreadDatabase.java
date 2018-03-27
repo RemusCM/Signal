@@ -414,27 +414,7 @@ public class ThreadDatabase extends Database {
     }
   }
 
-  public boolean hasPasscodeByThreadId(long threadId) {
-    Log.w(TAG, "ThreadDatabase: hasPasscodeByRecipientId("+threadId+")");
-    SQLiteDatabase db = databaseHelper.getReadableDatabase();
-    Cursor cursor = null;
-    String sql = "SELECT " + PASSCODE + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
-     String[] sqlArgs = new String[] {threadId+""};
-    try {
-      cursor = db.rawQuery(sql, sqlArgs);
-      if (cursor != null && cursor.moveToFirst()) {
-        return true;
-      } else {
-        return false;
-      }
-    } finally {
-      if (cursor != null) {
-        cursor.close();
-      }
-    }
 
-
-  }
   public void deleteThreadByRecipientId(Address address) {
     String recipientId = address.serialize();
     Log.w(TAG, "ThreadDatabase: deleteThreadByRecipientId("+recipientId+")");

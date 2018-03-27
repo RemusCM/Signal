@@ -13,25 +13,6 @@ public class PasscodeDatabase extends ThreadDatabase {
     super(context, databaseHelper);
   }
 
-  public boolean hasPasscodeByThreadId(long threadId) {
-    SQLiteDatabase db = databaseHelper.getReadableDatabase();
-    Cursor cursor = null;
-    String sql = "SELECT " + PASSCODE + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
-    String[] sqlArgs = new String[] {threadId+""};
-    try {
-      cursor = db.rawQuery(sql, sqlArgs);
-      if (cursor != null && cursor.moveToFirst()) {
-        return true;
-      } else {
-        return false;
-      }
-    } finally {
-      if (cursor != null) {
-        cursor.close();
-      }
-    }
-  }
-
   public String getPasscodeByThreadId(long threadId) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = null;
@@ -41,15 +22,13 @@ public class PasscodeDatabase extends ThreadDatabase {
       cursor = db.rawQuery(sql, sqlArgs);
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(0);
-      } else {
-        return null;
       }
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
-
+    return null;
   }
 
   public void updatePasscode(long threadId, String passcode) {

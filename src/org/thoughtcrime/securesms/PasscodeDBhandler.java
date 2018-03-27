@@ -1,6 +1,9 @@
 package org.thoughtcrime.securesms;
 
 import android.content.Context;
+import android.util.Log;
+
+import org.thoughtcrime.securesms.database.DatabaseFactory;
 
 public class PasscodeDBhandler {
   private static final String TAG = PasscodeDBhandler.class.getSimpleName();
@@ -37,9 +40,8 @@ public class PasscodeDBhandler {
    * @return the passcode currently
    * stored in the database
    */
-  public String getPasscodeIfExists() {
-    // TODO
-    return "";
+  private String getPasscodeIfExists() {
+    return DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId);
   }
 
   /**
@@ -48,8 +50,8 @@ public class PasscodeDBhandler {
    * in the thread database
    * @return true if passcode exists for this thread
    */
-  public boolean isPasscodeExists() {
-    return !getPasscodeIfExists().isEmpty() || getPasscodeIfExists() != null;
+  private boolean isPasscodeExists() {
+    return getPasscodeIfExists() != null;
   }
 
   /**
@@ -59,15 +61,16 @@ public class PasscodeDBhandler {
    * @return updates the passcode field
    */
   public String update() {
-    String currentPasscode = getPasscodeIfExists();
-    // checks if you enter the correct passcode
-    if (getPasscode().equals(currentPasscode)) {
-      /*DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
-      if (DatabaseFactory.getPasscodeDatabase(context).isUpdated(threadId, passcode)) {
-        return "Success";
-      }*/
+    String passcodeInDb = getPasscodeIfExists();
+    if (passcodeInDb == null) { // ADD : by default passcode field is null
+      DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
+      return "Success";
+    } else if (passcodeInDb.length() > 0) { // UPDATE
+      DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
+      return "Success";
+    } else {
+      return "Error";
     }
-    return "Error";
   }
 
   /**
