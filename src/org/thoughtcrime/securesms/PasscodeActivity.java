@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -84,6 +85,12 @@ public class PasscodeActivity extends Activity {
   }
 
   private void handleDelete(long threadId) {
+
+    AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
+    deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
+    deletePasscodeDialog.setCancelable(true);
+
+
     // TODO
     // create an alert dialog
     // insert passcode_add.xml to this dialog
