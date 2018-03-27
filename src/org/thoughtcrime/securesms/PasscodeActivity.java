@@ -1,7 +1,9 @@
 package org.thoughtcrime.securesms;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,6 +87,30 @@ public class PasscodeActivity extends Activity {
   }
 
   private void handleDelete(long threadId) {
+
+    AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
+    deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
+    deletePasscodeDialog.setCancelable(true);
+    deletePasscodeDialog.setMessage(R.string.confirm_deletion_with_passcode);
+    final EditText passcodeEditText = new EditText(this);
+    deletePasscodeDialog.setView(passcodeEditText);
+
+    deletePasscodeDialog.setPositiveButton(R.string.confirm_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+
+      }
+    });
+    deletePasscodeDialog.setNegativeButton(R.string.cancel_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+
+        dialog.cancel();
+      }
+    });
+    deletePasscodeDialog.show();
+
+
     // TODO
     // create an alert dialog
     // insert passcode_add.xml to this dialog
