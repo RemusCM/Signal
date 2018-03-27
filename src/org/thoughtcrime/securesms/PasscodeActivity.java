@@ -13,16 +13,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Created by daanish on 3/26/2018.
- */
-
 public class PasscodeActivity extends Activity {
 
-  public static final String THREAD_ID = "threadId";
-  static final String ADD = "ADD";
-  static final String UPDATE = "UPDATE";
-  static final String DELETE = "DELETE";
+  static final String THREAD_ID = "threadId";
+  static final String ADD       = "ADD";
+  static final String UPDATE    = "UPDATE";
+  static final String DELETE    = "DELETE";
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -32,8 +28,14 @@ public class PasscodeActivity extends Activity {
 
     Intent intent = this.getIntent();
     String threadId = null;
+    String passcode = null;
     if (intent != null) {
       threadId = intent.getStringExtra(THREAD_ID);
+      // TODO
+      // using this threadId
+      // checks if this thread has passcode using the passcode handler
+      // if yes get the passcode
+      // initiate passcode to this value
     }
 
     String[] data = new String[3];
@@ -44,8 +46,15 @@ public class PasscodeActivity extends Activity {
     PasscodeAdapter adapter = new PasscodeAdapter(this, data, threadId);
     passcodeListView.setAdapter(adapter);
 
-    passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    // TODO
+    // handleButtonVisibility(passcode) : handle action button visibility
+    // passcodeListView.getChildAt([0-2]).setEnabled(false);
+    // by default buttons are enabled however
+    // disable ADD if passcode is already set
+    // disable UPDATE if passcode is not yet set for this thread
+    // disable DELETE if passcode is not yet set for this thread
 
+    passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String clickedItem = (String) passcodeListView.getItemAtPosition(position);
@@ -69,22 +78,30 @@ public class PasscodeActivity extends Activity {
             Toast.makeText(getBaseContext(), "Invalid action", Toast.LENGTH_SHORT).show();
             break;
         }
-
       }
     });
 
   }
 
   private void handleDelete(long threadId) {
-    //TODO
+    // TODO
+    // create an alert dialog
+    // insert passcode_add.xml to this dialog
+    // call the passcode handler for handling addition
+    //   transaction is done in alert dialog's ok button
   }
 
   private void handleUpdate(long threadId) {
-    //TODO
+    // TODO
+    // create an alert dialog
+    // insert passcode_update.xml to this dialog
+    // call the passcode handler for handling passcode modification
+    //   transaction is done in dialog's ok button
   }
 
   private void handleAdd(long threadId) {
     // TODO
+    // do the same thing as add passcode
   }
 
   public class PasscodeAdapter extends BaseAdapter {
@@ -93,7 +110,7 @@ public class PasscodeActivity extends Activity {
     String threadId;
     LayoutInflater inflater;
 
-    public PasscodeAdapter(Context context, String[] data, String threadId) {
+    PasscodeAdapter(Context context, String[] data, String threadId) {
       this.context = context;
       this.data = data;
       this.threadId = threadId;
