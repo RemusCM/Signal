@@ -36,10 +36,10 @@ public class PasscodeActivity extends Activity {
     ListView passcodeListView = findViewById(R.id.passcode_action_list);
 
     Intent intent = this.getIntent();
-    String threadId = null;
+    String threadIdStr = null;
     String passcode = null;
     if (intent != null) {
-      threadId = intent.getStringExtra(THREAD_ID);
+      threadIdStr = intent.getStringExtra(THREAD_ID);
       // TODO
       // using this threadId
       // checks if this thread has passcode using the passcode handler
@@ -52,16 +52,10 @@ public class PasscodeActivity extends Activity {
     data[1] = UPDATE;
     data[2] = DELETE;
 
-    PasscodeAdapter adapter = new PasscodeAdapter(this, data, threadId);
+    PasscodeAdapter adapter = new PasscodeAdapter(this, data, threadIdStr);
     passcodeListView.setAdapter(adapter);
 
-    // TODO
-    // handleButtonVisibility(passcode) : handle action button visibility
-    // passcodeListView.getChildAt([0-2]).setEnabled(false);
-    // by default buttons are enabled however
-    // disable ADD if passcode is already set
-    // disable UPDATE if passcode is not yet set for this thread
-    // disable DELETE if passcode is not yet set for this thread
+    handleButtonVisibility(passcodeListView, passcode);
 
     passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
@@ -88,6 +82,15 @@ public class PasscodeActivity extends Activity {
 
   }
 
+  private void handleButtonVisibility(ListView passcodeListView, String passcode) {
+    // TODO
+    // passcodeListView.getChildAt([0-2]).setEnabled(false);
+    // by default buttons are enabled however
+    // disable ADD if passcode is already set
+    // disable UPDATE if passcode is not yet set for this thread
+    // disable DELETE if passcode is not yet set for this thread
+  }
+
   private void handleDelete(long threadId) {
     AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
     deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
@@ -112,6 +115,8 @@ public class PasscodeActivity extends Activity {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
           String result = process.delete();
           Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+          finish();
+          startActivity(getIntent());
         }
       }
     });
@@ -157,6 +162,8 @@ public class PasscodeActivity extends Activity {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, passcode);
           String result = process.update();
           Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+          finish();
+          startActivity(getIntent());
         }
       }
     });

@@ -40,7 +40,7 @@ public class PasscodeDBhandler {
    * @return the passcode currently
    * stored in the database
    */
-  private String getPasscodeIfExists() {
+  public String getPasscodeIfExists() {
     return DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId);
   }
 
