@@ -40,11 +40,9 @@ public class PasscodeActivity extends Activity {
     String passcode = null;
     if (intent != null) {
       threadIdStr = intent.getStringExtra(THREAD_ID);
-      // TODO
-      // using this threadId
-      // checks if this thread has passcode using the passcode handler
-      // if yes get the passcode
-      // initiate passcode to this value
+      long threadId = Long.parseLong(threadIdStr);
+      PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(this, threadId);
+      passcode = passcodeDBhandler.getPasscodeIfExists();
     }
 
     String[] data = new String[3];
@@ -56,8 +54,6 @@ public class PasscodeActivity extends Activity {
     passcodeListView.setAdapter(adapter);
 
     handleButtonVisibility(passcodeListView, passcode);
-
-
 
     passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
@@ -81,22 +77,15 @@ public class PasscodeActivity extends Activity {
         }
       }
     });
-
   }
 
   private void handleButtonVisibility(ListView passcodeListView, String passcode) {
-    // by default buttons are enabled however
-    // disable ADD if passcode is already set
-    // disable UPDATE if passcode is not yet set for this thread
-    // disable DELETE if passcode is not yet set for this thread
-    if(passcode==null){
+    if (passcode == null) {
       passcodeListView.getChildAt(1).setEnabled(false);
       passcodeListView.getChildAt(2).setEnabled(false);
-    }
-    else{
+    } else {
       passcodeListView.getChildAt(0).setEnabled(false);
     }
-
   }
 
   private void handleDelete(long threadId) {
@@ -159,26 +148,25 @@ public class PasscodeActivity extends Activity {
         String oldPasscodeInput = editText1.getText().toString();
         String newPasscodeInput = editText2.getText().toString();
 
-        PasscodeUtil oldPassItem = new PasscodeUtil(Arrays.asList(oldPasscodeInput));
-        PasscodeUtil newPassItem = new PasscodeUtil(Arrays.asList(newPasscodeInput));
+        String[] inputs = {oldPasscodeInput, newPasscodeInput};
+        PasscodeUtil items = new PasscodeUtil(Arrays.asList(inputs));
 
-        if (oldPassItem.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), "Please enter the old passcode.", Toast.LENGTH_SHORT).show();
-        } else if (newPassItem.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), "Please enter the new passcode.", Toast.LENGTH_SHORT).show();
-        } else if (!newPassItem.isValidPasscode()) {
+        if (items.isEmptyField()) {
+          Toast.makeText(getApplicationContext(), "One of the field is empty. Please try again.", Toast.LENGTH_SHORT).show();
+        } else if (!items.isValidPasscode()) {
           Toast.makeText(getApplicationContext(), "Please enter a valid passcode.", Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler pdbh = new PasscodeDBhandler(getApplicationContext(), threadId);
           String oldPassFromDB = pdbh.getPasscodeIfExists();
-
-          if(oldPassFromDB!=oldPasscodeInput){
+          if (!oldPassFromDB.equals(oldPasscodeInput)) {
             Toast.makeText(getApplicationContext(), "The old passcode is incorrect.", Toast.LENGTH_SHORT).show();
-          }
-          else{
+          } else {
             PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, newPasscodeInput);
             String result = process.update();
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+
+            finish(); // reload activity so the changes is reflected
+            startActivity(getIntent());
           }
         }
       }
