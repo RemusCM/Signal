@@ -1339,6 +1339,10 @@
     <string name="invalid_nickname">Please enter a valid nickname.</string>
     <string name="success_modifying_nickname">You have successfully modified this nickname.</string>
 
+    <!-- translation_feature -->
+    <string name="english_message">English</string>
+
+
 
     <!-- EOF -->
 

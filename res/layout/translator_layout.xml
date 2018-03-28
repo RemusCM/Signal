@@ -7,8 +7,9 @@
         android:layout_height="match_parent"
         android:weightSum="1">
 
-        <Spinner
+        <TextureView
             android:id="@+id/languages1"
+            android:text="@string/english_message"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
