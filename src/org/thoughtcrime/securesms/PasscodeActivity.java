@@ -115,7 +115,8 @@ public class PasscodeActivity extends Activity {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
           String result = process.delete();
           Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-          finish();
+
+          finish(); // reload activity so the changes is reflected
           startActivity(getIntent());
         }
       }
@@ -160,9 +161,10 @@ public class PasscodeActivity extends Activity {
           Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, passcode);
-          String result = process.update();
+          String result = process.add();
           Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-          finish();
+
+          finish(); // reload activity so the changes is reflected
           startActivity(getIntent());
         }
       }
@@ -225,7 +227,6 @@ public class PasscodeActivity extends Activity {
 
   private class PasscodeUtil {
 
-    static final int MAX_LENGTH = 4;
     static final int MIN_LENGTH = 4;
 
     List<String> items = new LinkedList<>();
@@ -248,7 +249,7 @@ public class PasscodeActivity extends Activity {
       String regex = "\\d{4}";
       Pattern pattern = Pattern.compile(regex);
       for (String s : items) {
-        if (s.length() > MAX_LENGTH || s.length() < MIN_LENGTH || !pattern.matcher(s).matches()) {
+        if (s.length() < MIN_LENGTH || !pattern.matcher(s).matches()) {
           cond = false;
           break;
         }
