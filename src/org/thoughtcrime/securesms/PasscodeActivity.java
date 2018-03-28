@@ -105,9 +105,9 @@ public class PasscodeActivity extends Activity {
         String editTextStr = editText.getText().toString();
         PasscodeUtil items = new PasscodeUtil(Arrays.asList(editTextStr));
         if (items.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), "No passcode entered.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.no_passcode_entered, Toast.LENGTH_SHORT).show();
         } else if (!items.isValidPasscode()) {
-          Toast.makeText(getApplicationContext(), "Please enter a valid passcode.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
           String result = process.delete();
@@ -136,7 +136,7 @@ public class PasscodeActivity extends Activity {
 
   public void handleAdd(long threadId) {
     AlertDialog.Builder addPasscodeDialog = new AlertDialog.Builder(this);
-    addPasscodeDialog.setTitle("Set Passcode");
+    addPasscodeDialog.setTitle(R.string.set_passcode);
     addPasscodeDialog.setCancelable(true);
 
     LayoutInflater layoutInf = getLayoutInflater();
@@ -150,9 +150,9 @@ public class PasscodeActivity extends Activity {
         String passcode = editText.getText().toString();
         PasscodeUtil items = new PasscodeUtil(Arrays.asList(passcode));
         if (items.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), "No passcode entered.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.no_passcode_entered, Toast.LENGTH_SHORT).show();
         } else if (!items.isValidPasscode()) {
-          Toast.makeText(getApplicationContext(), "Please enter a valid passcode.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, passcode);
           String result = process.update();
