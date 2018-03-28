@@ -76,7 +76,7 @@ public class ConversationListItem extends RelativeLayout
   private AlertView          alertView;
   private ImageView          unreadIndicator;
   private long               lastSeen;
-  private ImageButton        lockButton;
+  private ImageView          passcodeIndicatorView;
 
   private int             unreadCount;
   private AvatarImageView contactPhotoImage;
@@ -104,7 +104,7 @@ public class ConversationListItem extends RelativeLayout
     this.thumbnailView           = findViewById(R.id.thumbnail);
     this.archivedView            = findViewById(R.id.archived);
     this.unreadIndicator         = findViewById(R.id.unread_indicator);
-    this.lockButton              = findViewById(R.id.lock_button);
+    this.passcodeIndicatorView   = findViewById(R.id.passcode_indicator);
     thumbnailView.setClickable(false);
 
     ViewUtil.setTextViewGravityStart(this.fromView, getContext());
@@ -150,9 +150,10 @@ public class ConversationListItem extends RelativeLayout
     this.contactPhotoImage.setAvatar(glideRequests, recipient, true);
 
     PasscodeDBhandler handler = new PasscodeDBhandler(getContext(), threadId);
-    Log.i(TAG, "handler.isPasscodeExists()" + handler.isPasscodeExists());
     if(handler.isPasscodeExists()){
-      lockButton.setVisibility(View.VISIBLE);
+      passcodeIndicatorView.setVisibility(View.VISIBLE);
+    } else {
+      passcodeIndicatorView.setVisibility(View.INVISIBLE);
     }
 
   }

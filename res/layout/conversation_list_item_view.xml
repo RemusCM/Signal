@@ -102,12 +102,6 @@
             tools:src="@drawable/ic_video_light"
             tools:visibility="visible">
 
-            <ImageButton
-                android:id="@+id/lock_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_security_24dp" />
         </org.thoughtcrime.securesms.components.ThumbnailView>
 
         <TextView android:id="@id/date"
@@ -140,6 +134,16 @@
                   android:textSize="12sp"
                 />
 
+
+        <ImageView
+            android:id="@+id/passcode_indicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_above="@+id/archived"
+            android:layout_toLeftOf="@+id/thumbnail"
+            android:layout_toStartOf="@+id/thumbnail"
+            android:visibility="invisible"
+            app:srcCompat="@android:drawable/ic_secure" />
 
         <FrameLayout android:id="@+id/status"
                      android:layout_width="wrap_content"

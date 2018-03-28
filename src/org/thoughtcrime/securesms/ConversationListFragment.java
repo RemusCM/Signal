@@ -46,6 +46,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -413,6 +414,7 @@ public class ConversationListFragment extends Fragment
                                          String.valueOf(adapter.getBatchSelections().size())));
       }
 
+      // passcode locking button visibility
       if (adapter.getBatchSelections().size() == 1) {
         actionMode.getMenu().findItem(R.id.menu_passcode_lock_selected).setVisible(true);
       } else if (adapter.getBatchSelections().size() > 1) {
