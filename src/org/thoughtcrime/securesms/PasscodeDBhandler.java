@@ -51,7 +51,7 @@ public class PasscodeDBhandler {
    * in the thread database
    * @return true if passcode exists for this thread
    */
-  private boolean isPasscodeExists() {
+  public boolean isPasscodeExists() {
     return getPasscodeIfExists() != null;
   }
 

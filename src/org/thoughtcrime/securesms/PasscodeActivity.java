@@ -57,6 +57,8 @@ public class PasscodeActivity extends Activity {
 
     handleButtonVisibility(passcodeListView, passcode);
 
+
+
     passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -83,12 +85,18 @@ public class PasscodeActivity extends Activity {
   }
 
   private void handleButtonVisibility(ListView passcodeListView, String passcode) {
-    // TODO
-    // passcodeListView.getChildAt([0-2]).setEnabled(false);
     // by default buttons are enabled however
     // disable ADD if passcode is already set
     // disable UPDATE if passcode is not yet set for this thread
     // disable DELETE if passcode is not yet set for this thread
+    if(passcode==null){
+      passcodeListView.getChildAt(1).setEnabled(false);
+      passcodeListView.getChildAt(2).setEnabled(false);
+    }
+    else{
+      passcodeListView.getChildAt(0).setEnabled(false);
+    }
+
   }
 
   private void handleDelete(long threadId) {
