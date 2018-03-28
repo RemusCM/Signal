@@ -339,6 +339,10 @@ public class ConversationListFragment extends Fragment
           threadIds.addAll(selectedConversations);
         }
         String threadStr = String.valueOf(threadIds.get(0));
+        long threadId = Long.parseLong(threadStr);
+        PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(getActivity(), threadId);
+        String passcode = passcodeDBhandler.getPasscodeIfExists();
+        intent.putExtra(PasscodeActivity.PASSCODE, passcode);
         intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
         startActivity(intent);
       }

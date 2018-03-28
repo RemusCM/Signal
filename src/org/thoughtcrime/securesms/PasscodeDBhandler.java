@@ -64,14 +64,10 @@ public class PasscodeDBhandler {
   public String update() {
     String passcodeInDb = getPasscodeIfExists();
     try {
-      if (!passcodeInDb.isEmpty()) {
-        // confirmation : checks if the one entered is the same as the one in database
-        if (passcodeInDb.equals(passcode)) {
-          DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
-          if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId).equals(passcode)) {
-            return "Success";
-          }
-        }
+      // confirmation : checks if the one entered is the same as the one in database
+      DatabaseFactory.getPasscodeDatabase(context).updatePasscode(threadId, passcode);
+      if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId).equals(passcode)) {
+        return "Success";
       }
     } catch (NullPointerException e) {
       Toast.makeText(context, "There is nothing to update.", Toast.LENGTH_SHORT).show();
@@ -102,13 +98,11 @@ public class PasscodeDBhandler {
   public String delete() {
     String passcodeInDb = getPasscodeIfExists();
     try {
-      if (!passcodeInDb.isEmpty()) {
-        // confirmation : checks if the one entered is the same as the one in database
-        if (passcodeInDb.equals(passcode)) {
-          DatabaseFactory.getPasscodeDatabase(context).removePasscode(threadId);
-          if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId) == null) {
-            return "Success";
-          }
+      // confirmation : checks if the one entered is the same as the one in database
+      if (passcodeInDb.equals(passcode)) {
+        DatabaseFactory.getPasscodeDatabase(context).removePasscode(threadId);
+        if (DatabaseFactory.getPasscodeDatabase(context).getPasscodeByThreadId(threadId) == null) {
+          return "Success";
         }
       }
     } catch (NullPointerException e) {

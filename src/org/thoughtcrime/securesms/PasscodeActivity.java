@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,11 +25,13 @@ import java.util.regex.Pattern;
 
 public class PasscodeActivity extends Activity {
 
+  private static final String TAG = PasscodeActivity.class.getSimpleName();
+
   static final String THREAD_ID = "threadId";
+  static final String PASSCODE  = "passcode";;
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
-
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -40,20 +44,14 @@ public class PasscodeActivity extends Activity {
     String passcode = null;
     if (intent != null) {
       threadIdStr = intent.getStringExtra(THREAD_ID);
-      long threadId = Long.parseLong(threadIdStr);
-      PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(this, threadId);
-      passcode = passcodeDBhandler.getPasscodeIfExists();
+      passcode = intent.getStringExtra(PASSCODE);
     }
 
-    String[] data = new String[3];
-    data[0] = ADD;
-    data[1] = UPDATE;
-    data[2] = DELETE;
+    List<String> action = handleButtonVisibility(passcode);
+    String[] data = new String[action.size()];
 
-    PasscodeAdapter adapter = new PasscodeAdapter(this, data, threadIdStr);
+    PasscodeAdapter adapter = new PasscodeAdapter(this, action.toArray(data), threadIdStr);
     passcodeListView.setAdapter(adapter);
-
-    handleButtonVisibility(passcodeListView, passcode);
 
     passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
@@ -79,13 +77,15 @@ public class PasscodeActivity extends Activity {
     });
   }
 
-  private void handleButtonVisibility(ListView passcodeListView, String passcode) {
-    if (passcode == null) {
-      passcodeListView.getChildAt(1).setEnabled(false);
-      passcodeListView.getChildAt(2).setEnabled(false);
+  private List<String> handleButtonVisibility(String passcode) {
+    List<String> action = new ArrayList<>();
+    if (passcode != null) {
+      action.add(UPDATE);
+      action.add(DELETE);
     } else {
-      passcodeListView.getChildAt(0).setEnabled(false);
+      action.add(ADD);
     }
+    return action;
   }
 
   private void handleDelete(long threadId) {
@@ -157,16 +157,16 @@ public class PasscodeActivity extends Activity {
           Toast.makeText(getApplicationContext(), "Please enter a valid passcode.", Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler pdbh = new PasscodeDBhandler(getApplicationContext(), threadId);
-          String oldPassFromDB = pdbh.getPasscodeIfExists();
-          if (!oldPassFromDB.equals(oldPasscodeInput)) {
-            Toast.makeText(getApplicationContext(), "The old passcode is incorrect.", Toast.LENGTH_SHORT).show();
-          } else {
+          String passcodeFromDB = pdbh.getPasscodeIfExists();
+          if(passcodeFromDB.equals(oldPasscodeInput)) {
             PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, newPasscodeInput);
             String result = process.update();
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
 
             finish(); // reload activity so the changes is reflected
             startActivity(getIntent());
+          } else {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
           }
         }
       }
