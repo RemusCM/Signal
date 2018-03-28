@@ -1,7 +1,9 @@
 package org.thoughtcrime.securesms;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,9 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class PasscodeActivity extends Activity {
 
@@ -19,6 +27,7 @@ public class PasscodeActivity extends Activity {
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
+
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -59,23 +68,19 @@ public class PasscodeActivity extends Activity {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String clickedItem = (String) passcodeListView.getItemAtPosition(position);
         TextView threadIdText = view.findViewById(R.id.thread_id_text);
-        String threadIdStr = threadIdText.toString();
+        String threadIdStr = threadIdText.getText().toString();
         long threadId = Long.parseLong(threadIdStr);
         switch (clickedItem) {
           case ADD:
             handleAdd(threadId);
-            Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
             break;
           case UPDATE:
             handleUpdate(threadId);
-            Toast.makeText(getBaseContext(), "Update was called", Toast.LENGTH_SHORT).show();
             break;
           case DELETE:
             handleDelete(threadId);
-            Toast.makeText(getBaseContext(), "Delete was called", Toast.LENGTH_SHORT).show();
             break;
           default:
-            Toast.makeText(getBaseContext(), "Invalid action", Toast.LENGTH_SHORT).show();
             break;
         }
       }
@@ -84,11 +89,41 @@ public class PasscodeActivity extends Activity {
   }
 
   private void handleDelete(long threadId) {
-    // TODO
-    // create an alert dialog
-    // insert passcode_add.xml to this dialog
-    // call the passcode handler for handling addition
-    //   transaction is done in alert dialog's ok button
+    AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
+    deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
+    deletePasscodeDialog.setCancelable(true);
+    deletePasscodeDialog.setMessage(R.string.confirm_deletion_with_passcode);
+
+    LayoutInflater inflater = this.getLayoutInflater();
+    View deleteEditTextView = inflater.inflate(R.layout.passcode_delete, null);
+    deletePasscodeDialog.setView(deleteEditTextView);
+
+    deletePasscodeDialog.setPositiveButton(R.string.confirm_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        EditText editText = deleteEditTextView.findViewById(R.id.delete_passcode);
+        String editTextStr = editText.getText().toString();
+        PasscodeUtil items = new PasscodeUtil(Arrays.asList(editTextStr));
+        if (items.isEmptyField()) {
+          Toast.makeText(getApplicationContext(), R.string.no_passcode_entered, Toast.LENGTH_SHORT).show();
+        } else if (!items.isValidPasscode()) {
+          Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
+        } else {
+          PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
+          String result = process.delete();
+          Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
+      }
+    });
+
+    deletePasscodeDialog.setNegativeButton(R.string.cancel_button_passcode, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+
+    deletePasscodeDialog.show();
   }
 
   private void handleUpdate(long threadId) {
@@ -99,9 +134,41 @@ public class PasscodeActivity extends Activity {
     //   transaction is done in dialog's ok button
   }
 
-  private void handleAdd(long threadId) {
-    // TODO
-    // do the same thing as add passcode
+  public void handleAdd(long threadId) {
+    AlertDialog.Builder addPasscodeDialog = new AlertDialog.Builder(this);
+    addPasscodeDialog.setTitle(R.string.set_passcode);
+    addPasscodeDialog.setCancelable(true);
+
+    LayoutInflater layoutInf = getLayoutInflater();
+    View addDialogView = layoutInf.inflate(R.layout.passcode_add,null);
+    addPasscodeDialog.setView(addDialogView);
+
+    addPasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        EditText editText = addDialogView.findViewById(R.id.enter_passcode);
+        String passcode = editText.getText().toString();
+        PasscodeUtil items = new PasscodeUtil(Arrays.asList(passcode));
+        if (items.isEmptyField()) {
+          Toast.makeText(getApplicationContext(), R.string.no_passcode_entered, Toast.LENGTH_SHORT).show();
+        } else if (!items.isValidPasscode()) {
+          Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
+        } else {
+          PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, passcode);
+          String result = process.update();
+          Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
+      }
+    });
+
+    addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+
+    addPasscodeDialog.show();
   }
 
   public class PasscodeAdapter extends BaseAdapter {
@@ -148,5 +215,40 @@ public class PasscodeActivity extends Activity {
       return view;
     }
   }
+
+  private class PasscodeUtil {
+
+    static final int MAX_LENGTH = 4;
+    static final int MIN_LENGTH = 4;
+
+    List<String> items = new LinkedList<>();
+
+    PasscodeUtil(List<String> list) {
+      this.items = list;
+    }
+
+    private boolean isEmptyField() {
+      return items.contains(null) || items.contains("");
+    }
+
+    /**
+     * Valid passcode must be a number and exactly four digits
+     *
+     * @return true if password is valid
+     */
+    private boolean isValidPasscode() {
+      boolean cond = true;
+      String regex = "\\d{4}";
+      Pattern pattern = Pattern.compile(regex);
+      for (String s : items) {
+        if (s.length() > MAX_LENGTH || s.length() < MIN_LENGTH || !pattern.matcher(s).matches()) {
+          cond = false;
+          break;
+        }
+      }
+      return cond;
+    }
+  }
+
 
 }

@@ -91,7 +91,7 @@ public class ThreadDatabase extends Database {
     DELIVERY_RECEIPT_COUNT + " INTEGER DEFAULT 0, " + EXPIRES_IN + " INTEGER DEFAULT 0, "          +
     LAST_SEEN + " INTEGER DEFAULT 0, " + HAS_SENT + " INTEGER DEFAULT 0, "                         +
     READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, " + UNREAD_COUNT + " INTEGER DEFAULT 0, "            +
-    PASSCODE + "INTEGER DEFAULT NULL);";
+    PASSCODE + " INTEGER DEFAULT NULL);";
 
   static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS thread_recipient_ids_index ON " + TABLE_NAME + " (" + ADDRESS + ");",
@@ -414,27 +414,7 @@ public class ThreadDatabase extends Database {
     }
   }
 
-  public boolean hasPasscodeByThreadId(long threadId) {
-    Log.w(TAG, "ThreadDatabase: hasPasscodeByRecipientId("+threadId+")");
-    SQLiteDatabase db = databaseHelper.getReadableDatabase();
-    Cursor cursor = null;
-    String sql = "SELECT " + PASSCODE + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
-     String[] sqlArgs = new String[] {threadId+""};
-    try {
-      cursor = db.rawQuery(sql, sqlArgs);
-      if (cursor != null && cursor.moveToFirst()) {
-        return true;
-      } else {
-        return false;
-      }
-    } finally {
-      if (cursor != null) {
-        cursor.close();
-      }
-    }
 
-
-  }
   public void deleteThreadByRecipientId(Address address) {
     String recipientId = address.serialize();
     Log.w(TAG, "ThreadDatabase: deleteThreadByRecipientId("+recipientId+")");
