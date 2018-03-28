@@ -141,11 +141,57 @@ public class PasscodeActivity extends Activity {
   }
 
   private void handleUpdate(long threadId) {
-    // TODO
-    // create an alert dialog
-    // insert passcode_update.xml to this dialog
-    // call the passcode handler for handling passcode modification
-    //   transaction is done in dialog's ok button
+
+    AlertDialog.Builder updatePasscodeDialog = new AlertDialog.Builder(this);
+    updatePasscodeDialog.setTitle("Update Passcode");
+    updatePasscodeDialog.setCancelable(true);
+
+    LayoutInflater layoutInf = getLayoutInflater();
+    View updateDialogView = layoutInf.inflate(R.layout.passcode_update,null);
+    updatePasscodeDialog.setView(updateDialogView);
+
+    updatePasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        EditText editText1 = updateDialogView.findViewById(R.id.old_passcode);
+        EditText editText2 = updateDialogView.findViewById(R.id.new_passcode);
+
+        String oldPasscodeInput = editText1.getText().toString();
+        String newPasscodeInput = editText2.getText().toString();
+
+        PasscodeUtil oldPassItem = new PasscodeUtil(Arrays.asList(oldPasscodeInput));
+        PasscodeUtil newPassItem = new PasscodeUtil(Arrays.asList(newPasscodeInput));
+
+        if (oldPassItem.isEmptyField()) {
+          Toast.makeText(getApplicationContext(), "Please enter the old passcode.", Toast.LENGTH_SHORT).show();
+        } else if (newPassItem.isEmptyField()) {
+          Toast.makeText(getApplicationContext(), "Please enter the new passcode.", Toast.LENGTH_SHORT).show();
+        } else if (!newPassItem.isValidPasscode()) {
+          Toast.makeText(getApplicationContext(), "Please enter a valid passcode.", Toast.LENGTH_SHORT).show();
+        } else {
+          PasscodeDBhandler pdbh = new PasscodeDBhandler(getApplicationContext(), threadId);
+          String oldPassFromDB = pdbh.getPasscodeIfExists();
+
+          if(oldPassFromDB!=oldPasscodeInput){
+            Toast.makeText(getApplicationContext(), "The old passcode is incorrect.", Toast.LENGTH_SHORT).show();
+          }
+          else{
+            PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, newPasscodeInput);
+            String result = process.update();
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+          }
+        }
+      }
+    });
+
+    updatePasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+
+    updatePasscodeDialog.show();
   }
 
   public void handleAdd(long threadId) {
