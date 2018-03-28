@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:text="Passcode Management"
         android:textAlignment="center"
-        android:textSize="20sp"/>
+        android:textAppearance="@style/Registration.Label"
+        android:textSize="35sp" />
 
     <ListView
         android:id="@+id/passcode_action_list"
