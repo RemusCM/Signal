@@ -16,6 +16,9 @@
     <item android:title="@string/arrays__import_export"
           android:id="@+id/menu_import_export" />
 
+    <item android:title="@string/text_secure_normal__schedule_message"
+        android:id="@+id/menu_schedule_message" />
+
     <item android:title="@string/text_secure_normal__menu_settings"
           android:id="@+id/menu_settings" />
 
