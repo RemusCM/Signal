@@ -14,8 +14,9 @@
         android:layout_marginRight="18dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="Enter your password"
-        android:inputType="numberPassword" />
+        android:hint="@string/passcode_enter_passcode"
+        android:inputType="numberPassword"
+        android:textSize="14sp" />
 
     <EditText
         android:id="@+id/new_passcode"
@@ -26,8 +27,9 @@
         android:layout_marginRight="18dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="Enter new password"
+        android:hint="@string/passcode_enter_new_passcode"
         android:inputType="numberPassword"
-        android:maxLength="4" />
+        android:maxLength="4"
+        android:textSize="14sp" />
 
 </LinearLayout>
