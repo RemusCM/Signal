@@ -308,6 +308,12 @@
         <activity
             android:name=".VerifyIdentityActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <!-- This is the schedule message activity -->
+        <activity
+            android:name=".ScheduleActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
         <activity
             android:name=".ApplicationPreferencesActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
@@ -483,6 +489,9 @@
                 <action android:name="android.service.chooser.ChooserTargetService" />
             </intent-filter>
         </service>
+
+        <!-- This is the schedule message service -->
+        <service android:name=".service.ScheduleService"></service>
 
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
