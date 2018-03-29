@@ -46,13 +46,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -399,10 +399,38 @@ public class ConversationListFragment extends Fragment
   }
 
   @Override
-  public void onItemClick(ConversationListItem item) {
-    if (actionMode == null) {
-      handleCreateConversation(item.getThreadId(), item.getRecipient(),
-                               item.getDistributionType(), item.getLastSeen());
+  public void onItemClick(ConversationListItem item, long threadId) {
+    if (actionMode == null) { // goes directly to the conversation
+      PasscodeDBhandler pdbh = new PasscodeDBhandler(getActivity(), threadId);
+      if (pdbh.isPasscodeExists()) { // intercept here
+        LayoutInflater layoutInf = getLayoutInflater();
+        View editTextView = layoutInf.inflate(R.layout.passcode_add,null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.passcode_conversation_locked);
+        builder.setMessage(R.string.passcode_please_enter_four_digit_code);
+        builder.setView(editTextView);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            EditText enteredPasscode = editTextView.findViewById(R.id.enter_passcode);
+            String passcodeFromDb = pdbh.getPasscodeIfExists();
+            if (passcodeFromDb.equals(enteredPasscode.getText().toString())) {
+              handleCreateConversation(item.getThreadId(), item.getRecipient(),
+                      item.getDistributionType(), item.getLastSeen());
+            } else {
+              Toast.makeText(getActivity(), R.string.passcode_invalid_message3, Toast.LENGTH_SHORT).show();
+            }
+          }
+        });
+        builder.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            dialog.dismiss();
+          }
+        });
+        builder.show();
+      } else {
+        handleCreateConversation(item.getThreadId(), item.getRecipient(),
+                item.getDistributionType(), item.getLastSeen());
+      }
     } else {
       ConversationListAdapter adapter = (ConversationListAdapter)list.getAdapter();
       adapter.toggleThreadInBatchSet(item.getThreadId());
