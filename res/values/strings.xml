@@ -965,16 +965,18 @@
     <string name="profile_create_activity__finish">FINISH</string>
     <string name="profile_create_activity__who_can_see_this_information">Who can see this information?</string>
     <string name="profile_create_activity__your_name">Your name</string>
-
-
+    
     <!-- passcode strings -->
-    <string name="delete_passcode_title">Confirm Deletetion of Passcode?</string>
-    <string name="cancel_button_passcode">Cancel</string>
-    <string name="confirm_button_passcode">Confirm</string>
-    <string name="confirm_deletion_with_passcode">Enter Passcode to Confirm Deletion.</string>
-    <string name="no_passcode_entered">No Passcode Entered.</string>
-    <string name="please_enter_a_valid_passcode">Please Enter a Valid Passcode.</string>
-    <string name="set_passcode">Set Passcode</string>
+    <string name="passcode_delete_title">Confirm Deletetion of Passcode?</string>
+    <string name="passcode_confirm_button">Confirm</string>
+    <string name="passcode_confirm_deletion">Enter Passcode to Confirm Deletion.</string>
+    <string name="passcode_invalid_message">Please Enter a Valid Passcode.</string>
+    <string name="passcode_invalid_message2">No Passcode Entered.</string>
+    <string name="passcode_set">Set Passcode</string>
+    <string name="passcode_lock_selected__menu">Lock with passcode</string>
+    <string name="passcode_lock_confirmation__dialog">Are you sure you want to lock this conversation with a passcode?</string>
+    <string name="passcode_dialog_save">Save</string>
+    <string name="passcode_dialog_cancel">Cancel</string>
 
     <!-- recipient_preferences_activity -->
     <string name="recipient_preference_activity__shared_media">Shared media</string>
@@ -1196,12 +1198,6 @@
     <!-- **************************************** -->
     <!-- menus -->
     <!-- **************************************** -->
-
-    <!-- passcode -->
-    <string name="passcode_lock_selected__menu">Lock with passcode</string>
-    <string name="passcode_lock_confirmation__dialog">Are you sure you want to lock this conversation with a passcode?</string>
-    <string name="passcode_dialog_save">Save</string>
-    <string name="passcode_dialog_cancel">Cancel</string>
 
     <!-- contact_selection_list -->
     <string name="contact_selection_list__unknown_contact">New message to...</string>
