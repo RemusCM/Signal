@@ -10,15 +10,18 @@ buildscript {
             url 'https://maven.google.com/'
             name 'Google'
         }
+        google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.0'
         classpath files('libs/gradle-witness.jar')
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'witness'
+apply plugin: 'findbugs'
 
 repositories {
     maven {
@@ -94,6 +97,9 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.5.0'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
+    //this is for language detection
+    compile 'com.detectlanguage:detectlanguage:1.1.0'
 
     annotationProcessor 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile ("com.doomonafireball.betterpickers:library:1.5.3") {
@@ -431,6 +437,24 @@ task assembleWebsiteDescriptor << {
                 descriptorFile.write(descriptor)
             }
         }
+    }
+}
+
+//this is a task for findbugs static analysis
+task findbugs(type: FindBugs) {
+    description 'Find bugs mainly design flaws, bad practices, multithreaded correctness and code vulnerabilities.'
+    group 'verification'
+    excludeFilter = file("$project.rootDir/tools/rules-findbugs.xml")
+    classes = fileTree("$project.buildDir/intermediates/classes/dev/debug/com/aranoah")
+    source = fileTree('src/main/java')
+    effort 'max'
+    reportLevel = "high"
+    classpath = files()
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.buildDir/outputs/findbugs/findbugs.html"
     }
 }
 
