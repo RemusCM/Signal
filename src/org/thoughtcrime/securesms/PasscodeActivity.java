@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,7 @@ public class PasscodeActivity extends Activity {
     setContentView(R.layout.passcode_list_actions);
     ListView passcodeListView = findViewById(R.id.passcode_action_list);
 
+    // get the intent object passed by ConversationListFragment:handleLockWithPasscodeSelected
     Intent intent = this.getIntent();
     String threadIdStr = null;
     String passcode = null;
@@ -90,36 +90,34 @@ public class PasscodeActivity extends Activity {
 
   private void handleDelete(long threadId) {
     AlertDialog.Builder deletePasscodeDialog = new AlertDialog.Builder(this);
-    deletePasscodeDialog.setTitle(R.string.delete_passcode_title);
+    deletePasscodeDialog.setTitle(R.string.passcode_delete_title);
     deletePasscodeDialog.setCancelable(true);
-    deletePasscodeDialog.setMessage(R.string.confirm_deletion_with_passcode);
+    deletePasscodeDialog.setMessage(R.string.passcode_confirm_deletion);
 
     LayoutInflater inflater = this.getLayoutInflater();
     View deleteEditTextView = inflater.inflate(R.layout.passcode_delete, null);
     deletePasscodeDialog.setView(deleteEditTextView);
 
-    deletePasscodeDialog.setPositiveButton(R.string.confirm_button_passcode, new DialogInterface.OnClickListener() {
+    deletePasscodeDialog.setPositiveButton(R.string.passcode_confirm_button, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         EditText editText = deleteEditTextView.findViewById(R.id.delete_passcode);
         String editTextStr = editText.getText().toString();
         PasscodeUtil items = new PasscodeUtil(Arrays.asList(editTextStr));
         if (items.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), R.string.no_passcode_entered, Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message2, Toast.LENGTH_SHORT).show();
         } else if (!items.isValidPasscode()) {
-          Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
-          String result = process.delete();
-          Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-
+          Toast.makeText(getApplicationContext(), process.delete(), Toast.LENGTH_SHORT).show();
           finish(); // reload activity so the changes is reflected
           startActivity(getIntent());
         }
       }
     });
 
-    deletePasscodeDialog.setNegativeButton(R.string.cancel_button_passcode, new DialogInterface.OnClickListener() {
+    deletePasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         dialog.dismiss();
@@ -154,14 +152,13 @@ public class PasscodeActivity extends Activity {
         if (items.isEmptyField()) {
           Toast.makeText(getApplicationContext(), "One of the field is empty. Please try again.", Toast.LENGTH_SHORT).show();
         } else if (!items.isValidPasscode()) {
-          Toast.makeText(getApplicationContext(), "Please enter a valid passcode.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler pdbh = new PasscodeDBhandler(getApplicationContext(), threadId);
           String passcodeFromDB = pdbh.getPasscodeIfExists();
-          if(passcodeFromDB.equals(oldPasscodeInput)) {
+          if(passcodeFromDB != null) {
             PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, newPasscodeInput);
-            String result = process.update();
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), process.update(), Toast.LENGTH_SHORT).show();
 
             finish(); // reload activity so the changes is reflected
             startActivity(getIntent());
@@ -171,20 +168,18 @@ public class PasscodeActivity extends Activity {
         }
       }
     });
-
     updatePasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         dialog.dismiss();
       }
     });
-
     updatePasscodeDialog.show();
   }
 
   public void handleAdd(long threadId) {
     AlertDialog.Builder addPasscodeDialog = new AlertDialog.Builder(this);
-    addPasscodeDialog.setTitle(R.string.set_passcode);
+    addPasscodeDialog.setTitle(R.string.passcode_set);
     addPasscodeDialog.setCancelable(true);
 
     LayoutInflater layoutInf = getLayoutInflater();
@@ -198,9 +193,9 @@ public class PasscodeActivity extends Activity {
         String passcode = editText.getText().toString();
         PasscodeUtil items = new PasscodeUtil(Arrays.asList(passcode));
         if (items.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), R.string.no_passcode_entered, Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message2, Toast.LENGTH_SHORT).show();
         } else if (!items.isValidPasscode()) {
-          Toast.makeText(getApplicationContext(), R.string.please_enter_a_valid_passcode, Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
         } else {
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, passcode);
           String result = process.add();
@@ -211,14 +206,12 @@ public class PasscodeActivity extends Activity {
         }
       }
     });
-
     addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         dialog.dismiss();
       }
     });
-
     addPasscodeDialog.show();
   }
 

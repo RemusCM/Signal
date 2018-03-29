@@ -70,9 +70,9 @@ public class PasscodeDBhandler {
         return "Success";
       }
     } catch (NullPointerException e) {
-      Toast.makeText(context, "There is nothing to update.", Toast.LENGTH_SHORT).show();
+      Log.e(TAG, String.valueOf(e));
     }
-    return "Error";
+    return "Error.";
   }
 
   public String add() {
@@ -106,7 +106,7 @@ public class PasscodeDBhandler {
         }
       }
     } catch (NullPointerException e) {
-      Toast.makeText(context, "There is nothing to delete.", Toast.LENGTH_SHORT).show();
+      Log.e(TAG, String.valueOf(e));
     }
     return "Error";
   }
