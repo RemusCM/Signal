@@ -30,11 +30,13 @@ public class ScheduleActivity extends Activity{
     private Button bStart,bCancel,bTimeSelect,bPhone;
 
     static final int TIME_DIALOG_ID=1;
+    static final int DATE_DIALOG_ID=2;
     private static final int REQUEST_CODE = 1;
 
     Calendar c;
     public int yearPicked ,monthPicked ,day,hour,minute;
-    private int mHour,mMinute;
+    private int mHour,mMinute, mYear, mMonth,mDay;
+
 
     private AlarmManager aManager;
     private PendingIntent pIntent;
@@ -44,6 +46,9 @@ public class ScheduleActivity extends Activity{
         c = Calendar.getInstance();
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mMinute = c.get(Calendar.MINUTE);
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
     }
 
     @Override
@@ -92,6 +97,8 @@ public class ScheduleActivity extends Activity{
                 c.setTimeInMillis(System.currentTimeMillis());
                 c.set(Calendar.HOUR_OF_DAY, hour);
                 c.set(Calendar.MINUTE, minute);
+                
+
                 aManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pIntent);
                 Toast.makeText(getApplicationContext(), "Sms scheduled! " + sSms,Toast.LENGTH_SHORT).show();
             }
@@ -103,7 +110,9 @@ public class ScheduleActivity extends Activity{
             @Override
             public void onClick(View v) {
                 showDialog(TIME_DIALOG_ID);
+                showDialog(DATE_DIALOG_ID);
             }
+
         });
 
         //Cancel schedule
@@ -167,12 +176,15 @@ public class ScheduleActivity extends Activity{
             // create a new TimePickerDialog with values you want to show
             case TIME_DIALOG_ID:
                 return new TimePickerDialog(this, mTimeSetListener, mHour, mMinute, false);
+            case DATE_DIALOG_ID:
+                return new DatePickerDialog(this, mDateSetListener, mYear, mMonth, mDay);
+
         }
         return null;
     }
 
     //This function will have all the needed functionality to send the message at the scheduled time.
-    private void sendSMSAtTime(String phoneNumber, String message ){
+    private void sendSMSAtTime(String phoneNumber, String message, int year, int month, int day, int hour, int minute ){
 
     }
 }
