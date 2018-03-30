@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -31,7 +33,7 @@ public class ScheduleActivity extends Activity{
     private static final int REQUEST_CODE = 1;
 
     Calendar c;
-    public int year,month,day,hour,minute;
+    public int yearPicked ,monthPicked ,day,hour,minute;
     private int mHour,mMinute;
 
     private AlarmManager aManager;
@@ -146,6 +148,18 @@ public class ScheduleActivity extends Activity{
                 }
             };
 
+    //Register DatePickerDialog listerner
+    private DatePickerDialog.OnDateSetListener mDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    yearPicked = year;
+                    monthPicked = month;
+                    day = dayOfMonth;
+
+                }
+            };
+
     // Method automatically gets Called when you call showDialog()  method
     @Override
     protected Dialog onCreateDialog(int id) {
@@ -155,5 +169,10 @@ public class ScheduleActivity extends Activity{
                 return new TimePickerDialog(this, mTimeSetListener, mHour, mMinute, false);
         }
         return null;
+    }
+
+    //This function will have all the needed functionality to send the message at the scheduled time.
+    private void sendSMSAtTime(String phoneNumber, String message ){
+
     }
 }
