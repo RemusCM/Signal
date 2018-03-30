@@ -1,25 +1,18 @@
 package org.thoughtcrime.securesms;
 
-import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.PasscodeDatabase;
 
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DatabaseFactory.class})
 public class PasscodeDBhandlerMocking extends BaseUnitTest {
 
-  protected DatabaseFactory databaseFactoryMock;
-  protected PasscodeDatabase passcodeDatabaseMock;
+  private DatabaseFactory databaseFactoryMock;
+  private PasscodeDatabase passcodeDatabaseMock;
   protected PasscodeDBhandler passcodeDBHMock1;
   protected PasscodeDBhandler passcodeDBHMock2;
-  protected String passcode = "2018";
+  private String passcode = "2018";
 
   @Override
   public void setUp() {
