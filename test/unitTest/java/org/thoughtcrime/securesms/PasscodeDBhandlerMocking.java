@@ -15,37 +15,37 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({DatabaseFactory.class})
 public class PasscodeDBhandlerMocking extends BaseUnitTest {
 
-    protected DatabaseFactory databaseFactoryMock;
-    protected PasscodeDatabase passcodeDatabaseMock;
-    protected PasscodeDBhandler passcodeDBHMock1;
-    protected PasscodeDBhandler passcodeDBHMock2;
-    protected String passcode = "2018";
+  protected DatabaseFactory databaseFactoryMock;
+  protected PasscodeDatabase passcodeDatabaseMock;
+  protected PasscodeDBhandler passcodeDBHMock1;
+  protected PasscodeDBhandler passcodeDBHMock2;
+  protected String passcode = "2018";
 
-    @Override
-    public void setUp(){
-        databaseFactoryMock = mock(DatabaseFactory.class);
-        passcodeDatabaseMock = mock(PasscodeDatabase.class);
-        passcodeDBHMock1 = mock(PasscodeDBhandler.class);
-        passcodeDBHMock2 = mock(PasscodeDBhandler.class);
-    }
+  @Override
+  public void setUp() {
+    databaseFactoryMock = mock(DatabaseFactory.class);
+    passcodeDatabaseMock = mock(PasscodeDatabase.class);
+    passcodeDBHMock1 = mock(PasscodeDBhandler.class);
+    passcodeDBHMock2 = mock(PasscodeDBhandler.class);
+  }
 
-    protected void setUpPasscodeExistence() {
-        when(passcodeDBHMock1.getPasscodeIfExists()).thenReturn(passcode);
-        when(passcodeDBHMock1.isPasscodeExists()).thenReturn(true);
-    }
+  protected void setUpPasscodeExistence() {
+    when(passcodeDBHMock1.getPasscodeIfExists()).thenReturn(passcode);
+    when(passcodeDBHMock1.isPasscodeExists()).thenReturn(true);
+  }
 
-    protected void setUpPasscodeAdd(){
-        when(passcodeDBHMock2.add()).thenReturn("Success");
-    }
+  protected void setUpPasscodeAdd() {
+    when(passcodeDBHMock2.add()).thenReturn("Success");
+  }
 
-    protected void setUpPasscodeUpdate(){
-        when(passcodeDBHMock1.update()).thenReturn("Success");
-    }
+  protected void setUpPasscodeUpdate() {
+    when(passcodeDBHMock1.update()).thenReturn("Success");
+  }
 
-    protected void setUpPasscodeDeletion(){
-        when(passcodeDBHMock2.delete()).thenReturn("Success");
-        when(passcodeDBHMock2.isPasscodeExists()).thenReturn(false);
-    }
+  protected void setUpPasscodeDeletion() {
+    when(passcodeDBHMock2.delete()).thenReturn("Success");
+    when(passcodeDBHMock2.isPasscodeExists()).thenReturn(false);
+  }
 
 
 }
