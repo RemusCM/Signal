@@ -12,39 +12,47 @@ public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking{
 
 
     @Override
-    public void setUp() throws Exception{
+    public void setUp(){
         super.setUp();
-        super.setUpStaticPasscodeDatabase();
-        super.setUpPasscodeExistence();
+        setUpPasscodeExistence();
+        setUpPasscodeUpdate();
+        setUpPasscodeDeletion();
     }
-
 
     @Test
     public void testIsPasscodeExists(){
-        System.out.println("\n- Testing isPasscodeExists : Outcome #1 -");
+        System.out.println("\n- Testing isPasscodeExists : Mock #1 -");
         System.out.println("    Expected: True");
-        System.out.println("    Actual: True");
-        assertEquals(true, passcodeDBHMock.isPasscodeExists());
+        System.out.println("    Actual: " + passcodeDBHMock1.isPasscodeExists());
+        assertEquals(true, passcodeDBHMock1.isPasscodeExists());
     }
-/*
+
+    @Test
+    public void testGetPasscodeIfExists(){
+        System.out.println("\n- Testing getPasscodeIfExists : Mock #1 -");
+        System.out.println("    Expected: 2018");
+        System.out.println("    Actual: " + passcodeDBHMock1.getPasscodeIfExists());
+        assertEquals("2018", passcodeDBHMock1.getPasscodeIfExists());
+    }
 
     @Test
     public void testUpdate(){
-
+        System.out.println("\n- Testing update : Mock #1 -");
+        System.out.println("    Expected: Success");
+        System.out.println("    Actual: " + passcodeDBHMock1.update());
+        assertEquals("Success", passcodeDBHMock1.update());
     }
 
     @Test
     public void testDelete(){
-
+        System.out.println("\n- Testing delete : Mock #2 -");
+        System.out.println("    Expected: Success");
+        System.out.println("    Actual: " + passcodeDBHMock2.delete());
+        assertEquals("Success", passcodeDBHMock2.delete());
+        System.out.println("- Checking if Passcode still exists -");
+        System.out.println("    Expected: false");
+        System.out.println("    Actual: " + passcodeDBHMock2.isPasscodeExists());
+        assertEquals(false, passcodeDBHMock2.isPasscodeExists());
     }
-*/
-    @Test
-    public void testGetPasscodeIfExists(){
-        System.out.println("\n- Testing getPasscodeIfExists : Outcome #1 -");
-        System.out.println("    Expected: 2018");
-        System.out.println("    Actual: " + passcodeDBHMock.getPasscodeIfExists());
-        assertEquals("2018", passcodeDBHMock.getPasscodeIfExists());
-    }
-
 
 }

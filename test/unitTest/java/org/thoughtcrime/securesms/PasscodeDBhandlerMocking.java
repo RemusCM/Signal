@@ -17,29 +17,31 @@ public class PasscodeDBhandlerMocking extends BaseUnitTest {
 
     protected DatabaseFactory databaseFactoryMock;
     protected PasscodeDatabase passcodeDatabaseMock;
-    protected PasscodeDBhandler passcodeDBHMock;
+    protected PasscodeDBhandler passcodeDBHMock1;
+    protected PasscodeDBhandler passcodeDBHMock2;
     protected String passcode = "2018";
 
     @Override
-    public void setUp() throws Exception{
-        super.setUp();
-
+    public void setUp(){
         databaseFactoryMock = mock(DatabaseFactory.class);
         passcodeDatabaseMock = mock(PasscodeDatabase.class);
-        passcodeDBHMock = mock(PasscodeDBhandler.class);
-    }
-
-    protected void setUpStaticPasscodeDatabase() {
-        PowerMockito.mockStatic(DatabaseFactory.class);
-        BDDMockito.given(DatabaseFactory.getInstance(context)).willReturn(databaseFactoryMock);
-        BDDMockito.given(DatabaseFactory.getPasscodeDatabase(context)).willReturn(passcodeDatabaseMock);
+        passcodeDBHMock1 = mock(PasscodeDBhandler.class);
+        passcodeDBHMock2 = mock(PasscodeDBhandler.class);
     }
 
     protected void setUpPasscodeExistence() {
-        when(passcodeDBHMock.getPasscodeIfExists()).thenReturn(passcode);
-        when(passcodeDBHMock.isPasscodeExists()).thenReturn(true);
+        when(passcodeDBHMock1.getPasscodeIfExists()).thenReturn(passcode);
+        when(passcodeDBHMock1.isPasscodeExists()).thenReturn(true);
     }
 
+    protected void setUpPasscodeUpdate(){
+        when(passcodeDBHMock1.update()).thenReturn("Success");
+    }
+
+    protected void setUpPasscodeDeletion(){
+        when(passcodeDBHMock2.delete()).thenReturn("Success");
+        when(passcodeDBHMock2.isPasscodeExists()).thenReturn(false);
+    }
 
 
 }
