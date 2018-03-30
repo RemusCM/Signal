@@ -82,6 +82,7 @@ public class ScheduleActivity extends Activity{
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
+                Toast.makeText(ScheduleActivity.this, "Sms scheduled! " ,Toast.LENGTH_SHORT).show();
                 sPhone = etPhone.getText().toString();
                 sSms = etSms.getText().toString();
                 etSms.getText().clear();
@@ -97,10 +98,16 @@ public class ScheduleActivity extends Activity{
                 c.setTimeInMillis(System.currentTimeMillis());
                 c.set(Calendar.HOUR_OF_DAY, hour);
                 c.set(Calendar.MINUTE, minute);
+                c.set(Calendar.YEAR, yearPicked);
+                c.set(Calendar.MONTH, monthPicked);
+                c.set(Calendar.DAY_OF_MONTH, day);
+
                 
 
                 aManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pIntent);
-                Toast.makeText(getApplicationContext(), "Sms scheduled! " + sSms,Toast.LENGTH_SHORT).show();
+
+                //ScheduleActivity.super.onBackPressed();
+
             }
         });
 
@@ -153,7 +160,11 @@ public class ScheduleActivity extends Activity{
                     hour = hourOfDay;
                     minute = min;
                     // Set the Selected Date in Select date Button
-                    bTimeSelect.setText(hour+":"+minute);
+                    if(minute < 10){
+                        bTimeSelect.setText(hour+ ":0" + minute + ", " + yearPicked + "/" + (monthPicked+1) + "/" + day);
+                    }
+                    else
+                    bTimeSelect.setText(hour+":"+minute + ", " + yearPicked + "/" + (monthPicked+1) + "/" + day);
                 }
             };
 
@@ -183,8 +194,5 @@ public class ScheduleActivity extends Activity{
         return null;
     }
 
-    //This function will have all the needed functionality to send the message at the scheduled time.
-    private void sendSMSAtTime(String phoneNumber, String message, int year, int month, int day, int hour, int minute ){
 
-    }
 }
