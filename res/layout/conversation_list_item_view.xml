@@ -89,21 +89,20 @@
                 android:ellipsize="end" />
 
         <org.thoughtcrime.securesms.components.ThumbnailView
-                android:id="@+id/thumbnail"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="5dip"
-                android:layout_marginLeft="5dip"
-                android:layout_toLeftOf="@+id/date"
-                android:layout_toStartOf="@+id/date"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="5dip"
-                android:contentDescription="@string/conversation_activity__attachment_thumbnail"
-                app:backgroundColorHint="?conversation_background"
-                android:visibility="gone"
-                tools:src="@drawable/ic_video_light"
-                tools:visibility="visible" />
+            android:id="@+id/thumbnail"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignBottom="@+id/from"
+            android:layout_gravity="center_horizontal"
+            android:layout_toLeftOf="@+id/date"
+            android:layout_toStartOf="@+id/date"
+            android:contentDescription="@string/conversation_activity__attachment_thumbnail"
+            android:visibility="gone"
+            app:backgroundColorHint="?conversation_background"
+            tools:src="@drawable/ic_video_light"
+            tools:visibility="visible">
+
+        </org.thoughtcrime.securesms.components.ThumbnailView>
 
         <TextView android:id="@id/date"
                   android:layout_marginLeft="3dip"
@@ -135,6 +134,16 @@
                   android:textSize="12sp"
                 />
 
+
+        <ImageView
+            android:id="@+id/passcode_indicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_above="@+id/archived"
+            android:layout_toLeftOf="@+id/thumbnail"
+            android:layout_toStartOf="@+id/thumbnail"
+            android:visibility="invisible"
+            app:srcCompat="@android:drawable/ic_secure" />
 
         <FrameLayout android:id="@+id/status"
                      android:layout_width="wrap_content"

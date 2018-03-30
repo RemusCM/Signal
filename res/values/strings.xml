@@ -966,6 +966,25 @@
     <string name="profile_create_activity__who_can_see_this_information">Who can see this information?</string>
     <string name="profile_create_activity__your_name">Your name</string>
 
+    <!-- passcode strings -->
+    <string name="passcode_delete_title">Confirm Deletetion of Passcode?</string>
+    <string name="passcode_confirm_button">Confirm</string>
+    <string name="passcode_confirm_deletion">Enter Passcode to Confirm Deletion.</string>
+    <string name="passcode_invalid_message">Please Enter a Valid Passcode.</string>
+    <string name="passcode_invalid_message2">No Passcode Entered.</string>
+    <string name="passcode_invalid_message3">Incorrect passcode!</string>
+    <string name="passcode_set">Set Passcode</string>
+    <string name="passcode_lock_selected__menu">Lock with passcode</string>
+    <string name="passcode_lock_confirmation__dialog">Are you sure you want to lock this conversation with a passcode?</string>
+    <string name="passcode_dialog_save">Save</string>
+    <string name="passcode_dialog_cancel">Cancel</string>
+    <string name="passcode_please_enter_four_digit_code">Please enter your four digit passcode to enter.</string>
+    <string name="passcode_conversation_locked">Conversation Locked with Passcode</string>
+    <string name="passcode_enter_passcode">Enter your passcode</string>
+    <string name="passcode_enter_new_passcode">Enter new passcode</string>
+
+
+
     <!-- recipient_preferences_activity -->
     <string name="recipient_preference_activity__shared_media">Shared media</string>
 

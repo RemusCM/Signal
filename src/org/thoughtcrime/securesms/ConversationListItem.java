@@ -26,7 +26,9 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -74,6 +76,7 @@ public class ConversationListItem extends RelativeLayout
   private AlertView          alertView;
   private ImageView          unreadIndicator;
   private long               lastSeen;
+  private ImageView          passcodeIndicatorView;
 
   private int             unreadCount;
   private AvatarImageView contactPhotoImage;
@@ -101,6 +104,7 @@ public class ConversationListItem extends RelativeLayout
     this.thumbnailView           = findViewById(R.id.thumbnail);
     this.archivedView            = findViewById(R.id.archived);
     this.unreadIndicator         = findViewById(R.id.unread_indicator);
+    this.passcodeIndicatorView   = findViewById(R.id.passcode_indicator);
     thumbnailView.setClickable(false);
 
     ViewUtil.setTextViewGravityStart(this.fromView, getContext());
@@ -144,6 +148,14 @@ public class ConversationListItem extends RelativeLayout
     setRippleColor(recipient);
     setUnreadIndicator(thread);
     this.contactPhotoImage.setAvatar(glideRequests, recipient, true);
+
+    PasscodeDBhandler handler = new PasscodeDBhandler(getContext(), threadId);
+    if(handler.isPasscodeExists()){
+      passcodeIndicatorView.setVisibility(View.VISIBLE);
+    } else {
+      passcodeIndicatorView.setVisibility(View.INVISIBLE);
+    }
+
   }
 
   @Override

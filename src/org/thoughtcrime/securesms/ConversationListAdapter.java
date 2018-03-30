@@ -123,7 +123,7 @@ class ConversationListAdapter extends CursorRecyclerViewAdapter<ConversationList
                                                                                parent, false);
 
       item.setOnClickListener(view -> {
-        if (clickListener != null) clickListener.onItemClick(item);
+        if (clickListener != null) clickListener.onItemClick(item, item.getThreadId());
       });
 
       item.setOnLongClickListener(view -> {
@@ -193,7 +193,7 @@ class ConversationListAdapter extends CursorRecyclerViewAdapter<ConversationList
   }
 
   interface ItemClickListener {
-    void onItemClick(ConversationListItem item);
+    void onItemClick(ConversationListItem item, long threadId);
     void onItemLongClick(ConversationListItem item);
     void onSwitchToArchive();
   }

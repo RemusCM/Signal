@@ -78,6 +78,8 @@ public class ThreadDatabase extends Database {
   public  static final String EXPIRES_IN             = "expires_in";
   public  static final String LAST_SEEN              = "last_seen";
   private static final String HAS_SENT               = "has_sent";
+  public static        String PASSCODE               = "passcode";
+
 
   public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("                    +
     ID + " INTEGER PRIMARY KEY, " + DATE + " INTEGER DEFAULT 0, "                                  +
@@ -88,7 +90,8 @@ public class ThreadDatabase extends Database {
     ARCHIVED + " INTEGER DEFAULT 0, " + STATUS + " INTEGER DEFAULT 0, "                            +
     DELIVERY_RECEIPT_COUNT + " INTEGER DEFAULT 0, " + EXPIRES_IN + " INTEGER DEFAULT 0, "          +
     LAST_SEEN + " INTEGER DEFAULT 0, " + HAS_SENT + " INTEGER DEFAULT 0, "                         +
-    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, " + UNREAD_COUNT + " INTEGER DEFAULT 0);";
+    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, " + UNREAD_COUNT + " INTEGER DEFAULT 0, "            +
+    PASSCODE + " INTEGER DEFAULT NULL);";
 
   static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS thread_recipient_ids_index ON " + TABLE_NAME + " (" + ADDRESS + ");",
@@ -97,7 +100,7 @@ public class ThreadDatabase extends Database {
 
   private static final String[] THREAD_PROJECTION = {
       ID, DATE, MESSAGE_COUNT, ADDRESS, SNIPPET, SNIPPET_CHARSET, READ, UNREAD_COUNT, TYPE, ERROR, SNIPPET_TYPE,
-      SNIPPET_URI, ARCHIVED, STATUS, DELIVERY_RECEIPT_COUNT, EXPIRES_IN, LAST_SEEN, READ_RECEIPT_COUNT
+      SNIPPET_URI, ARCHIVED, STATUS, DELIVERY_RECEIPT_COUNT, EXPIRES_IN, LAST_SEEN, READ_RECEIPT_COUNT, PASSCODE
   };
 
   private static final List<String> TYPED_THREAD_PROJECTION = Stream.of(THREAD_PROJECTION)
@@ -151,6 +154,14 @@ public class ThreadDatabase extends Database {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.update(TABLE_NAME, contentValues, ID + " = ?", new String[] {threadId + ""});
     notifyConversationListListeners();
+  }
+
+  public void updatePasscode(String passcode, long threadId){
+    ContentValues contentValues = new ContentValues(1);
+    contentValues.put(PASSCODE, passcode);
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+    db.update(TABLE_NAME, contentValues, ID + " = ? ", new String[] {threadId + ""});
+
   }
 
   public void updateSnippet(long threadId, String snippet, @Nullable Uri attachment, long date, long type, boolean unarchive) {
@@ -350,6 +361,14 @@ public class ThreadDatabase extends Database {
     return cursor;
   }
 
+  public Cursor getConversationListNoPasscode(int limit) {
+    SQLiteDatabase db    = databaseHelper.getReadableDatabase();
+    String         query = createQuery(MESSAGE_COUNT + " != 0 AND " + PASSCODE +
+            " IS NULL ", limit);
+
+    return db.rawQuery(query, null);
+  }
+
   public Cursor getRecentConversationList(int limit) {
     SQLiteDatabase db    = databaseHelper.getReadableDatabase();
     String         query = createQuery(MESSAGE_COUNT + " != 0", limit);
@@ -402,6 +421,7 @@ public class ThreadDatabase extends Database {
       }
     }
   }
+
 
   public void deleteThreadByRecipientId(Address address) {
     String recipientId = address.serialize();
