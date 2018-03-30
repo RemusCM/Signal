@@ -361,6 +361,14 @@ public class ThreadDatabase extends Database {
     return cursor;
   }
 
+  public Cursor getConversationListNoPasscode(int limit) {
+    SQLiteDatabase db    = databaseHelper.getReadableDatabase();
+    String         query = createQuery(MESSAGE_COUNT + " != 0 AND " + PASSCODE +
+            " IS NULL ", limit);
+
+    return db.rawQuery(query, null);
+  }
+
   public Cursor getRecentConversationList(int limit) {
     SQLiteDatabase db    = databaseHelper.getReadableDatabase();
     String         query = createQuery(MESSAGE_COUNT + " != 0", limit);

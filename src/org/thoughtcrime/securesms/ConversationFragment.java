@@ -59,6 +59,7 @@ import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
 import org.thoughtcrime.securesms.database.loaders.ConversationLoader;
+import org.thoughtcrime.securesms.database.loaders.ConversationSearchLoader;
 import org.thoughtcrime.securesms.database.model.MediaMmsMessageRecord;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.mms.GlideApp;
@@ -500,6 +501,48 @@ public class ConversationFragment extends Fragment
   private void scrollToLastSeenPosition(final int lastSeenPosition) {
     if (lastSeenPosition > 0) {
       list.post(() -> ((LinearLayoutManager)list.getLayoutManager()).scrollToPositionWithOffset(lastSeenPosition, list.getHeight()));
+    }
+  }
+
+  public void search(String query) {
+    if (getListAdapter() != null) {
+      ConversationSearchLoader loader = new ConversationSearchLoader(getActivity(), threadId);
+      int maxPosition = list.getAdapter().getItemCount() - 1;
+
+      int toastLong = Toast.LENGTH_LONG;
+      int toastShort = Toast.LENGTH_SHORT;
+      Context context = getContext();
+
+      int searching = R.string.conversationFragment_searching;
+      int noFoundSoFar = R.string.conversationFragment_no_message_found_so_far;
+      int noFound = R.string.conversationFragment_no_message_found;
+
+      Toast searchingToast = Toast.makeText(context, searching, toastLong);
+      searchingToast.show();;
+
+      new AsyncTask<String, Void, Integer>() {
+
+        @Override
+        protected Integer doInBackground(String... query) {
+          return getListAdapter().findMessagePosition(loader.getCursor(), query[0], maxPosition);
+        }
+
+        @Override
+         protected void onPostExecute(Integer matchingPosition) {
+          searchingToast.cancel();
+          if (matchingPosition >= 0) {
+            // if match go to the message position
+            list.scrollToPosition(matchingPosition);
+          } else {
+            Toast.makeText(context, noFound, toastShort).show();
+          }
+          // only search for 500 messages be default
+          if (maxPosition == PARTIAL_CONVERSATION_LIMIT) {
+            list.scrollToPosition(maxPosition);
+            Toast.makeText(context, noFoundSoFar, toastShort).show();
+          }
+        }
+      }.execute(query);
     }
   }
 

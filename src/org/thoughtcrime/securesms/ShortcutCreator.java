@@ -20,7 +20,6 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import org.thoughtcrime.securesms.crypto.MasterCipher;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
-import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.model.ThreadRecord;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -71,7 +70,7 @@ public class ShortcutCreator implements ShortcutCreatorInterface {
         // get the most recent conversations from the database
         ThreadDatabase threadDatabase = DatabaseFactory.getThreadDatabase(context);
         // limit the results to 5 conversations
-        Cursor cursor = threadDatabase.getRecentConversationList(5);
+        Cursor cursor = threadDatabase.getConversationListNoPasscode(5);
 
         try {
           // record contains the five most recent conversation
@@ -115,7 +114,8 @@ public class ShortcutCreator implements ShortcutCreatorInterface {
             }
           }
         } catch (NullPointerException npe) {
-          Toast.makeText(context, "Caught NullPointerException in " + TAG + ":createShortcuts", Toast.LENGTH_SHORT).show();
+          Toast.makeText(context, "Caught NullPointerException in " +
+                          TAG + ":createShortcuts", Toast.LENGTH_SHORT).show();
         } finally {
           if (cursor != null) {
             cursor.close();
