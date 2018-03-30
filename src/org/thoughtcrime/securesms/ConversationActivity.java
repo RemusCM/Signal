@@ -19,6 +19,7 @@ package org.thoughtcrime.securesms;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,6 +47,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -194,7 +196,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
                OnKeyboardShownListener,
                AttachmentDrawerListener,
                InputPanel.Listener,
-               InputPanel.MediaListener
+               InputPanel.MediaListener,
+               SearchView.OnQueryTextListener
 {
   private static final String TAG = ConversationActivity.class.getSimpleName();
 
@@ -243,6 +246,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   protected HidingLinearLayout     quickAttachmentToggle;
   private   QuickAttachmentDrawer  quickAttachmentDrawer;
   private   InputPanel             inputPanel;
+  private   SearchView             searchView;
 
   private Recipient  recipient;
   private long       threadId;
@@ -477,7 +481,20 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   public boolean onPrepareOptionsMenu(Menu menu) {
     MenuInflater inflater = this.getMenuInflater();
     menu.clear();
-    Context           context         = ConversationActivity.this;
+    Context context = ConversationActivity.this;
+
+    inflater.inflate(R.menu.conversation_search, menu);
+
+    MenuItem searchItem = menu.findItem(R.id.action_search_message);
+    SearchManager searchManager = (SearchManager)
+            getSystemService(Context.SEARCH_SERVICE);
+    searchItem = menu.findItem(R.id.action_search_message);
+    searchView = (SearchView) searchItem.getActionView();
+
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setSubmitButtonEnabled(true);
+    searchView.setOnQueryTextListener(this);
+
 
     if (isSecureText) {
       if (recipient.getExpireMessages() > 0) {
@@ -1972,6 +1989,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     } else if (MediaUtil.isAudioType(contentType)) {
       setMedia(uri, MediaType.AUDIO);
     }
+  }
+
+  @Override
+  public boolean onQueryTextSubmit(String query) {
+    // fragment.search(query);
+    return true;
+  }
+
+  @Override
+  public boolean onQueryTextChange(String newText) {
+    return false;
   }
 
 
