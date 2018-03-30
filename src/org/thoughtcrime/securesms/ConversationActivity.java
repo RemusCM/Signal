@@ -1993,7 +1993,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
   @Override
   public boolean onQueryTextSubmit(String query) {
-    // fragment.search(query);
+    fragment.search(query);
     return true;
   }
 
