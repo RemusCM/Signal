@@ -34,6 +34,10 @@ public class PasscodeDBhandlerMocking extends BaseUnitTest {
         when(passcodeDBHMock1.isPasscodeExists()).thenReturn(true);
     }
 
+    protected void setUpPasscodeAdd(){
+        when(passcodeDBHMock2.add()).thenReturn("Success");
+    }
+
     protected void setUpPasscodeUpdate(){
         when(passcodeDBHMock1.update()).thenReturn("Success");
     }

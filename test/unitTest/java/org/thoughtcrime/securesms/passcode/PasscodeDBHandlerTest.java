@@ -15,6 +15,7 @@ public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking{
     public void setUp(){
         super.setUp();
         setUpPasscodeExistence();
+        setUpPasscodeAdd();
         setUpPasscodeUpdate();
         setUpPasscodeDeletion();
     }
@@ -41,6 +42,14 @@ public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking{
         System.out.println("    Expected: Success");
         System.out.println("    Actual: " + passcodeDBHMock1.update());
         assertEquals("Success", passcodeDBHMock1.update());
+    }
+
+    @Test
+    public void testAdd(){
+        System.out.println("\n- Testing add : Mock #2 -");
+        System.out.println("    Expected: Success");
+        System.out.println("    Actual: " + passcodeDBHMock2.add());
+        assertEquals("Success", passcodeDBHMock2.add());
     }
 
     @Test
