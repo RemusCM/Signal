@@ -513,9 +513,9 @@ public class ConversationFragment extends Fragment
       int toastShort = Toast.LENGTH_SHORT;
       Context context = getContext();
 
-      int searching = R.string.conversation_fragment__searching;
-      int noFoundSoFar = R.string.conversation_fragment__no_matching_message_found_so_far;
-      int noFound = R.string.conversation_fragment__no_matching_message_found;
+      int searching = R.string.conversationFragment_searching;
+      int noFoundSoFar = R.string.conversationFragment_no_message_found_so_far;
+      int noFound = R.string.conversationFragment_no_message_found;
 
       Toast searchingToast = Toast.makeText(context, searching, toastLong);
       searchingToast.show();;
@@ -530,13 +530,16 @@ public class ConversationFragment extends Fragment
         @Override
          protected void onPostExecute(Integer matchingPosition) {
           searchingToast.cancel();
-          if (maxPosition >= 0) {
+          if (matchingPosition >= 0) {
+            // if match go to the message position
             list.scrollToPosition(matchingPosition);
-          } else if (maxPosition == PARTIAL_CONVERSATION_LIMIT) {
-            list.scrollToPosition(maxPosition);
-            Toast.makeText(context, noFoundSoFar, toastShort).show();
           } else {
             Toast.makeText(context, noFound, toastShort).show();
+          }
+          // only search for 500 messages be default
+          if (maxPosition == PARTIAL_CONVERSATION_LIMIT) {
+            list.scrollToPosition(maxPosition);
+            Toast.makeText(context, noFoundSoFar, toastShort).show();
           }
         }
       }.execute(query);
