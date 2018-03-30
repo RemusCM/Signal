@@ -109,8 +109,7 @@ public class ScheduleActivity extends Activity{
 
             @Override
             public void onClick(View v) {
-                aManager.cancel(pIntent);
-                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+               ScheduleActivity.super.onBackPressed();
             }
         });
     }
