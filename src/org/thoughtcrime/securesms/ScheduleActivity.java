@@ -49,13 +49,13 @@ public class ScheduleActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_activity);
 
-        etPhone = (EditText)findViewById(R.id.etPhone);
-        etSms = (EditText)findViewById(R.id.etSms);
+        etPhone = (EditText)findViewById(R.id.edit_text_phone);
+        etSms = (EditText)findViewById(R.id.edit_text_message);
 
-        bStart = (Button)findViewById(R.id.bStart);
-        bCancel = (Button)findViewById(R.id.bCancel);
-        bTimeSelect = (Button)findViewById(R.id.bTime);
-        bPhone = (Button)findViewById(R.id.bCPhone);
+        bStart = (Button)findViewById(R.id.set_schedule_button);
+        bCancel = (Button)findViewById(R.id.cancel_schedule_button);
+        bTimeSelect = (Button)findViewById(R.id.time_select_button);
+        bPhone = (Button)findViewById(R.id.contact);
 
         //contact
         bPhone.setOnClickListener(new View.OnClickListener() {
