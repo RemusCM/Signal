@@ -3,9 +3,12 @@ package org.thoughtcrime.securesms;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -24,15 +28,17 @@ import java.util.Calendar;
 public class ScheduleActivity extends Activity{
     public String sPhone,sSms;
     private EditText etPhone,etSms;
-
+    boolean wasCancelled = false;
     private Button bStart,bCancel,bTimeSelect,bPhone;
 
     static final int TIME_DIALOG_ID=1;
+    static final int DATE_DIALOG_ID=2;
     private static final int REQUEST_CODE = 1;
 
     Calendar c;
-    public int year,month,day,hour,minute;
-    private int mHour,mMinute;
+    public int year, month,day,hour,minute;
+    private int mHour,mMinute, mYear, mMonth,mDay;
+
 
     private AlarmManager aManager;
     private PendingIntent pIntent;
@@ -40,8 +46,12 @@ public class ScheduleActivity extends Activity{
     public ScheduleActivity(){
         // Assign current Date and Time Values to Variables
         c = Calendar.getInstance();
+
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mMinute = c.get(Calendar.MINUTE);
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
     }
 
     @Override
@@ -69,29 +79,51 @@ public class ScheduleActivity extends Activity{
             }
         });
 
-        //start schedule
+        //Logic of the set button.
         bStart.setOnClickListener(new View.OnClickListener() {
 
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
+
+
                 sPhone = etPhone.getText().toString();
                 sSms = etSms.getText().toString();
                 etSms.getText().clear();
 
-                Intent i = new Intent(ScheduleActivity.this,ScheduleService.class);
-                i.putExtra("exPhone", sPhone);
-                i.putExtra("exSmS", sSms);
+                if((sPhone != null && !sPhone.equals(""))) {
+                    Intent i = new Intent(ScheduleActivity.this, ScheduleService.class);
+                    i.putExtra("exPhone", sPhone);
+                    i.putExtra("exSmS", sSms);
 
 
-                pIntent = PendingIntent.getService(getApplicationContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    pIntent = PendingIntent.getService(getApplicationContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                aManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-                c.setTimeInMillis(System.currentTimeMillis());
-                c.set(Calendar.HOUR_OF_DAY, hour);
-                c.set(Calendar.MINUTE, minute);
-                aManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pIntent);
-                Toast.makeText(getApplicationContext(), "Sms scheduled! " + sSms,Toast.LENGTH_SHORT).show();
+                    aManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                    c.setTimeInMillis(System.currentTimeMillis());
+                    c.set(Calendar.HOUR_OF_DAY, hour);
+                    c.set(Calendar.MINUTE, minute);
+
+                    if(wasCancelled){
+                        c.set(Calendar.YEAR, mYear);
+                        c.set(Calendar.MONTH, mMonth);
+                        c.set(Calendar.DAY_OF_MONTH, mDay);
+                    }
+                    c.set(Calendar.YEAR, year);
+                    c.set(Calendar.MONTH, month);
+                    c.set(Calendar.DAY_OF_MONTH, day);
+
+
+                    aManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pIntent);
+
+                    //It is to be noted, if user's notifications are turned off, Toast notifications will not appear as well.
+                    Toast.makeText(getBaseContext(), "Sms scheduled! ", Toast.LENGTH_SHORT).show();
+                    ScheduleActivity.super.onBackPressed();
+
+                }
+                else
+                    Toast.makeText(getBaseContext(), "Please Enter Valid Contact.", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -101,7 +133,9 @@ public class ScheduleActivity extends Activity{
             @Override
             public void onClick(View v) {
                 showDialog(TIME_DIALOG_ID);
+                showDialog(DATE_DIALOG_ID);
             }
+
         });
 
         //Cancel schedule
@@ -109,8 +143,7 @@ public class ScheduleActivity extends Activity{
 
             @Override
             public void onClick(View v) {
-                aManager.cancel(pIntent);
-                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+               ScheduleActivity.super.onBackPressed();
             }
         });
     }
@@ -143,7 +176,31 @@ public class ScheduleActivity extends Activity{
                     hour = hourOfDay;
                     minute = min;
                     // Set the Selected Date in Select date Button
-                    bTimeSelect.setText(hour+":"+minute);
+                    if(minute < 10){
+                        if(wasCancelled){
+                            bTimeSelect.setText(hour+ ":0" + minute + ", " + mYear + "/" + (mMonth +1) + "/" + mDay);
+                        }
+                    else
+                        bTimeSelect.setText(hour+ ":0" + minute + ", " + year + "/" + (month +1) + "/" + day);
+                    }
+                    else
+                        if(wasCancelled)
+                            bTimeSelect.setText(hour+":" + minute + ", " + mYear + "/" + (mMonth +1) + "/" + mDay);
+
+                    else
+                    bTimeSelect.setText(hour+":" + minute + ", " + year + "/" + (month +1) + "/" + day);
+                }
+            };
+
+    //Register DatePickerDialog listener
+    private DatePickerDialog.OnDateSetListener mDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    ScheduleActivity.this.year = year;
+                    ScheduleActivity.this.month = month;
+                    day = dayOfMonth;
+
                 }
             };
 
@@ -154,7 +211,29 @@ public class ScheduleActivity extends Activity{
             // create a new TimePickerDialog with values you want to show
             case TIME_DIALOG_ID:
                 return new TimePickerDialog(this, mTimeSetListener, mHour, mMinute, false);
+            case DATE_DIALOG_ID:
+
+
+                DatePickerDialog datePicker = new DatePickerDialog(this, mDateSetListener,mYear,mMonth,mDay);
+                datePicker.getDatePicker().setMinDate(c.getTimeInMillis()-1000); //set min date to right now, need to put - 1 sec
+                c.add(Calendar.YEAR, 1);
+                datePicker.getDatePicker().setMaxDate(c.getTimeInMillis()); //added a year to make the maximum date a year from now.
+                datePicker.setCancelable(false);
+                datePicker.setCanceledOnTouchOutside(false);
+                datePicker.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == DialogInterface.BUTTON_NEGATIVE)
+                        wasCancelled= true;
+                    }
+                });
+
+
+                return datePicker;
+
         }
         return null;
     }
+
+
 }
