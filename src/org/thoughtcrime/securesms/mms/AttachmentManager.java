@@ -54,6 +54,7 @@ import org.thoughtcrime.securesms.giph.ui.GiphyActivity;
 import org.thoughtcrime.securesms.permissions.Permissions;
 import org.thoughtcrime.securesms.providers.PersistentBlobProvider;
 import org.thoughtcrime.securesms.scribbles.ScribbleActivity;
+import org.thoughtcrime.securesms.spinBottle;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -379,6 +380,11 @@ public class AttachmentManager {
     Intent intent = new Intent(activity, GiphyActivity.class);
     intent.putExtra(GiphyActivity.EXTRA_IS_MMS, isForMms);
     activity.startActivityForResult(intent, requestCode);
+  }
+
+  public static void selectDrawing(Activity activity) {
+    Intent intent = new Intent(activity, spinBottle.class);
+    activity.startActivity(intent);
   }
 
   private @Nullable Uri getSlideUri() {
