@@ -125,6 +125,10 @@
             android:resource="@xml/automotive_app_desc" />
 
         <activity
+            android:name=".DrawingActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
             android:name=".WebRtcCallActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|fontScale"
             android:excludeFromRecents="true"
