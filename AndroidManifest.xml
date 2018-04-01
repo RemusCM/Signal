@@ -238,6 +238,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.thoughtcrime.securesms.ConversationListActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable">
+            </meta-data>
         </activity>
         <activity
             android:name=".ConversationPopupActivity"
@@ -656,8 +660,11 @@
         <meta-data
             android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
             android:value="598.0dip" />
+        
+        <activity
+            android:name=".PasscodeActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
 
-        <activity android:name=".ConversationMembersActivity"></activity>
     </application>
 
 </manifest>

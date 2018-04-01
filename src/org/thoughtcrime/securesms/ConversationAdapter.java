@@ -329,6 +329,26 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
     return -1;
   }
 
+  public int findMessagePosition(Cursor cursor, String query, int maxPosition) {
+    String q = query.trim().toLowerCase();
+    int invalidPosition = -1;
+    if (!q.isEmpty() && cursor != null && cursor.moveToFirst()) {
+      while (cursor.moveToNext()) {
+        MessageRecord messageRecord = getRecordFromCursor(cursor);
+        if (!messageRecord.isMms()) {
+          String message = messageRecord.getDisplayBody().toString().toLowerCase();
+          if (message.contains(q)) {
+            return cursor.getPosition();
+          }
+          if (cursor.getPosition() >= maxPosition) {
+            return invalidPosition;
+          }
+        }
+      }
+    }
+    return invalidPosition;
+  }
+
   public void toggleSelection(MessageRecord messageRecord) {
     if (!batchSelected.remove(messageRecord)) {
       batchSelected.add(messageRecord);
