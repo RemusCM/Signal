@@ -6,24 +6,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.thoughtcrime.securesms.giph.ui.GiphyActivity;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.SecureRandom;
-import java.util.concurrent.ExecutionException;
 
 @SuppressLint("NewApi")
 public class DrawingActivity extends Activity implements OnClickListener {
@@ -69,7 +64,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
         View content = drawView;
         content.setDrawingCacheEnabled(true);
         Bitmap bitmap = content.getDrawingCache();
+        // saved the image in user's device
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        // random image name of length 4
+        // image type is png
         String imageName = randomString(4).toLowerCase();
         File file = new File(path + "/" + imageName + ".png");
         FileOutputStream osStream;
@@ -84,16 +82,19 @@ public class DrawingActivity extends Activity implements OnClickListener {
           e.printStackTrace();
           Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
         }
-        
+
         new AsyncTask<Void, Void, Uri>() {
           @Override
           protected Uri doInBackground(Void... params) {
+            // passed the image file to be sent
             return Uri.fromFile(file);
           }
           protected void onPostExecute(@Nullable Uri uri) {
             if (uri == null) {
               Toast.makeText(DrawingActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
             } else {
+              // send the uri back to ConversationActivity
+              // setMedia(data.getData(), MediaType.IMAGE);
               setResult(RESULT_OK, new Intent().setData(uri));
               finish();
             }

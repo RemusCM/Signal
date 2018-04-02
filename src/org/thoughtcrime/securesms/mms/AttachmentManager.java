@@ -385,7 +385,6 @@ public class AttachmentManager {
   public static void selectDrawing(Activity activity, int pickDrawing) {
     Intent intent = new Intent(activity, DrawingActivity.class);
     activity.startActivityForResult(intent, pickDrawing);
-    //activity.startActivity(intent);
   }
 
   private @Nullable Uri getSlideUri() {
