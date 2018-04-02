@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.passcode;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -9,6 +10,7 @@ import org.thoughtcrime.securesms.database.DatabaseFactory;
 
 import static junit.framework.Assert.assertEquals;
 
+@Ignore
 @RunWith(JUnit4.class)
 @PrepareForTest({DatabaseFactory.class})
 public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking {

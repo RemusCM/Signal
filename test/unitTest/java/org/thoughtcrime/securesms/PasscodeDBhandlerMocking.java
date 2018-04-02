@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -8,6 +9,7 @@ import org.thoughtcrime.securesms.passcode.PasscodeDBHandlerTest;
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PasscodeDBHandlerTest.class})
 public class PasscodeDBhandlerMocking extends BaseUnitTest {
