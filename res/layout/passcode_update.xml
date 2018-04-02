@@ -14,6 +14,7 @@
         android:layout_marginRight="18dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:maxLength="4"
         android:hint="@string/passcode_enter_passcode"
         android:inputType="numberPassword"
         android:textSize="14sp" />
