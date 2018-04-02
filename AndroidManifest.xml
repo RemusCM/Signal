@@ -640,6 +640,11 @@
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:process=":remote"
+            android:name=".CustomAlarmReceiver">
+        </receiver>
+
 
         <uses-library
             android:name="com.sec.android.app.multiwindow"
