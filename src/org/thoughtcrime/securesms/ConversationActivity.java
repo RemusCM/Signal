@@ -219,7 +219,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private static final int PICK_LOCATION     = 8;
   private static final int PICK_GIF          = 9;
   private static final int SMS_DEFAULT       = 10;
-  private static final int PICK_DRAWING       = 11;
+  private static final int PICK_DRAWING      = 11;
 
   private   MasterSecret                masterSecret;
   private   GlideRequests               glideRequests;
@@ -450,6 +450,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case PICK_LOCATION:
       SignalPlace place = new SignalPlace(PlacePicker.getPlace(data, this));
       attachmentManager.setLocation(masterSecret, place, getCurrentMediaConstraints());
+      break;
+    case PICK_DRAWING:
+      setMedia(data.getData(), MediaType.IMAGE);
       break;
     case PICK_GIF:
       setMedia(data.getData(), MediaType.GIF);
@@ -1444,7 +1447,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case AttachmentTypeSelector.ADD_GIF:
       AttachmentManager.selectGif(this, PICK_GIF, !isSecureText); break;
     case AttachmentTypeSelector.ADD_DRAWING:
-      AttachmentManager.selectDrawing(this); break;
+      AttachmentManager.selectDrawing(this, PICK_DRAWING); break;
     }
   }
 
