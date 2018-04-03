@@ -27,7 +27,7 @@ public class PasscodeActivity extends Activity {
   private static final String TAG = PasscodeActivity.class.getSimpleName();
 
   static final String THREAD_ID = "threadId";
-  static final String PASSCODE  = "passcode";;
+  static final String PASSCODE  = "passcode";
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
