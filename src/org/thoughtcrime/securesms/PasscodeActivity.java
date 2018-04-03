@@ -27,7 +27,7 @@ public class PasscodeActivity extends Activity {
   private static final String TAG = PasscodeActivity.class.getSimpleName();
 
   static final String THREAD_ID = "threadId";
-  static final String PASSCODE  = "passcode";;
+  static final String PASSCODE  = "passcode";
   static final String ADD       = "ADD";
   static final String UPDATE    = "UPDATE";
   static final String DELETE    = "DELETE";
@@ -157,11 +157,15 @@ public class PasscodeActivity extends Activity {
           PasscodeDBhandler pdbh = new PasscodeDBhandler(getApplicationContext(), threadId);
           String passcodeFromDB = pdbh.getPasscodeIfExists();
           if(passcodeFromDB != null) {
-            PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, newPasscodeInput);
-            Toast.makeText(getApplicationContext(), process.update(), Toast.LENGTH_SHORT).show();
+            if (!passcodeFromDB.equals(oldPasscodeInput)) {
+              Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            } else {
+              PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, newPasscodeInput);
+              Toast.makeText(getApplicationContext(), process.update(), Toast.LENGTH_SHORT).show();
 
-            finish(); // reload activity so the changes is reflected
-            startActivity(getIntent());
+              finish(); // reload activity so the changes is reflected
+              startActivity(getIntent());
+            }
           } else {
             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
           }
