@@ -225,7 +225,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private static final int PICK_DRAWING      = 11;
 
   //this is for the voice to text feature
-  private final int REQ_CODE_SPEECH_INPUT = 11;
+  private final int REQ_CODE_SPEECH_INPUT    = 12;
 
   private   MasterSecret                masterSecret;
   private   GlideRequests               glideRequests;
@@ -469,7 +469,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case SMS_DEFAULT:
       initializeSecurity(isSecureText, isDefaultSms);
       break;
-
     //this is for voice to text feature: receiving voice input
     case REQ_CODE_SPEECH_INPUT: {
       if (resultCode == RESULT_OK && null != data) {
