@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 @SuppressLint("NewApi")
-public class DrawingView extends View {
+public class DrawingView extends View implements DrawingViewInterface {
 
     private CustomPath drawPath;
     private Bitmap canvasBitmap;
@@ -75,7 +75,7 @@ public class DrawingView extends View {
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int wprev, int hprev){
+    public void onSizeChanged(int w, int h, int wprev, int hprev){
         super.onSizeChanged(w, h, wprev, hprev);
         canvasBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
@@ -86,7 +86,7 @@ public class DrawingView extends View {
      * as a part of the painting.
      */
     @Override
-    protected void onDraw(Canvas canvas){
+    public void onDraw(Canvas canvas){
         super.onDraw(canvas);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 
