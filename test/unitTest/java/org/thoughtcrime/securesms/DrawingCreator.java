@@ -10,14 +10,13 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by daanish on 4/4/2018.
  */
 
 @RunWith(PowerMockRunner.class)
-public class DrawingTestingMocking extends BaseUnitTest{
+public class DrawingCreator{
   private DrawingView drawView;
   private Button drawBtn;
   private Button eraseBtn, saveBtn;
@@ -30,7 +29,7 @@ public class DrawingTestingMocking extends BaseUnitTest{
   private Canvas drawCanvas;
 
   private float brushSize;
-  private float prevBrushSize; 
+  private float prevBrushSize;
 
   private boolean erase = false;
   public boolean smoothStrokes = false;
@@ -40,7 +39,6 @@ public class DrawingTestingMocking extends BaseUnitTest{
   private float endX;
   private float endY;
 
-  @Override
   public void setUp() {
     drawView = mock(DrawingView.class);
     drawBtn = mock(Button.class);
@@ -63,12 +61,5 @@ public class DrawingTestingMocking extends BaseUnitTest{
     brushSize = 20;
     prevBrushSize = brushSize;
   }
-
-
-  public void setUpDrawingView(){
-
-  }
-
-
 
 }
