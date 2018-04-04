@@ -58,7 +58,7 @@ public class DrawingView extends View implements DrawingViewInterface {
      * CustomViewForDrawing class.
      */
     public void setUpDrawing(){
-        drawPaint = new Paint();;
+        drawPaint = new Paint();
         drawPath = new CustomPath(paintColor, brushSize);
         erase = false;
         smoothStrokes = false;
