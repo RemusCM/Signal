@@ -124,7 +124,7 @@ public class SearchMessageUtil {
    * @param query the message to search
    * @return the index of found message
    */
-  private int findMessagePosition(Cursor cursor, String query, int maxPosition) {
+  public int findMessagePosition(Cursor cursor, String query, int maxPosition) {
     String q = query.trim().toLowerCase();
     int invalidPosition = -1;
     if (!q.isEmpty() && cursor != null && cursor.moveToFirst()) {
