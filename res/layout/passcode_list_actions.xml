@@ -13,8 +13,32 @@
         android:textAppearance="@style/Registration.Label"
         android:textSize="35sp" />
 
+    <Spinner
+        android:id="@+id/recovery_questions"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/recovery_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter recovery answer"
+        android:inputType="text|textShortMessage" />
+
     <ListView
         android:id="@+id/passcode_action_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickBackBtn"
+        android:text="Back" />
+
 </LinearLayout>

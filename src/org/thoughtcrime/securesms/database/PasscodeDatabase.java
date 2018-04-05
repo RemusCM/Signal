@@ -9,6 +9,8 @@ import android.util.Log;
 
 public class PasscodeDatabase extends ThreadDatabase {
 
+  private static final String TAG = PasscodeDatabase.class.getSimpleName();
+
   PasscodeDatabase(Context context, SQLiteOpenHelper databaseHelper) {
     super(context, databaseHelper);
   }
@@ -23,6 +25,8 @@ public class PasscodeDatabase extends ThreadDatabase {
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getString(0);
       }
+    } catch (NullPointerException npe) {
+      Log.e(TAG, npe.getMessage());
     } finally {
       if (cursor != null) {
         cursor.close();
@@ -43,6 +47,32 @@ public class PasscodeDatabase extends ThreadDatabase {
     contentValues.putNull(PASSCODE);
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.update(TABLE_NAME, contentValues, ID + " = ? ", new String[] {threadId + ""});
-
   }
+
+  public String getRecoveryAnswer(long threadId) {
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = null;
+    String sql = "SELECT " + RECOVERY_ANSWER + " FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
+    try {
+      cursor = db.rawQuery(sql, new String[] {threadId+""});
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getString(0);
+      }
+    } catch (NullPointerException npe) {
+      Log.e(TAG, npe.getMessage());
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+    return null;
+  }
+
+  public void updateRecoveryAnswer(long threadId, String recoveryAnswer) {
+    ContentValues contentValue = new ContentValues(1);
+    contentValue.put(RECOVERY_ANSWER, recoveryAnswer);
+    SQLiteDatabase db = databaseHelper.getWritableDatabase();
+    db.update(TABLE_NAME, contentValue, ID + " = ? ", new String[] {threadId + ""});
+  }
+
 }
