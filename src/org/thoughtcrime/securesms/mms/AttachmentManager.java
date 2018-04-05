@@ -41,6 +41,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import org.thoughtcrime.securesms.DrawingActivity;
 import org.thoughtcrime.securesms.MediaPreviewActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.AudioView;
@@ -379,6 +380,11 @@ public class AttachmentManager {
     Intent intent = new Intent(activity, GiphyActivity.class);
     intent.putExtra(GiphyActivity.EXTRA_IS_MMS, isForMms);
     activity.startActivityForResult(intent, requestCode);
+  }
+
+  public static void selectDrawing(Activity activity, int pickDrawing) {
+    Intent intent = new Intent(activity, DrawingActivity.class);
+    activity.startActivityForResult(intent, pickDrawing);
   }
 
   private @Nullable Uri getSlideUri() {
