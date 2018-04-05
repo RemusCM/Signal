@@ -70,7 +70,7 @@ import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask.Attachment;
-import org.thoughtcrime.securesms.util.SearchUtil;
+import org.thoughtcrime.securesms.util.SearchMessageUtil;
 import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.task.ProgressDialogAsyncTask;
@@ -505,7 +505,7 @@ public class ConversationFragment extends Fragment
   }
 
   public void search(String query) {
-    SearchUtil searchUtil = new SearchUtil(getActivity(), getListAdapter(), list, threadId);
+    SearchMessageUtil searchUtil = new SearchMessageUtil(getActivity(), getListAdapter(), list, threadId);
     searchUtil.search(query);
   }
 

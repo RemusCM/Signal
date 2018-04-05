@@ -28,7 +28,7 @@ import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.database.loaders.ConversationSearchLoader;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 
-public class SearchUtil {
+public class SearchMessageUtil {
 
   private static final int PARTIAL_CONVERSATION_LIMIT = 500;
 
@@ -37,7 +37,7 @@ public class SearchUtil {
   private RecyclerView recyclerView; // contains item (message) info, i.e. position from the lists
   private long threadId;
 
-  public SearchUtil(Context context, ConversationAdapter conversationAdapter, RecyclerView recyclerView, long threadId) {
+  public SearchMessageUtil(Context context, ConversationAdapter conversationAdapter, RecyclerView recyclerView, long threadId) {
     this.context = context;
     this.conversationAdapter = conversationAdapter;
     this.recyclerView = recyclerView;
