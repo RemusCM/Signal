@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 @SuppressLint("NewApi")
-public class DrawingView extends View implements DrawingViewInterface {
+public class DrawingView extends View {
 
   private CustomPath drawPath;
   private Bitmap canvasBitmap;
@@ -89,14 +89,6 @@ public class DrawingView extends View implements DrawingViewInterface {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
     canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-    /**
-     * This method is called when a stroke is drawn on the canvas
-     * as a part of the painting.
-     */
-    @Override
-    public void onDraw(Canvas canvas){
-        super.onDraw(canvas);
-        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 
     for (CustomPath p : paths) {
       drawPaint.setStrokeWidth(p.getBrushThickness());
