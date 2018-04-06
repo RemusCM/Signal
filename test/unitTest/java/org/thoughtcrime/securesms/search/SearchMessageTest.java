@@ -5,10 +5,7 @@ import android.database.Cursor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.thoughtcrime.securesms.MessageMocking;
-import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.util.SearchMessageUtil;
 
 import static junit.framework.Assert.assertEquals;
@@ -25,7 +22,6 @@ public class SearchMessageTest extends MessageMocking {
         c3 = mock(Cursor.class);
 
         setUpMessagePositions();
-        setSearchingMsg();
     }
 
     @Test
@@ -47,12 +43,16 @@ public class SearchMessageTest extends MessageMocking {
     }
 
     @Test
-    public void testGetSearchingMsg(){
-        System.out.println("- Testing getSearchingMsg : Outcome #1 -");
-        System.out.println("    Expected: 0x7f0f0250" );
-        System.out.println("    Actual: " + R.string.conversationFragment_searching);
-        assertEquals(0x7f0f0250, R.string.conversationFragment_searching);
-    }
+    public void testSearch(){
+        MockSearchMessageUtil msmu = new MockSearchMessageUtil();
+        crsr = mock(Cursor.class);
+        String query = "hello world";
 
+        System.out.println("- Testing Message Search : Outcome #1 -");
+        msmu.search(query);
+        System.out.println("    Expected: 45" );
+        System.out.println("    Actual: " + msmu.getMessagePosition());
+        assertEquals(45, msmu.getMessagePosition());
+    }
 
 }
