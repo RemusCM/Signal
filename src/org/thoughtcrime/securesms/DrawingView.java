@@ -59,7 +59,6 @@ public class DrawingView extends View {
    */
   public void setUpDrawing() {
     drawPaint = new Paint();
-    ;
     drawPath = new CustomPath(paintColor, brushSize);
     erase = false;
     smoothStrokes = false;
