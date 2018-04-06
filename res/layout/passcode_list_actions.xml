@@ -10,11 +10,29 @@
         android:layout_height="wrap_content"
         android:text="Passcode Management"
         android:textAlignment="center"
+        android:layout_marginBottom="10dp"
         android:textAppearance="@style/Registration.Label"
         android:textSize="35sp" />
+
+    <Spinner
+        android:id="@+id/recovery_questions_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/recovery_answer_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_marginLeft="18dp"
+        android:hint="Enter recovery answer"
+        android:inputType="text|textShortMessage" />
 
     <ListView
         android:id="@+id/passcode_action_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+
+    </ListView>
+
 </LinearLayout>

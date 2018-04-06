@@ -222,9 +222,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private static final int PICK_LOCATION     = 8;
   private static final int PICK_GIF          = 9;
   private static final int SMS_DEFAULT       = 10;
+  private static final int PICK_DRAWING      = 11;
 
   //this is for the voice to text feature
-  private final int REQ_CODE_SPEECH_INPUT = 11;
+  private final int REQ_CODE_SPEECH_INPUT    = 12;
 
   private   MasterSecret                masterSecret;
   private   GlideRequests               glideRequests;
@@ -456,6 +457,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       SignalPlace place = new SignalPlace(PlacePicker.getPlace(data, this));
       attachmentManager.setLocation(masterSecret, place, getCurrentMediaConstraints());
       break;
+    case PICK_DRAWING:
+      setMedia(data.getData(), MediaType.IMAGE);
+      break;
     case PICK_GIF:
       setMedia(data.getData(), MediaType.GIF);
       break;
@@ -465,7 +469,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case SMS_DEFAULT:
       initializeSecurity(isSecureText, isDefaultSms);
       break;
-
     //this is for voice to text feature: receiving voice input
     case REQ_CODE_SPEECH_INPUT: {
       if (resultCode == RESULT_OK && null != data) {
@@ -1479,6 +1482,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       attachmentManager.capturePhoto(this, TAKE_PHOTO); break;
     case AttachmentTypeSelector.ADD_GIF:
       AttachmentManager.selectGif(this, PICK_GIF, !isSecureText); break;
+    case AttachmentTypeSelector.ADD_DRAWING:
+      AttachmentManager.selectDrawing(this, PICK_DRAWING); break;
     }
   }
 

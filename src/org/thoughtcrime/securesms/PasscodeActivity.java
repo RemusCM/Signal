@@ -6,13 +6,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,17 +29,34 @@ public class PasscodeActivity extends Activity {
 
   private static final String TAG = PasscodeActivity.class.getSimpleName();
 
-  static final String THREAD_ID = "threadId";
-  static final String PASSCODE  = "passcode";
-  static final String ADD       = "ADD";
-  static final String UPDATE    = "UPDATE";
-  static final String DELETE    = "DELETE";
+  static final String THREAD_ID        = "threadId";
+  static final String PASSCODE         = "passcode";
+  static final String ADD              = "ADD";
+  static final String UPDATE           = "UPDATE";
+  static final String DELETE           = "DELETE";
+  static final String RECOVER_PASSCODE = "FORGOT PASSCODE";
+  static final String BACK             = "BACK";
+
+  ListView passcodeListView;
+  Spinner recoveryQuestionSpinner;
+  EditText recoveryAnswerEditText;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.passcode_list_actions);
-    ListView passcodeListView = findViewById(R.id.passcode_action_list);
+    passcodeListView = findViewById(R.id.passcode_action_list);
+
+    // spinner for recovery questions
+    recoveryQuestionSpinner = findViewById(R.id.recovery_questions_spinner);
+    recoveryQuestionSpinner.setOnItemSelectedListener(new RecoveryQuestionItemSelectedListener(this));
+    ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+            android.R.layout.simple_spinner_item, getRecoveryQuestions());
+    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    recoveryQuestionSpinner.setAdapter(dataAdapter);
+    // for entering recovery answer
+    recoveryAnswerEditText = findViewById(R.id.recovery_answer_edit_text);
+    recoveryAnswerEditText.clearFocus();
 
     // get the intent object passed by ConversationListFragment:handleLockWithPasscodeSelected
     Intent intent = this.getIntent();
@@ -52,29 +72,66 @@ public class PasscodeActivity extends Activity {
 
     PasscodeAdapter adapter = new PasscodeAdapter(this, action.toArray(data), threadIdStr);
     passcodeListView.setAdapter(adapter);
+    passcodeListView.setOnItemClickListener(new PasscodeActionClickListener(this));
+  }
 
-    passcodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String clickedItem = (String) passcodeListView.getItemAtPosition(position);
-        TextView threadIdText = view.findViewById(R.id.thread_id_text);
-        String threadIdStr = threadIdText.getText().toString();
-        long threadId = Long.parseLong(threadIdStr);
-        switch (clickedItem) {
-          case ADD:
-            handleAdd(threadId);
-            break;
-          case UPDATE:
-            handleUpdate(threadId);
-            break;
-          case DELETE:
-            handleDelete(threadId);
-            break;
-          default:
-            break;
-        }
+  private class PasscodeActionClickListener implements AdapterView.OnItemClickListener {
+    PasscodeActionClickListener(PasscodeActivity passcodeActivity) { }
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+      String clickedItem = (String) parent.getItemAtPosition(position);
+      TextView threadIdText = view.findViewById(R.id.thread_id_text);
+      String threadIdStr = threadIdText.getText().toString();
+      long threadId = Long.parseLong(threadIdStr);
+      switch (clickedItem) {
+        case ADD:
+          handleAdd(threadId);
+          break;
+        case UPDATE:
+          handleUpdate(threadId);
+          break;
+        case DELETE:
+          handleDelete(threadId);
+          break;
+        case RECOVER_PASSCODE:
+          handleRecoverPasscode(threadId);
+          break;
+        case BACK:
+          PasscodeActivity.super.onBackPressed();
+          break;
+        default:
+          break;
       }
-    });
+    }
+  }
+
+  private List<String> getRecoveryQuestions() {
+    // Spinner Drop down elements -> Recovery Questions
+    List<String> recoveryQuestions = new ArrayList<>();
+    recoveryQuestions.add("Select recovery question");
+    recoveryQuestions.add("What is your mother's maiden name?");
+    recoveryQuestions.add("What street did you grow up on?");
+    recoveryQuestions.add("What is the name of your first school?");
+    recoveryQuestions.add("What is your pet's name?");
+    recoveryQuestions.add("What is your father's middle name?");
+    recoveryQuestions.add("What was the model of your first car?");
+    return recoveryQuestions;
+  }
+
+  private class RecoveryQuestionItemSelectedListener implements AdapterView.OnItemSelectedListener {
+    private Context context;
+    RecoveryQuestionItemSelectedListener(Context context) {
+      this.context = context;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+      String selected = (String) parent.getItemAtPosition(position);
+      Log.i(TAG, selected + ": position: " + position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) { }
   }
 
   private List<String> handleButtonVisibility(String passcode) {
@@ -82,10 +139,92 @@ public class PasscodeActivity extends Activity {
     if (passcode != null) {
       action.add(UPDATE);
       action.add(DELETE);
+      action.add(RECOVER_PASSCODE);
+      action.add(BACK);
+      recoveryQuestionSpinner.setVisibility(View.GONE);
+      recoveryAnswerEditText.setVisibility(View.GONE);
     } else {
       action.add(ADD);
+      action.add(BACK);
     }
     return action;
+  }
+
+  public int getSelectedRecoveryQuestionItem() {
+    return recoveryQuestionSpinner.getSelectedItemPosition();
+  }
+
+  private String getRecoveryAnswer() {
+    return recoveryAnswerEditText.getText().toString();
+  }
+
+  /**
+   * After adding a recovery passcode and setting a passcode
+   * disable drop down recovery question, edit text and
+   * ADD button
+   */
+  private void disableAddRecoverPasscodeComponents() {
+    recoveryQuestionSpinner.setEnabled(false);
+    recoveryAnswerEditText.setEnabled(false);
+    passcodeListView.getChildAt(0).setOnClickListener(null);
+  }
+
+  private void disableUpdateDeleteRecoverPasscodeComponents() {
+    // don't disable BACK button (last item)
+    int listItemCount = passcodeListView.getChildCount() - 1;
+    for (int i = 0; i < listItemCount; i++) {
+      passcodeListView.getChildAt(i).setOnClickListener(null);
+    }
+  }
+
+  private boolean isValidRecoveryQuestionAndAnswer() {
+    // validation before add -> make sure recovery question is selected and answer is provided
+    // item at 0 -> "Select a recovery question" is invalid
+    return getSelectedRecoveryQuestionItem() != 0 && !getRecoveryAnswer().isEmpty();
+  }
+
+  private void handleRecoverPasscode(long threadId) {
+    AlertDialog.Builder recoveryDialog = new AlertDialog.Builder(this);
+    recoveryDialog.setTitle(R.string.passcode_recovery_title);
+    recoveryDialog.setMessage("Passcode will be displayed after entering the correct recovery answer.");
+    recoveryDialog.setCancelable(true);
+
+    LayoutInflater inflater = this.getLayoutInflater();
+    View recoverPasscodeView = inflater.inflate(R.layout.passcode_forgot_passcode, null);
+
+    // get the recovery answer from the database
+    // remember <recoveryAnswer>,<questionIndex>, which return the answer and the question index
+    // using this info prompt the user to enter the recovery answer in the TextView
+    PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(getApplicationContext(), threadId);
+    String answer = passcodeDBhandler.getRecoveryAnswerIfExists();
+    int lastIndexOfComma = passcodeDBhandler.getRecoveryAnswerIfExists().lastIndexOf(",");
+    int selectedQuestionIndex = Integer.parseInt(answer.substring(lastIndexOfComma + 1));
+    TextView recoveryQuestionTv = recoverPasscodeView.findViewById(R.id.recovery_question_tv);
+    recoveryQuestionTv.setText(getRecoveryQuestions().get(selectedQuestionIndex));
+    recoveryDialog.setView(recoverPasscodeView);
+
+    // the user will enter the recover answer
+    // if the recovery answer match, display the passcode by toast
+    recoveryDialog.setPositiveButton(R.string.ok, (dialog, which) -> {
+      EditText editText = recoverPasscodeView.findViewById(R.id.entered_recovery_answer);
+      String recoveryAnswer = editText.getText().toString();
+      PasscodeUtil items = new PasscodeUtil(Arrays.asList(recoveryAnswer));
+      if (items.isEmptyField()) {
+        Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message4, Toast.LENGTH_SHORT).show();
+      } else {
+        PasscodeDBhandler handler = new PasscodeDBhandler(getApplicationContext(), threadId);
+        String recoveryAnswerFromDbFull = handler.getRecoveryAnswerIfExists();
+        String answerFromDBWithoutIndex = recoveryAnswerFromDbFull.substring(0, recoveryAnswerFromDbFull.lastIndexOf(","));
+        if (answerFromDBWithoutIndex.equals(recoveryAnswer)) {
+          Toast.makeText(getApplicationContext(), "Your passcode was " +
+                          handler.getPasscodeIfExists(), Toast.LENGTH_SHORT).show();
+        } else {
+          Toast.makeText(getApplicationContext(), R.string.passcode_recovery_incorrect_answer, Toast.LENGTH_SHORT).show();
+        }
+      }
+    });
+    recoveryDialog.setNegativeButton(R.string.passcode_dialog_cancel, (dialog, which) -> dialog.dismiss());
+    recoveryDialog.show();
   }
 
   private void handleDelete(long threadId) {
@@ -98,32 +237,24 @@ public class PasscodeActivity extends Activity {
     View deleteEditTextView = inflater.inflate(R.layout.passcode_delete, null);
     deletePasscodeDialog.setView(deleteEditTextView);
 
-    deletePasscodeDialog.setPositiveButton(R.string.passcode_confirm_button, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        EditText editText = deleteEditTextView.findViewById(R.id.delete_passcode);
-        String editTextStr = editText.getText().toString();
-        PasscodeUtil items = new PasscodeUtil(Arrays.asList(editTextStr));
-        if (items.isEmptyField()) {
-          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message2, Toast.LENGTH_SHORT).show();
-        } else if (!items.isValidPasscode()) {
-          Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
-        } else {
-          PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
-          Toast.makeText(getApplicationContext(), process.delete(), Toast.LENGTH_SHORT).show();
-          finish(); // reload activity so the changes is reflected
-          startActivity(getIntent());
+    deletePasscodeDialog.setPositiveButton(R.string.passcode_confirm_button, (dialog, which) -> {
+      EditText editText = deleteEditTextView.findViewById(R.id.delete_passcode);
+      String editTextStr = editText.getText().toString();
+      PasscodeUtil items = new PasscodeUtil(Arrays.asList(editTextStr));
+      if (items.isEmptyField()) {
+        Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message2, Toast.LENGTH_SHORT).show();
+      } else if (!items.isValidPasscode()) {
+        Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
+      } else {
+        PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
+        String result = process.delete();
+        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        if (result.equals("Success")) { // disable the other buttons except back on delete success
+          disableUpdateDeleteRecoverPasscodeComponents();
         }
       }
     });
-
-    deletePasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
-
+    deletePasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, (dialog, which) -> dialog.dismiss());
     deletePasscodeDialog.show();
   }
 
@@ -181,18 +312,21 @@ public class PasscodeActivity extends Activity {
     updatePasscodeDialog.show();
   }
 
-  public void handleAdd(long threadId) {
-    AlertDialog.Builder addPasscodeDialog = new AlertDialog.Builder(this);
-    addPasscodeDialog.setTitle(R.string.passcode_set);
-    addPasscodeDialog.setCancelable(true);
+  private void handleAdd(long threadId) {
+    // prompt the user to enter recovery answer first
+    // update recovery answer field with the answer provided and the index of recovery questions
+    // the field is update with <recoveryAnswer>,<questionIndex>
+    // if recovery answer is provided proceed with the addition of passcode
+    if (isValidRecoveryQuestionAndAnswer()) {
+      AlertDialog.Builder addPasscodeDialog = new AlertDialog.Builder(this);
+      addPasscodeDialog.setTitle(R.string.passcode_set);
+      addPasscodeDialog.setCancelable(true);
 
-    LayoutInflater layoutInf = getLayoutInflater();
-    View addDialogView = layoutInf.inflate(R.layout.passcode_add,null);
-    addPasscodeDialog.setView(addDialogView);
+      LayoutInflater layoutInf = getLayoutInflater();
+      View addDialogView = layoutInf.inflate(R.layout.passcode_add,null);
+      addPasscodeDialog.setView(addDialogView);
 
-    addPasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
+      addPasscodeDialog.setPositiveButton(R.string.passcode_dialog_save, (dialog, which) -> {
         EditText editText = addDialogView.findViewById(R.id.enter_passcode);
         String passcode = editText.getText().toString();
         PasscodeUtil items = new PasscodeUtil(Arrays.asList(passcode));
@@ -201,22 +335,22 @@ public class PasscodeActivity extends Activity {
         } else if (!items.isValidPasscode()) {
           Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
         } else {
+          String recoveryAnswer = getRecoveryAnswer() + "," + String.valueOf(getSelectedRecoveryQuestionItem());
+          PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(
+                  getApplicationContext(), threadId, passcode, recoveryAnswer);
+          passcodeDBhandler.updateRecoveryAnswer();
+
           PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, passcode);
           String result = process.add();
           Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-
-          finish(); // reload activity so the changes is reflected
-          startActivity(getIntent());
+          disableAddRecoverPasscodeComponents();
         }
-      }
-    });
-    addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
-    addPasscodeDialog.show();
+      });
+      addPasscodeDialog.setNegativeButton(R.string.passcode_dialog_cancel, (dialog, which) -> dialog.dismiss());
+      addPasscodeDialog.show();
+    } else {
+      Toast.makeText(this, "Please provide a recovery answer.", Toast.LENGTH_SHORT).show();
+    }
   }
 
   public class PasscodeAdapter extends BaseAdapter {
@@ -296,6 +430,5 @@ public class PasscodeActivity extends Activity {
       return cond;
     }
   }
-
 
 }

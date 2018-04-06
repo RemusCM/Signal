@@ -16,12 +16,15 @@ public class PasscodeDBhandlerMocking extends BaseUnitTest {
 
   protected PasscodeDBhandler passcodeDBHMock1;
   protected PasscodeDBhandler passcodeDBHMock2;
+  protected PasscodeDBhandler passcodeDBHMock3;
   private String passcode = "2018";
+  private String recoveryAnswer = "abc";
 
   @Override
   public void setUp() {
     passcodeDBHMock1 = mock(PasscodeDBhandler.class);
     passcodeDBHMock2 = mock(PasscodeDBhandler.class);
+    passcodeDBHMock3 = mock(PasscodeDBhandler.class);
   }
 
   protected void setUpPasscodeExistence() {
@@ -42,5 +45,9 @@ public class PasscodeDBhandlerMocking extends BaseUnitTest {
     when(passcodeDBHMock2.isPasscodeExists()).thenReturn(false);
   }
 
+  protected void setUpUpdateRecoveryAnswer() {
+    when(passcodeDBHMock3.updateRecoveryAnswer()).thenReturn("Recovery answer has been successfully added.");
+    when(passcodeDBHMock3.getRecoveryAnswerIfExists()).thenReturn(recoveryAnswer);
+  }
 
 }
