@@ -750,7 +750,7 @@
     <string name="attachment_type_selector__file_description">File</string>
     <string name="attachment_type_selector__gallery">Gallery</string>
     <string name="attachment_type_selector__file">File</string>
-
+    <string name="attachment_type_selector__drawing">Drawing</string>
     <string name="attachment_type_selector__drawer_description">Toggle attachment drawer</string>
 
     <!-- change_passphrase_activity -->
@@ -976,6 +976,7 @@
     <string name="passcode_invalid_message">Please Enter a Valid Passcode.</string>
     <string name="passcode_invalid_message2">No Passcode Entered.</string>
     <string name="passcode_invalid_message3">Incorrect passcode!</string>
+    <string name="passcode_invalid_message4">No recovery answer entered!</string>
     <string name="passcode_set">Set Passcode</string>
     <string name="passcode_lock_selected__menu">Lock with passcode</string>
     <string name="passcode_lock_confirmation__dialog">Are you sure you want to lock this conversation with a passcode?</string>
@@ -985,6 +986,9 @@
     <string name="passcode_conversation_locked">Conversation Locked with Passcode</string>
     <string name="passcode_enter_passcode">Enter your passcode</string>
     <string name="passcode_enter_new_passcode">Enter new passcode</string>
+    <string name="passcode_enter_recovery_answer">Enter recovery answer</string>
+    <string name="passcode_recovery_title">Recover passcode</string>
+    <string name="passcode_recovery_incorrect_answer">Incorrect recovery answer!</string>
 
 
 

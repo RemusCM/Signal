@@ -336,7 +336,7 @@ public class ConversationListFragment extends Fragment
     long threadId = Long.parseLong(threadStr);
     PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(getActivity(), threadId);
     String passcode = passcodeDBhandler.getPasscodeIfExists();
-    if (passcode.length() == 4) { // passcode already exist do not ask again
+    if (passcode != null) { // passcode already exist do not ask again
       Intent intent = new Intent(getActivity(), PasscodeActivity.class);
       intent.putExtra(PasscodeActivity.PASSCODE, passcode);
       intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
@@ -369,8 +369,6 @@ public class ConversationListFragment extends Fragment
       });
       builder.show();
     }
-
-
   }
 
   private void handleSelectAllThreads() {

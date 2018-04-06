@@ -40,6 +40,7 @@ import android.os.Vibrator;
 import android.provider.Browser;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -172,8 +173,10 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import static org.thoughtcrime.securesms.TransportOption.Type;
@@ -219,6 +222,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private static final int PICK_LOCATION     = 8;
   private static final int PICK_GIF          = 9;
   private static final int SMS_DEFAULT       = 10;
+  private static final int PICK_DRAWING      = 11;
+
+  //this is for the voice to text feature
+  private final int REQ_CODE_SPEECH_INPUT    = 12;
 
   private   MasterSecret                masterSecret;
   private   GlideRequests               glideRequests;
@@ -450,6 +457,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       SignalPlace place = new SignalPlace(PlacePicker.getPlace(data, this));
       attachmentManager.setLocation(masterSecret, place, getCurrentMediaConstraints());
       break;
+    case PICK_DRAWING:
+      setMedia(data.getData(), MediaType.IMAGE);
+      break;
     case PICK_GIF:
       setMedia(data.getData(), MediaType.GIF);
       break;
@@ -459,6 +469,16 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     case SMS_DEFAULT:
       initializeSecurity(isSecureText, isDefaultSms);
       break;
+    //this is for voice to text feature: receiving voice input
+    case REQ_CODE_SPEECH_INPUT: {
+      if (resultCode == RESULT_OK && null != data) {
+
+        ArrayList<String> result = data
+                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        composeText.setText(result.get(0));
+      }
+      break;
+    }
     }
   }
 
@@ -1330,6 +1350,26 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     composeText.setOnClickListener(composeKeyPressedListener);
     composeText.setOnFocusChangeListener(composeKeyPressedListener);
 
+    //this is the voice to text function
+    composeText.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "Hi speak something");
+        try {
+          startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            a.printStackTrace();
+        }
+        return true;
+      }
+    });
+
     if (QuickAttachmentDrawer.isDeviceSupported(this)) {
       quickAttachmentDrawer.setListener(this);
       quickCameraToggle.setOnClickListener(new QuickCameraToggleListener());
@@ -1442,6 +1482,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       attachmentManager.capturePhoto(this, TAKE_PHOTO); break;
     case AttachmentTypeSelector.ADD_GIF:
       AttachmentManager.selectGif(this, PICK_GIF, !isSecureText); break;
+    case AttachmentTypeSelector.ADD_DRAWING:
+      AttachmentManager.selectDrawing(this, PICK_DRAWING); break;
     }
   }
 

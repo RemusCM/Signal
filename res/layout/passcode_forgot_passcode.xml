@@ -5,22 +5,18 @@
     android:orientation="vertical">
 
 
-    <EditText
-        android:id="@+id/old_passcode"
+    <TextView
+        android:id="@+id/recovery_question_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:maxLength="4"
-        android:hint="@string/passcode_enter_passcode"
-        android:inputType="numberPassword"
-        android:textSize="14sp" />
+        android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/new_passcode"
+        android:id="@+id/entered_recovery_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -28,9 +24,8 @@
         android:layout_marginRight="18dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="@string/passcode_enter_new_passcode"
-        android:inputType="numberPassword"
-        android:maxLength="4"
+        android:hint="@string/passcode_enter_recovery_answer"
+        android:inputType="text"
         android:textSize="14sp" />
 
 </LinearLayout>
