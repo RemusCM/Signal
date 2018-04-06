@@ -14,6 +14,7 @@ public class PasscodeDBhandler {
   private Context context;
   private long threadId;
   private String passcode;
+  private String recoveryAnswer;
 
   public String getPasscode() {
     return passcode;
@@ -23,6 +24,19 @@ public class PasscodeDBhandler {
     return threadId;
   }
 
+  public String getRecoveryAnswer() {
+    return recoveryAnswer;
+  }
+
+  // constructor for setting the recovery answer
+  PasscodeDBhandler(Context context, long threadId, String passcode, String recoveryAnswer) {
+    this.context        = context;
+    this.threadId       = threadId;
+    this.passcode       = passcode;
+    this.recoveryAnswer = recoveryAnswer;
+  }
+
+  // constructor for setting the passcode
   PasscodeDBhandler(Context context, long threadId, String passcode) {
     this.context = context;
     this.threadId = threadId;
@@ -110,4 +124,21 @@ public class PasscodeDBhandler {
     }
     return "Error";
   }
+
+  public String getRecoveryAnswerIfExists() {
+    return DatabaseFactory.getPasscodeDatabase(context).getRecoveryAnswer(threadId);
+  }
+
+  public String updateRecoveryAnswer() {
+    try {
+      DatabaseFactory.getPasscodeDatabase(context).updateRecoveryAnswer(threadId, recoveryAnswer);
+      if (DatabaseFactory.getPasscodeDatabase(context).getRecoveryAnswer(threadId).equals(recoveryAnswer)) {
+        return "Recovery answer has been successfully added.";
+      }
+    } catch (NullPointerException e) {
+      Log.e(TAG, String.valueOf(e));
+    }
+    return "Error updating recovery answer.";
+  }
+
 }

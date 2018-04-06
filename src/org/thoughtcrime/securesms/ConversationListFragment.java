@@ -328,32 +328,47 @@ public class ConversationListFragment extends Fragment
 
   private void handleLockWithPasscodeSelected() {
     final Set<Long> selectedConversations = new HashSet<>(getListAdapter().getBatchSelections());
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    builder.setCancelable(true);
-    builder.setTitle(R.string.passcode_lock_selected__menu);
-    builder.setMessage(R.string.passcode_lock_confirmation__dialog);
-    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-        Intent intent = new Intent(getActivity(), PasscodeActivity.class);
-        List<Long> threadIds = new ArrayList<>();
-        if (!selectedConversations.isEmpty()) {
-          threadIds.addAll(selectedConversations);
+    List<Long> threadIds = new ArrayList<>();
+    if (!selectedConversations.isEmpty()) {
+      threadIds.addAll(selectedConversations);
+    }
+    String threadStr = String.valueOf(threadIds.get(0));
+    long threadId = Long.parseLong(threadStr);
+    PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(getActivity(), threadId);
+    String passcode = passcodeDBhandler.getPasscodeIfExists();
+    if (passcode != null) { // passcode already exist do not ask again
+      Intent intent = new Intent(getActivity(), PasscodeActivity.class);
+      intent.putExtra(PasscodeActivity.PASSCODE, passcode);
+      intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
+      startActivity(intent);
+    } else {
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder.setCancelable(true);
+      builder.setTitle(R.string.passcode_lock_selected__menu);
+      builder.setMessage(R.string.passcode_lock_confirmation__dialog);
+      builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int id) {
+          Intent intent = new Intent(getActivity(), PasscodeActivity.class);
+          List<Long> threadIds = new ArrayList<>();
+          if (!selectedConversations.isEmpty()) {
+            threadIds.addAll(selectedConversations);
+          }
+          String threadStr = String.valueOf(threadIds.get(0));
+          long threadId = Long.parseLong(threadStr);
+          PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(getActivity(), threadId);
+          String passcode = passcodeDBhandler.getPasscodeIfExists();
+          intent.putExtra(PasscodeActivity.PASSCODE, passcode);
+          intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
+          startActivity(intent);
         }
-        String threadStr = String.valueOf(threadIds.get(0));
-        long threadId = Long.parseLong(threadStr);
-        PasscodeDBhandler passcodeDBhandler = new PasscodeDBhandler(getActivity(), threadId);
-        String passcode = passcodeDBhandler.getPasscodeIfExists();
-        intent.putExtra(PasscodeActivity.PASSCODE, passcode);
-        intent.putExtra(PasscodeActivity.THREAD_ID, threadStr);
-        startActivity(intent);
-      }
-    });
-    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-        dialog.dismiss();
-      }
-    });
-    builder.show();
+      });
+      builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int id) {
+          dialog.dismiss();
+        }
+      });
+      builder.show();
+    }
   }
 
   private void handleSelectAllThreads() {
