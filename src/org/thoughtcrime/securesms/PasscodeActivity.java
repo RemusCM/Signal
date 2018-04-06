@@ -247,8 +247,9 @@ public class PasscodeActivity extends Activity {
         Toast.makeText(getApplicationContext(), R.string.passcode_invalid_message, Toast.LENGTH_SHORT).show();
       } else {
         PasscodeDBhandler process = new PasscodeDBhandler(getApplicationContext(), threadId, editTextStr);
-        Toast.makeText(getApplicationContext(), process.delete(), Toast.LENGTH_SHORT).show();
-        if (process.delete().equals("Success")) { // disable the other buttons except back on delete success
+        String result = process.delete();
+        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        if (result.equals("Success")) { // disable the other buttons except back on delete success
           disableUpdateDeleteRecoverPasscodeComponents();
         }
       }
