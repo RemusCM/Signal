@@ -15,13 +15,14 @@ public class DrawingViewTest {
 
   public class FakeDrawingView {
 
-    FakeDrawingView() { }
+    FakeDrawingView() {
+    }
 
     Paint drawPaint       = mock(Paint.class);
     CustomPath drawPath   = mock(CustomPath.class);
     Resources resources   = mock(Resources.class);
     TypedValue typedValue = mock(TypedValue.class);
-    int paintColor        = Color.BLACK;
+    int paintColor        = Color.BLACK; // default paint color
     float brushSize;
     boolean erase;
     boolean smoothStrokes;
@@ -47,7 +48,6 @@ public class DrawingViewTest {
       when(getDrawPaint().getStyle()).thenReturn(Paint.Style.STROKE);
       when(getDrawPaint().getStrokeJoin()).thenReturn(Paint.Join.ROUND);
       when(getDrawPaint().getStrokeCap()).thenReturn(Paint.Cap.ROUND);
-
     }
 
     void setColor(String newColor) {
