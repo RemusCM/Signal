@@ -8,6 +8,8 @@ import org.thoughtcrime.securesms.PasscodeDBhandlerMocking;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
 
 @RunWith(JUnit4.class)
 @PrepareForTest({DatabaseFactory.class})
@@ -21,6 +23,7 @@ public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking {
     setUpPasscodeAdd();
     setUpPasscodeUpdate();
     setUpPasscodeDeletion();
+    setUpUpdateRecoveryAnswer();
   }
 
   @Test
@@ -48,11 +51,30 @@ public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking {
   }
 
   @Test
+  public void testUpdateFailCase() {
+    System.out.println("\n- Testing update FAIL case: Mock #1 -");
+    System.out.println("    Expected: Success");
+    System.out.println("    Actual: " + passcodeDBHMock1.update());
+    assertThat(passcodeDBHMock1.update(), not(equalTo("Error")));
+  }
+
+  @Test
   public void testAdd() {
     System.out.println("\n- Testing add : Mock #2 -");
     System.out.println("    Expected: Success");
     System.out.println("    Actual: " + passcodeDBHMock2.add());
     assertEquals("Success", passcodeDBHMock2.add());
+  }
+
+  @Test
+  public void testAddFailCase() {
+    System.out.println("\n- Testing add FAIL case: Mock #2 -");
+    System.out.println("    Expected: Success");
+    System.out.println("    Actual: " + passcodeDBHMock2.add());
+    // reverse assertion: asserts that the object under test must
+    // return "Success" and not any other value i.e. Error
+    // assertThat(passcodeDBHMock2.add(), not(equalTo("Success"))); // FAIL
+    assertThat(passcodeDBHMock2.add(), not(equalTo("Error")));
   }
 
   @Test
@@ -65,6 +87,22 @@ public class PasscodeDBHandlerTest extends PasscodeDBhandlerMocking {
     System.out.println("    Expected: false");
     System.out.println("    Actual: " + passcodeDBHMock2.isPasscodeExists());
     assertEquals(false, passcodeDBHMock2.isPasscodeExists());
+  }
+
+  @Test
+  public void testDeleteFailCase() {
+    System.out.println("\n- Testing delete FAIL case : Mock #2 -");
+    System.out.println("    Expected: Success");
+    System.out.println("    Actual: " + passcodeDBHMock2.delete());
+    assertThat(passcodeDBHMock2.delete(), not(equalTo("Error")));
+  }
+
+  @Test
+  public void testUpdateRecoveryAnswer() {
+    System.out.println("\n- Testing updateRecoveryAnswer : Mock #3 -");
+    System.out.println("    Expected: Recovery answer has been successfully added.");
+    System.out.println("    Actual: " + passcodeDBHMock3.updateRecoveryAnswer());
+    assertEquals("Recovery answer has been successfully added.", passcodeDBHMock3.updateRecoveryAnswer());
   }
 
 }

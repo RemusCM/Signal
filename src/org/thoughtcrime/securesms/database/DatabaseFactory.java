@@ -116,21 +116,18 @@ public class DatabaseFactory {
   private static final int UNREAD_COUNT_VERSION                            = 46;
   private static final int MORE_RECIPIENT_FIELDS                           = 47;
   private static final int INTRODUCED_MODERATOR                            = 48;
-  private static final int INTRODUCED_PERMISSION_VERSION = 49;
-  private static final int INTRODUCED_PASSCODE = 50;
-  private static final int DATABASE_VERSION                                = 50;
+  private static final int INTRODUCED_PERMISSION_VERSION                   = 49;
+  private static final int INTRODUCED_PASSCODE                             = 50;
+  private static final int INTRODUCED_RECOVERY_ANSWER                      = 51;
+  private static final int DATABASE_VERSION                                = 51;
 
   /**
-   * Old database name was messages.db
-   * Changed to messages[#].db for development purpose only.
-   * Revert to old name in production.
-   *
    * If adding a new column, do the following:
    * 1. make a constant variable INTRODUCED_<COLUMN_NAME>
    * 2. increment DATABASE_VERSION
    * 3. see if statement: if (oldVersion < ....) in onUpgrade
    */
-  private static final String DATABASE_NAME = "messages.db";
+  private static final String DATABASE_NAME    = "messages.db";
   private static final Object lock             = new Object();
 
   private static DatabaseFactory instance;
@@ -1457,6 +1454,11 @@ public class DatabaseFactory {
 
       if (oldVersion < INTRODUCED_PASSCODE){
         db.execSQL("ALTER TABLE thread ADD COLUMN passcode INTEGER DEFAULT NULL");
+      }
+
+      // for recovery passcode
+      if (oldVersion < INTRODUCED_RECOVERY_ANSWER){
+        db.execSQL("ALTER TABLE thread ADD COLUMN recovery_answer TEXT DEFAULT NULL");
       }
 
       db.setTransactionSuccessful();
