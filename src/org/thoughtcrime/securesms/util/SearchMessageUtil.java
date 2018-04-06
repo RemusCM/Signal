@@ -44,7 +44,7 @@ public class SearchMessageUtil {
     this.threadId = threadId;
   }
 
-  private int getSearchingMsg() {
+  public int getSearchingMsg() {
     return R.string.conversationFragment_searching;
   }
 

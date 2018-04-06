@@ -38,7 +38,6 @@ public class MessageMocking extends BaseUnitTest {
   protected MessageRecord messageRecord1;
   protected MessageRecord messageRecord2;
   protected MessageRecord messageRecord3;
-
   protected Cursor c1, c2, c3;
 
   protected void setUpMessageIds(){
@@ -54,15 +53,11 @@ public class MessageMocking extends BaseUnitTest {
     int c = smsDbMock.getMessageIdsByRecipientId(addressMock).size();
     when(threadDbMock.getMessageCountByRecipientId(addressMock)).thenReturn(c);
   }
-/*
-  protected void setUpMessageRecords(){
 
-    when(messageRecord1.getBody()).thenReturn(new DisplayRecord.Body("Message one", true));
-    when(messageRecord2.getBody()).thenReturn(new DisplayRecord.Body("Message two", true));
-    when(messageRecord3.getBody()).thenReturn(new DisplayRecord.Body("Message three", true));
-
+  protected void setSearchingMsg(){
+    when(smu.getSearchingMsg()).thenReturn(0x7f0f0250);
   }
-*/
+
   protected void setUpMessagePositions(){
 
     String q1 = "query1", q2 = "query2", q3 = "query3";
