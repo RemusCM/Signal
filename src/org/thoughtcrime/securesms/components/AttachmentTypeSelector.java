@@ -39,6 +39,8 @@ public class AttachmentTypeSelector extends PopupWindow {
   public static final int TAKE_PHOTO        = 5;
   public static final int ADD_LOCATION      = 6;
   public static final int ADD_GIF           = 7;
+  // drawing feature
+  public static final int ADD_DRAWING       = 8;
 
   private static final int ANIMATION_DURATION = 300;
 
@@ -55,6 +57,8 @@ public class AttachmentTypeSelector extends PopupWindow {
   private final @NonNull ImageView           locationButton;
   private final @NonNull ImageView           gifButton;
   private final @NonNull ImageView           closeButton;
+  // drawing feature
+  private final @NonNull ImageView           drawingButton;
 
   private @Nullable View                      currentAnchor;
   private @Nullable AttachmentClickedListener listener;
@@ -76,6 +80,8 @@ public class AttachmentTypeSelector extends PopupWindow {
     this.locationButton = ViewUtil.findById(layout, R.id.location_button);
     this.gifButton      = ViewUtil.findById(layout, R.id.giphy_button);
     this.closeButton    = ViewUtil.findById(layout, R.id.close_button);
+    // drawing feature
+    this.drawingButton  = ViewUtil.findById(layout, R.id.drawing_button);
 
     this.imageButton.setOnClickListener(new PropagatingClickListener(ADD_GALLERY));
     this.audioButton.setOnClickListener(new PropagatingClickListener(ADD_SOUND));
@@ -86,6 +92,8 @@ public class AttachmentTypeSelector extends PopupWindow {
     this.gifButton.setOnClickListener(new PropagatingClickListener(ADD_GIF));
     this.closeButton.setOnClickListener(new CloseClickListener());
     this.recentRail.setListener(new RecentPhotoSelectedListener());
+    // drawing feature
+    this.drawingButton.setOnClickListener(new PropagatingClickListener(ADD_DRAWING));
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
       ViewUtil.findById(layout, R.id.location_linear_layout).setVisibility(View.INVISIBLE);
@@ -131,6 +139,7 @@ public class AttachmentTypeSelector extends PopupWindow {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       animateButtonIn(imageButton, ANIMATION_DURATION / 2);
       animateButtonIn(cameraButton, ANIMATION_DURATION / 2);
+      animateButtonIn(drawingButton, ANIMATION_DURATION / 4);
 
       animateButtonIn(audioButton, ANIMATION_DURATION / 3);
       animateButtonIn(locationButton, ANIMATION_DURATION / 3);
