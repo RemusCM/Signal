@@ -81,37 +81,42 @@ public class ScheduleActivity extends Activity {
 
     @Override
     public void onClick(View v) {
-      ScheduleMessage scheduleMessage = new ScheduleMessage();
+      try {
+        ScheduleMessage scheduleMessage = new ScheduleMessage();
 
-      scheduleMessage.setPhoneNumber(receiverEditText.getText().toString());
-      scheduleMessage.setSmsMessage(smsEditText.getText().toString());
+        scheduleMessage.setPhoneNumber(receiverEditText.getText().toString());
+        scheduleMessage.setSmsMessage(smsEditText.getText().toString());
 
-      Calendar calendar = Calendar.getInstance();
-      Date date = new Date(
-              Integer.parseInt(yearTextView.getText().toString()),
-              Integer.parseInt(monthTextView.getText().toString()) - 1,
-              Integer.parseInt(dayTextView.getText().toString()),
-              Integer.parseInt(hourTextView.getText().toString()),
-              Integer.parseInt(minuteTextView.getText().toString())
-      );
-      calendar.setTime(date);
+        Calendar calendar = Calendar.getInstance();
 
-      String num = scheduleMessage.getPhoneNumber();
-      String msg = scheduleMessage.getSmsMessage();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hourTextView.getText().toString()) );
+        calendar.set(Calendar.MINUTE, Integer.parseInt(minuteTextView.getText().toString()));
+        calendar.set(Calendar.YEAR, Integer.parseInt(yearTextView.getText().toString()));
+        calendar.set(Calendar.MONTH, Integer.parseInt(monthTextView.getText().toString())-1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dayTextView.getText().toString()));
+       
 
-      Intent alarmIntent = new Intent(context, CustomAlarmReceiver.class);
-      alarmIntent.putExtra(CustomAlarmReceiver.MESSAGE_EXTRA, msg);
-      alarmIntent.putExtra(CustomAlarmReceiver.PHONE_EXTRA, num);
+        String num = scheduleMessage.getPhoneNumber();
+        String msg = scheduleMessage.getSmsMessage();
 
-      PendingIntent pendingAlarm = PendingIntent.getBroadcast(context,
-              eventID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-      eventID += 1;
+        Intent alarmIntent = new Intent(context, CustomAlarmReceiver.class);
+        alarmIntent.putExtra(CustomAlarmReceiver.MESSAGE_EXTRA, msg);
+        alarmIntent.putExtra(CustomAlarmReceiver.PHONE_EXTRA, num);
 
-      AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-      assert alarmManager != null;
-      alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingAlarm);
+        PendingIntent pendingAlarm = PendingIntent.getBroadcast(context,
+                eventID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        eventID += 1;
 
-      Toast.makeText(context, "Message scheduled!", Toast.LENGTH_SHORT).show();
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        assert alarmManager != null;
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingAlarm);
+
+        Toast.makeText(context, "Message scheduled!", Toast.LENGTH_SHORT).show();
+      }
+      catch(Exception e){
+        Toast.makeText(context, "Invalid, Try again.", Toast.LENGTH_SHORT).show();
+      }
     }
   }
 
@@ -198,21 +203,26 @@ public class ScheduleActivity extends Activity {
     String phoneNumber;
     String smsMessage;
 
-    private ScheduleMessage() { }
+    public ScheduleMessage (){
+      phoneNumber = null;
+      smsMessage = null;
+    }
 
-    private String getPhoneNumber() {
+
+
+    public String getPhoneNumber() {
       return phoneNumber;
     }
 
-    private void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
       this.phoneNumber = phoneNumber;
     }
 
-    private String getSmsMessage() {
+    public String getSmsMessage() {
       return smsMessage;
     }
 
-    private void setSmsMessage(String smsMessage) {
+    public void setSmsMessage(String smsMessage) {
       this.smsMessage = smsMessage;
     }
 
