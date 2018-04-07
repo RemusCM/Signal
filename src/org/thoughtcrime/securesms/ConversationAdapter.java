@@ -26,8 +26,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -308,6 +306,22 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
     return messageRecord;
   }
 
+  public MessageRecord getRecordFromCursorForSearch(@NonNull Cursor cursor) {
+    long   messageId = cursor.getLong(cursor.getColumnIndexOrThrow(MmsSmsColumns.ID));
+    String type      = cursor.getString(cursor.getColumnIndexOrThrow(MmsSmsDatabase.TRANSPORT));
+
+    final SoftReference<MessageRecord> reference = messageRecordCache.get(type + messageId);
+    if (reference != null) {
+      final MessageRecord record = reference.get();
+      if (record != null) return record;
+    }
+
+    final MessageRecord messageRecord = db.readerFor(cursor, masterSecret).getCurrent();
+    messageRecordCache.put(type + messageId, new SoftReference<>(messageRecord));
+
+    return messageRecord;
+  }
+
   public void close() {
     getCursor().close();
   }
@@ -327,26 +341,6 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
     }
 
     return -1;
-  }
-
-  public int findMessagePosition(Cursor cursor, String query, int maxPosition) {
-    String q = query.trim().toLowerCase();
-    int invalidPosition = -1;
-    if (!q.isEmpty() && cursor != null && cursor.moveToFirst()) {
-      while (cursor.moveToNext()) {
-        MessageRecord messageRecord = getRecordFromCursor(cursor);
-        if (!messageRecord.isMms()) {
-          String message = messageRecord.getDisplayBody().toString().toLowerCase();
-          if (message.contains(q)) {
-            return cursor.getPosition();
-          }
-          if (cursor.getPosition() >= maxPosition) {
-            return invalidPosition;
-          }
-        }
-      }
-    }
-    return invalidPosition;
   }
 
   public void toggleSelection(MessageRecord messageRecord) {
