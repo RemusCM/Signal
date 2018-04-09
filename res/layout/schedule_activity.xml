@@ -5,32 +5,6 @@
     android:orientation="vertical"
     tools:context="org.thoughtcrime.securesms.ScheduleActivity" >
 
-    <TextView
-        android:id="@+id/phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Phone number:" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/edit_text_phone"
-            android:layout_width="241dp"
-            android:layout_height="wrap_content"
-            android:inputType="phone" >
-        </EditText>
-
-        <Button
-            android:id="@+id/contact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Contact" />
-
-    </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -63,18 +37,17 @@
             android:layout_weight="1"
             android:text="Time to send:" />
 
-        <Button
-            android:id="@+id/time_select_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Time select" />
-
         <TextView
             android:id="@+id/year_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="/" />
 
         <TextView
             android:id="@+id/month_tv"
@@ -83,16 +56,34 @@
             android:layout_weight="1" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="/" />
+
+        <TextView
             android:id="@+id/day_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=" - " />
+
+        <TextView
             android:id="@+id/hour_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=":" />
 
         <TextView
             android:id="@+id/minute_tv"
@@ -109,6 +100,13 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/time_select_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Select time and date" />
+
+        <Button
             android:id="@+id/set_schedule_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,5 +121,6 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text="Cancel" />
+
     </LinearLayout>
 </LinearLayout>

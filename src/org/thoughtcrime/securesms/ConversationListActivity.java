@@ -165,7 +165,6 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     case R.id.menu_import_export:     handleImportExport();    return true;
     case R.id.menu_invite:            handleInvite();          return true;
     case R.id.menu_help:              handleHelp();            return true;
-    case R.id.menu_schedule_message:  handleScheduleMessage();     return true;
 
     }
 
@@ -245,8 +244,5 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     }
   }
 
-    private void handleScheduleMessage() {
-        Intent scheduleMessageIntent = new Intent(this, ScheduleActivity.class);
-        startActivity(scheduleMessageIntent);
-    }
+
 }

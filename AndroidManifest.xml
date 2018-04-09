@@ -644,6 +644,7 @@
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
             </intent-filter>
         </receiver>
+        <!-- This is the schedule message activity -->
         <receiver
             android:process=":remote"
             android:name=".CustomAlarmReceiver">
