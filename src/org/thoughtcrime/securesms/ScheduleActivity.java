@@ -98,6 +98,8 @@ public class ScheduleActivity extends Activity {
         // cannot schedule a message if one of these are empty
         for (String aTimeDateOrMessage : stringValues) {
           if (aTimeDateOrMessage.isEmpty()) {
+            Toast.makeText(context, "One of the required fields is empty. Please try again.",
+                    Toast.LENGTH_SHORT).show();
             return;
           }
         }
@@ -129,8 +131,6 @@ public class ScheduleActivity extends Activity {
       } catch(Exception e){
         Toast.makeText(context, "Invalid, Try again.", Toast.LENGTH_SHORT).show();
       }
-      Toast.makeText(context, "One of the required fields is empty. Please try again.",
-              Toast.LENGTH_SHORT).show();
     }
   }
 
