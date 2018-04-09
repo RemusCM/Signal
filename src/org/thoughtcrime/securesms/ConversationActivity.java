@@ -533,9 +533,11 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
     if (isSingleConversation()) {
       inflater.inflate(R.menu.conversation_clear_chat, menu);
+      inflater.inflate(R.menu.conversation_schedule_message, menu); // schedule message
       if (isSecureText) inflater.inflate(R.menu.conversation_callable_secure, menu);
       else              inflater.inflate(R.menu.conversation_callable_insecure, menu);
     } else if (isGroupConversation()) {
+      inflater.inflate(R.menu.conversation_schedule_message, menu); // schedule message
       inflater.inflate(R.menu.conversation_group_options, menu);
 
       if (!isPushGroupConversation()) {
@@ -602,13 +604,20 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       case R.id.menu_expiring_messages_off:
       case R.id.menu_expiring_messages:         handleSelectMessageExpiration();                   return true;
       case android.R.id.home:                   handleReturnToConversationList();                  return true;
-      case R.id.menu_clear_group_chat:
-        handleClearGroupChat();
-        return true;
+      case R.id.menu_clear_group_chat:          handleClearGroupChat();                            return true;
+      case R.id.menu_schedule_message:          handleScheduleMessage();                           return true;
 
     }
 
     return false;
+  }
+
+  private void handleScheduleMessage() {
+    // you need to pass in the recipient and the thread required for sending a message
+    Intent intent = new Intent(this, ScheduleActivity.class);
+    intent.putExtra(ScheduleActivity.ADDRESS_EXTRA, getRecipient().getAddress());
+    intent.putExtra(ScheduleActivity.THREAD_ID_EXTRA, getThreadId());
+    startActivity(intent);
   }
 
   @Override

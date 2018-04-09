@@ -165,6 +165,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     case R.id.menu_import_export:     handleImportExport();    return true;
     case R.id.menu_invite:            handleInvite();          return true;
     case R.id.menu_help:              handleHelp();            return true;
+
     }
 
     return false;
@@ -242,4 +243,6 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
       Toast.makeText(this, R.string.ConversationListActivity_there_is_no_browser_installed_on_your_device, Toast.LENGTH_LONG).show();
     }
   }
+
+
 }
