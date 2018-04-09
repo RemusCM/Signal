@@ -22,11 +22,12 @@ import android.widget.Toast;
 
 import org.thoughtcrime.securesms.database.Address;
 
-import java.io.Serializable;
 import java.util.Calendar;
 
 /**
- *
+ * Handles scheduling a message which include
+ * inputting the message and selecting the time
+ * and date.
  */
 public class ScheduleActivity extends Activity {
   private static final String TAG = ScheduleActivity.class.getSimpleName();
@@ -85,24 +86,35 @@ public class ScheduleActivity extends Activity {
     @Override
     public void onClick(View v) {
       try {
-        ScheduleMessage scheduleMessage = new ScheduleMessage();
-        scheduleMessage.setSmsMessage(smsEditText.getText().toString());
+
+        String message        = smsEditText.getText().toString();
+        String hourTv         = hourTextView.getText().toString();
+        String minuteTv       = minuteTextView.getText().toString();
+        String yearTv         = yearTextView.getText().toString();
+        String monthTv        = monthTextView.getText().toString();
+        String dayTv          = dayTextView.getText().toString();
+        String[] stringValues = {message, hourTv, minuteTv, yearTv, monthTv, dayTv};
+
+        // cannot schedule a message if one of these are empty
+        for (String aTimeDateOrMessage : stringValues) {
+          if (aTimeDateOrMessage.isEmpty()) {
+            return;
+          }
+        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hourTextView.getText().toString()));
-        calendar.set(Calendar.MINUTE, Integer.parseInt(minuteTextView.getText().toString()));
-        calendar.set(Calendar.YEAR, Integer.parseInt(yearTextView.getText().toString()));
-        calendar.set(Calendar.MONTH, Integer.parseInt(monthTextView.getText().toString()) - 1);
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dayTextView.getText().toString()));
-
-        String msg = scheduleMessage.getSmsMessage();
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hourTv));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(minuteTv));
+        calendar.set(Calendar.YEAR, Integer.parseInt(yearTv));
+        calendar.set(Calendar.MONTH, Integer.parseInt(monthTv) - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dayTv));
 
         // pass the thread id, the recipient, and the message to the receiver class
         Intent alarmIntent = new Intent(ScheduleActivity.this, CustomAlarmReceiver.class);
         alarmIntent.putExtra(CustomAlarmReceiver.THREAD_ID_EXTRA, threadId);
         alarmIntent.putExtra(CustomAlarmReceiver.ADDRESS_EXTRA, address);
-        alarmIntent.putExtra(CustomAlarmReceiver.MESSAGE_EXTRA, msg);
+        alarmIntent.putExtra(CustomAlarmReceiver.MESSAGE_EXTRA, message);
 
         PendingIntent pendingAlarm = PendingIntent.getBroadcast(ScheduleActivity.this,
                 eventID, alarmIntent, 0);
@@ -117,6 +129,8 @@ public class ScheduleActivity extends Activity {
       } catch(Exception e){
         Toast.makeText(context, "Invalid, Try again.", Toast.LENGTH_SHORT).show();
       }
+      Toast.makeText(context, "One of the required fields is empty. Please try again.",
+              Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -167,45 +181,6 @@ public class ScheduleActivity extends Activity {
       monthTextView.setText(String.valueOf(month + 1));
       yearTextView.setText(String.valueOf(year));
     }
-  }
-
-  private class ScheduleMessage {
-    String phoneNumber;
-    String smsMessage;
-
-    public ScheduleMessage (){
-      phoneNumber = null;
-      smsMessage = null;
-    }
-
-
-
-    public String getPhoneNumber() {
-      return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-      this.phoneNumber = phoneNumber;
-    }
-
-    public String getSmsMessage() {
-      return smsMessage;
-    }
-
-    public void setSmsMessage(String smsMessage) {
-      this.smsMessage = smsMessage;
-    }
-
-    private boolean areValidFields() {
-      return !(getPhoneNumber().isEmpty() && getSmsMessage().isEmpty());
-    }
-
-    // validate phone number
-    // validate message length
-    private String deleteAll(String strValue, String charToRemove) {
-      return strValue.replaceAll(charToRemove, "");
-    }
-
   }
 
 }

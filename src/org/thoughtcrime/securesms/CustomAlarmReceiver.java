@@ -44,12 +44,14 @@ public class CustomAlarmReceiver extends BroadcastReceiver {
     Recipient recipient          = Recipient.from(context, address, true);
     MasterSecret masterSecret    = KeyCachingService.getMasterSecret(context);
 
-
     long expiresIn               = recipient.getExpireMessages() * 1000;
 
     try {
+
       Toast.makeText(getApplicationContext(), "Sending sms message...", Toast.LENGTH_LONG).show();
+
       OutgoingTextMessage outgoingTextMessage = new OutgoingTextMessage(recipient, message, expiresIn, -1);
+
       new AsyncTask<Void, Void, Void>() {
         @Override
         protected Void doInBackground(Void... params) {
@@ -66,7 +68,8 @@ public class CustomAlarmReceiver extends BroadcastReceiver {
       }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     } catch (Exception e) {
-      Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
+      Toast.makeText(context, "There was an error sending your message. Please try again later.",
+              Toast.LENGTH_SHORT).show();
       e.printStackTrace();
     }
   }
