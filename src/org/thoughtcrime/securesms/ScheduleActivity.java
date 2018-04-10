@@ -11,7 +11,9 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -21,6 +23,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.thoughtcrime.securesms.database.Address;
+import org.thoughtcrime.securesms.recipients.Recipient;
 
 import java.util.Calendar;
 
@@ -33,7 +36,7 @@ public class ScheduleActivity extends Activity {
   private static final String TAG = ScheduleActivity.class.getSimpleName();
 
   public static final String THREAD_ID_EXTRA      = "thread_id";
-  public static final String ADDRESS_EXTRA        = "recipient_address";
+  public static final String NUMBER_EXTRA         = "number";
 
   private EditText smsEditText;
   private TextView yearTextView;
@@ -44,7 +47,7 @@ public class ScheduleActivity extends Activity {
 
   private static int eventID = 0;
 
-  private Address address;
+  private String number;
   private long threadId;
 
   @Override
@@ -52,8 +55,10 @@ public class ScheduleActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.schedule_activity);
 
-    this.address         = getIntent().getParcelableExtra(ADDRESS_EXTRA);
-    this.threadId        = getIntent().getLongExtra(THREAD_ID_EXTRA, -1);
+    if (getIntent() != null) {
+      this.threadId      = getIntent().getLongExtra(THREAD_ID_EXTRA, -1);
+      this.number        = getIntent().getStringExtra(NUMBER_EXTRA);
+    }
 
     yearTextView         = findViewById(R.id.year_tv);
     monthTextView        = findViewById(R.id.month_tv);
@@ -115,7 +120,7 @@ public class ScheduleActivity extends Activity {
         // pass the thread id, the recipient, and the message to the receiver class
         Intent alarmIntent = new Intent(ScheduleActivity.this, CustomAlarmReceiver.class);
         alarmIntent.putExtra(CustomAlarmReceiver.THREAD_ID_EXTRA, threadId);
-        alarmIntent.putExtra(CustomAlarmReceiver.ADDRESS_EXTRA, address);
+        alarmIntent.putExtra(CustomAlarmReceiver.NUMBER_EXTRA, number);
         alarmIntent.putExtra(CustomAlarmReceiver.MESSAGE_EXTRA, message);
 
         PendingIntent pendingAlarm = PendingIntent.getBroadcast(ScheduleActivity.this,

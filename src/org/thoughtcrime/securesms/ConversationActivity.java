@@ -615,7 +615,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private void handleScheduleMessage() {
     // you need to pass in the recipient and the thread required for sending a message
     Intent intent = new Intent(this, ScheduleActivity.class);
-    intent.putExtra(ScheduleActivity.ADDRESS_EXTRA, getRecipient().getAddress());
+    String number = getRecipient().getAddress().serialize();
+    intent.putExtra(ScheduleActivity.NUMBER_EXTRA, number);
     intent.putExtra(ScheduleActivity.THREAD_ID_EXTRA, getThreadId());
     startActivity(intent);
   }
