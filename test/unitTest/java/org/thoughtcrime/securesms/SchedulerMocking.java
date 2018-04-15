@@ -28,4 +28,11 @@ public class SchedulerMocking extends BaseUnitTest {
     when(mockSendSms.getMessage()).thenReturn(message);
   }
 
+  public void setUpIsMessageSent(){
+    boolean isSent = false;
+    mockSendSms.sendSMSMessage();
+    isSent = true;
+    when(mockSendSms.isMessageSent()).thenReturn(isSent);
+  }
+
 }
