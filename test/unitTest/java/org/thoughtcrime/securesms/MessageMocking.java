@@ -10,17 +10,19 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.MessageTest;
 import org.thoughtcrime.securesms.database.SmsDatabase;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.recipients.Recipient;
 
 import java.util.ArrayList;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Ignore
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DatabaseFactory.class})
+@PrepareForTest({MessageTest.class})
 public class MessageMocking extends BaseUnitTest {
 
   protected Context contextMock;
@@ -30,6 +32,16 @@ public class MessageMocking extends BaseUnitTest {
   protected Recipient recipientMock;
   protected Address addressMock;
   protected ArrayList<Integer> messageIds;
+
+  @Override
+  public void setUp() {
+    contextMock = mock(Context.class);
+    dbFactoryMock = mock(DatabaseFactory.class);
+    recipientMock = mock(Recipient.class);
+    smsDbMock = mock(SmsDatabase.class);
+    threadDbMock = mock(ThreadDatabase.class);
+    addressMock = mock(Address.class);
+  }
 
   protected void setUpMessageIds(){
     messageIds = new ArrayList<>();

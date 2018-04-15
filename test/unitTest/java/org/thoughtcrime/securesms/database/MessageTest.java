@@ -1,18 +1,14 @@
 package org.thoughtcrime.securesms.database;
 
-import android.content.Context;
-
-import org.junit.runners.JUnit4;
-import org.junit.runner.RunWith;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.thoughtcrime.securesms.MessageMocking;
 import org.thoughtcrime.securesms.recipients.Recipient;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(JUnit4.class)
@@ -20,15 +16,9 @@ public class MessageTest extends MessageMocking {
 
   @Override
   public void setUp(){
-    contextMock = mock(Context.class);
-    dbFactoryMock = mock(DatabaseFactory.class);
-    recipientMock = mock(Recipient.class);
-    smsDbMock = mock(SmsDatabase.class);
-    threadDbMock = mock(ThreadDatabase.class);
-    addressMock = mock(Address.class);
-
-    super.setUpMessageIds();
-    super.setUpMessageCount();
+    super.setUp();
+    setUpMessageIds();
+    setUpMessageCount();
   }
 
   @Test

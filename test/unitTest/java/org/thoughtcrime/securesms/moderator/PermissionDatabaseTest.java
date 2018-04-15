@@ -23,10 +23,7 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Override
   public void setUp() {
-    addressMock = mock(Address.class);
-    permissionDbMock = mock(PermissionDatabase.class);
-    privileges = new String[2];
-
+    super.setUp();
     setUpAddressList();
     setUpPermission();
     setUpPrivileges();
