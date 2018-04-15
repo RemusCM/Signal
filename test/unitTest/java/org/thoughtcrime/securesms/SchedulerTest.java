@@ -17,6 +17,7 @@ public class SchedulerTest extends SchedulerMocking {
     mockSendSms = mock(SendSMSMessage.class);
     mockSendSms2 = mock(SendSMSMessage.class);
     setUpThreadId();
+    setUpMessage();
   }
 
   @Test
@@ -29,4 +30,12 @@ public class SchedulerTest extends SchedulerMocking {
     assertEquals(1, actualThreadId);
   }
 
+  @Test
+  public void testGetMessage(){
+    String actualMessage = mockSendSms.getMessage();
+    System.out.println("testGetMessage()");
+    System.out.println("Expected: " + "Hello, this is your message");
+    System.out.println("Actual: " + actualMessage);
+    assertEquals("Hello, this is your message", actualMessage);
+  }
 }
