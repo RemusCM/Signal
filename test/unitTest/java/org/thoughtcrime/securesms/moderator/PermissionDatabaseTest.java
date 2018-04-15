@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -103,11 +105,11 @@ public class PermissionDatabaseTest extends PermissionMocking {
 
   @Test
   public void testCreateRecordFail() {
-    System.out.println("- Testing testCreateRecordFail : Will fail -");
+    System.out.println("- FAIL case: testCreateRecordFail() -");
     boolean isCreated;
     isCreated = permissionDbMock.create("ABC123", "222", privileges, addressList);
-    assertTrue(isCreated);
-    assertEquals(privileges.toString(), permissionDbMock.getRecipientPrivilegesString("222", "ABC123"));
+    assertFalse(isCreated);
+    assertNotSame(privileges.toString(), permissionDbMock.getRecipientPrivilegesString("222", "ABC123"));
   }
 
 }
