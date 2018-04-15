@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static org.powermock.api.mockito.PowerMockito.when;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DatabaseFactory.class})
 public class PermissionMocking extends BaseUnitTest {

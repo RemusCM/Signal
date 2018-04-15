@@ -2,6 +2,7 @@ package org.thoughtcrime.securesms;
 
 import android.content.Context;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DatabaseFactory.class})
 public class MessageMocking extends BaseUnitTest {

@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -11,6 +12,7 @@ import org.thoughtcrime.securesms.recipients.Recipient;
 
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DatabaseFactory.class})
 public class NicknameMocking extends BaseUnitTest{
