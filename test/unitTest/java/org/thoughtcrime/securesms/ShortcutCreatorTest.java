@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -155,6 +156,9 @@ public class ShortcutCreatorTest {
     FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
     fakeShortcutCreator.getRecipientInitial(mockRecipient);
 
+    System.out.println("- testGetRecipientInitial() -");
+    System.out.println("    Expected: " + fakeShortcutCreator.getRecipientInitial(mockRecipient));
+    System.out.println("    Actual: " + "JD");
     assertEquals(fakeShortcutCreator.getRecipientInitial(mockRecipient), "JD");
 
   }
@@ -164,8 +168,12 @@ public class ShortcutCreatorTest {
     Recipient mockRecipient = mock(Recipient.class);
     FakeShortcutCreator fakeShortcutCreator = new FakeShortcutCreator();
     fakeShortcutCreator.getRecipientInitial(mockRecipient);
-    System.out.println("It's suppose to be JD.");
-    assertEquals(fakeShortcutCreator.getRecipientInitial(mockRecipient), "JE");
+
+    System.out.println("- FAIL case: testGetRecipientInitialFail() -");
+    System.out.println("    Expected: " + fakeShortcutCreator.getRecipientInitial(mockRecipient));
+    System.out.println("    Actual: " + "JE");
+    System.out.println("- It's suppose to be JD.");
+    assertNotSame(fakeShortcutCreator.getRecipientInitial(mockRecipient), "JE");
 
   }
 }

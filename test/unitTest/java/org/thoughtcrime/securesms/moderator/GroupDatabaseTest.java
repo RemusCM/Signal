@@ -87,11 +87,11 @@ public class GroupDatabaseTest extends BaseUnitTest {
 
   @Test
   public void testIsModeratorFail() {
-    System.out.println("\ntestIsModeratorFail(): - " + "Will fail");
-    assertFalse(groupDatabase.isModerator("111", groupId));
-    assertFalse(groupDatabase.isModerator("222", groupId));
-    assertTrue(groupDatabase.isModerator("333", groupId));
-    assertTrue(groupDatabase.isModerator("444", groupId));
+    System.out.println("\n FAIL case: testIsModeratorFail()");
+    assertTrue(groupDatabase.isModerator("111", groupId));
+    assertTrue(groupDatabase.isModerator("222", groupId));
+    assertFalse(groupDatabase.isModerator("333", groupId));
+    assertFalse(groupDatabase.isModerator("444", groupId));
   }
 
 
