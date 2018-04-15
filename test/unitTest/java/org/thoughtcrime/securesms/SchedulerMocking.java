@@ -35,4 +35,19 @@ public class SchedulerMocking extends BaseUnitTest {
     when(mockSendSms.isMessageSent()).thenReturn(isSent);
   }
 
+  public void setUpSendSMSMessage(){
+    String message = "Hello, this is your message";
+    long threadId = 123;
+    boolean isSent = false;
+
+    mockSendSms2.setMessage(message);
+    mockSendSms2.setThreadId(threadId);
+    mockSendSms2.sendSMSMessage();
+    isSent = true;
+
+    when(mockSendSms2.getMessage()).thenReturn(message);
+    when(mockSendSms2.getThreadId()).thenReturn(threadId);
+    when(mockSendSms2.isMessageSent()).thenReturn(isSent);
+
+  }
 }

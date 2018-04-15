@@ -19,6 +19,7 @@ public class SchedulerTest extends SchedulerMocking {
     setUpThreadId();
     setUpMessage();
     setUpIsMessageSent();
+    setUpSendSMSMessage();
   }
 
   @Test
@@ -46,6 +47,25 @@ public class SchedulerTest extends SchedulerMocking {
     System.out.println("testIsSentMessage()");
     System.out.println("Expected: " + true);
     System.out.println("Actual: " + isSent);
+    assertTrue(isSent);
+  }
+
+  @Test
+  public void testSendSMSMessage(){
+    long actualThreadId= mockSendSms2.getThreadId();
+    String actualMessage = mockSendSms2.getMessage();
+    boolean isSent = mockSendSms2.isMessageSent();
+
+    System.out.println("testSendSMSMessage()");
+    System.out.println("Expected: " + 1);
+    System.out.println("Actual: " + actualThreadId);
+    System.out.println("Expected: " + "Hello, this is your message");
+    System.out.println("Actual: " + actualMessage);
+    System.out.println("Expected: " + true);
+    System.out.println("Actual: " + isSent);
+
+    assertEquals("Hello, this is your message", actualMessage);
+    assertEquals(123, actualThreadId);
     assertTrue(isSent);
   }
 }
