@@ -1,5 +1,7 @@
 package org.thoughtcrime.securesms;
 
+import org.junit.Ignore;
+
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -7,6 +9,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by daanish on 4/15/2018.
  */
 
+@Ignore
 public class SchedulerMocking extends BaseUnitTest {
   public SendSMSMessage mockSendSms;
   public SendSMSMessage mockSendSms2;
