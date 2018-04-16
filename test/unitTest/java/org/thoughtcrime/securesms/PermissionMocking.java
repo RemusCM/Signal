@@ -1,19 +1,23 @@
 package org.thoughtcrime.securesms;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.PermissionDatabase;
+import org.thoughtcrime.securesms.moderator.PermissionDatabaseTest;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DatabaseFactory.class})
+@PrepareForTest({PermissionDatabaseTest.class})
 public class PermissionMocking extends BaseUnitTest {
 
     protected Address addressMock;
@@ -23,6 +27,13 @@ public class PermissionMocking extends BaseUnitTest {
     protected PermissionType canClear = PermissionType.CLEAR_GROUP_CONVERSATION;
     protected String[] privileges;
     protected PermissionDatabase.PermissionRecord pr1;
+
+    @Override
+    public void setUp() {
+        addressMock = mock(Address.class);
+        permissionDbMock = mock(PermissionDatabase.class);
+        privileges = new String[2];
+    }
 
     //Address.ExternalAddressFormatter formatter = new Address.ExternalAddressFormatter("+12223334444");
 

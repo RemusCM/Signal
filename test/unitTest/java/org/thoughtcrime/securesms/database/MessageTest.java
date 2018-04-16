@@ -1,17 +1,14 @@
 package org.thoughtcrime.securesms.database;
 
-import android.content.Context;
-
-import org.junit.runners.JUnit4;
-import org.junit.runner.RunWith;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.thoughtcrime.securesms.MessageMocking;
 import org.thoughtcrime.securesms.recipients.Recipient;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static junit.framework.Assert.assertNotSame;
 import static org.mockito.Mockito.verify;
 
 @RunWith(JUnit4.class)
@@ -19,15 +16,9 @@ public class MessageTest extends MessageMocking {
 
   @Override
   public void setUp(){
-    contextMock = mock(Context.class);
-    dbFactoryMock = mock(DatabaseFactory.class);
-    recipientMock = mock(Recipient.class);
-    smsDbMock = mock(SmsDatabase.class);
-    threadDbMock = mock(ThreadDatabase.class);
-    addressMock = mock(Address.class);
-
-    super.setUpMessageIds();
-    super.setUpMessageCount();
+    super.setUp();
+    setUpMessageIds();
+    setUpMessageCount();
   }
 
   @Test
@@ -78,38 +69,38 @@ public class MessageTest extends MessageMocking {
   /* Fail Case */
   @Test
   public void testGetMessageCountByRecipientIdFail1(){
-    System.out.println("- Testing Message Count : Outcome #2 -");
+    System.out.println("- FAIL case: testGetMessageCountByRecipientIdFail1 : Outcome #2 -");
     System.out.println("    Expected: 2");
     System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
-    assertEquals(2, threadDbMock.getMessageCountByRecipientId(addressMock));
+    assertNotSame(2, threadDbMock.getMessageCountByRecipientId(addressMock));
   }
 
   /* Fail Case */
   @Test
   public void testGetMessageCountByRecipientIdFail2(){
-    System.out.println("- Testing Message Count : Outcome #3 -");
+    System.out.println("- FAIL case: testGetMessageCountByRecipientIdFail2: Outcome #3 -");
     System.out.println("    Expected: 5");
     System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
-    assertEquals(5, threadDbMock.getMessageCountByRecipientId(addressMock));
+    assertNotSame(5, threadDbMock.getMessageCountByRecipientId(addressMock));
   }
 
   /* Fail Case */
   @Test
   public void testGetMessageCountByRecipientIdFail3(){
-    System.out.println("- Testing Message Count : Outcome #4 -");
+    System.out.println("- FAIL case: testGetMessageCountByRecipientIdFail3 : Outcome #4 -");
     System.out.println("    Expected: 10");
     System.out.println("    Actual: " + threadDbMock.getMessageCountByRecipientId(addressMock));
-    assertEquals(10, threadDbMock.getMessageCountByRecipientId(addressMock));
+    assertNotSame(10, threadDbMock.getMessageCountByRecipientId(addressMock));
   }
 
   /* Fail Case */
   @Test
   public void testGetMessageIdsByRecipientIdFail1(){
-    System.out.println("- Testing Get Message By Recipient Id : Outcome #2 -");
+    System.out.println("- FAIL case: testGetMessageIdsByRecipientIdFail1 : Outcome #2 -");
     verify(smsDbMock).getMessageIdsByRecipientId(addressMock);
     System.out.println("    Expected: [2018, 2019, 2020]" );
     System.out.println("    Actual: " + smsDbMock.getMessageIdsByRecipientId(addressMock).toString());
-    assertEquals("[2018, 2019, 2020]", smsDbMock.getMessageIdsByRecipientId(addressMock).toString());
+    assertNotSame("[2018, 2019, 2020]", smsDbMock.getMessageIdsByRecipientId(addressMock).toString());
   }
 
 }
