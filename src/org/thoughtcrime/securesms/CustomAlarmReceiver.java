@@ -22,6 +22,7 @@ public class CustomAlarmReceiver extends BroadcastReceiver {
   public static final String THREAD_ID_EXTRA = "thread_id";
   public static final String MESSAGE_EXTRA   = "message";
   public static final String NUMBER_EXTRA    = "number";
+  public Context context;
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -39,5 +40,9 @@ public class CustomAlarmReceiver extends BroadcastReceiver {
     }
 
   }
+
+    public void setAlarm(Context context) {
+      this.context = context;
+    }
 
 }
