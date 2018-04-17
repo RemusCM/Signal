@@ -27,6 +27,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
   private DrawingView drawView;
   private SecureRandom secureRandom = new SecureRandom();
+  private static final int BRUSHSIZE = 10;
+  private static final int ERASERSIZE = 30;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
     setContentView(R.layout.drawing_activity);
 
     drawView = findViewById(R.id.drawing);
-    drawView.setSizeForBrush(10);
+    drawView.setSizeForBrush(BRUSHSIZE);
 
     Button drawBtn = findViewById(R.id.pen_button);
     drawBtn.setOnClickListener(this);
@@ -129,12 +131,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
   public void onClick(View v) {
     if (v.getId() == R.id.pen_button) {
       drawView.setColor("black");
-      drawView.setSizeForBrush(10);
-      drawView.setPrevBrushSize(10);
+      drawView.setSizeForBrush(BRUSHSIZE);
+      drawView.setPrevBrushSize(BRUSHSIZE);
       Toast.makeText(this, "Pen selected.", Toast.LENGTH_SHORT).show();
     } else if (v.getId() == R.id.eraser_button) {
       drawView.setErase(true);
-      drawView.setSizeForBrush(30);
+      drawView.setSizeForBrush(ERASERSIZE);
       Toast.makeText(this, "Eraser selected.", Toast.LENGTH_SHORT).show();
     } else if (v.getId() == R.id.save_button) {
       saveDrawing();
