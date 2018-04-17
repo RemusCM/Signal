@@ -3,22 +3,15 @@ package org.thoughtcrime.securesms;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.widget.Toast;
 
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 
-import static android.content.Context.ALARM_SERVICE;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by daanish on 4/15/2018.
