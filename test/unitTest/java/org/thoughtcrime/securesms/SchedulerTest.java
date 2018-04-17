@@ -8,6 +8,7 @@ import android.widget.Toast;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -91,6 +92,31 @@ public class SchedulerTest extends SchedulerMocking {
     CustomAlarmReceiver car= mock(CustomAlarmReceiver.class);
     car.setAlarm(context);
 
+
+    LocalDateTime localNow = fam.localTime;
+    int year = localNow.getYear();
+    int month = localNow.getMonthValue();
+    int day = localNow.getDayOfMonth();
+    int hour = localNow.getHour();
+    int minute = localNow.getMinute();
+    int second = localNow.getSecond();
+
+    System.out.printf("%d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
+    String expected = String.format("%d-%02d-%02d %02d:%02d:%02d",year, month, day, hour, minute, second);
+
+    Calendar now = fam.calendar;
+    int cYear = now.get(Calendar.YEAR);
+    int cMonth = now.get(Calendar.MONTH); // Note: zero based!
+    int cDay = now.get(Calendar.DAY_OF_MONTH);
+    int cHour = now.get(Calendar.HOUR_OF_DAY);
+    int cMinute = now.get(Calendar.MINUTE) -1;
+    int cSecond = now.get(Calendar.SECOND);
+    System.out.println();
+    System.out.printf("%d-%02d-%02d %02d:%02d:%02d", cYear, cMonth, cDay, cHour, cMinute, cSecond);
+    String scheduled = String.format("%d-%02d-%02d %02d:%02d:%02d", cYear, cMonth, cDay, cHour, cMinute, cSecond);
+    System.out.println();
+
+
     System.out.println(" - Testing Scheduler - ");
     System.out.println("Expected: true" );
     System.out.println("Actual: " + fam.isAlarmSet());
@@ -98,6 +124,8 @@ public class SchedulerTest extends SchedulerMocking {
     System.out.println("Scheduled time: " + fam.calendar.getTime());
     System.out.println("Message sent: " + fam.msgSent);
     assertTrue(fam.isAlarmSet());
+
+    assertEquals(expected, scheduled);
   }
 
 
