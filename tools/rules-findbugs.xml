@@ -1,6 +1,110 @@
 <FindBugsFilter>
 
-    <!-- Do not check auto-generated resources classes -->
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.MessageDetailsRecipientAdapter"/>
+	</Match>
+
+	<Match>
+		<Class name="org.thoughtcrime.securesms.CreateProfileActivity$2"/>
+	</Match>
+
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.ConversationListAdapter"/>
+	</Match>
+
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.ConversationAdapter"/>
+	</Match>
+
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.PassphraseChangeActivity"/>
+	</Match>
+	
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.PassphraseCreateActivity"/>
+	</Match>
+
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.PassphrasePromptActivity"/>
+	</Match>
+
+	<Match>
+		<Class name="~org\.thoughtcrime\.securesms\.DrawingView"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.util*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.webrtc*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.contacts*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.contacts\.avatars*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.providers*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.service*"/>
+	</Match>
+
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.database\.*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.database\.loaders*"/>
+	</Match>	
+
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.jobs*"/>
+	</Match>
+
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.attachments*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.mms*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.crypto*"/>
+	</Match>
+
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.giph\.*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.giph\.net*"/>
+	</Match>
+
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.giph\.model*"/>
+	</Match>	
+
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.notifications*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.components\.*"/>
+	</Match>
+	
+	<Match>
+		<Package name="~org\.thoughtcrime\.securesms\.components\.camera*"/>
+	</Match>
+
+	<!-- Do not check auto-generated resources classes -->
     <Match>
         <Class name="~.*R\$.*"/>
     </Match>
